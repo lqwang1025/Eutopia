@@ -36,25 +36,25 @@ namespace eutopia {
 namespace core {
 
 enum class DataType : uint8_t {
-    EUTOPIA_DT_UNKNOWN = 0x00,
-    EUTOPIA_DT_UINT8   = 0x01,
-    EUTOPIA_DT_INT8    = 0x02,
-    EUTOPIA_DT_INT16   = 0x03,
-    EUTOPIA_DT_UINT16  = 0x04,
-    EUTOPIA_DT_INT32   = 0x05,
-    EUTOPIA_DT_UINT32  = 0x06,
-    EUTOPIA_DT_FP32    = 0x07,
-    EUTOPIA_DT_MAX     = 0xFF
+  EUTOPIA_DT_UNKNOWN = 0x00,
+  EUTOPIA_DT_UINT8 = 0x01,
+  EUTOPIA_DT_INT8 = 0x02,
+  EUTOPIA_DT_INT16 = 0x03,
+  EUTOPIA_DT_UINT16 = 0x04,
+  EUTOPIA_DT_INT32 = 0x05,
+  EUTOPIA_DT_UINT32 = 0x06,
+  EUTOPIA_DT_FP32 = 0x07,
+  EUTOPIA_DT_MAX = 0xFF
 };
 
 std::string data_type_to_string(DataType data_type);
 
-DataType string_to_data_type(std::string& data_type_str);
+DataType string_to_data_type(std::string &data_type_str);
 
 uint8_t get_data_type_byte(DataType data_type);
 
-uint8_t get_data_type_byte(std::string& data_type_str);
+uint8_t get_data_type_byte(std::string &data_type_str);
 
-} // namespce core
+} // namespace core
 } // namespace eutopia
 #endif /* __DATA_TYPE_H__ */

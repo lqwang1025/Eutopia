@@ -29,6 +29,7 @@
 #include <cstdarg>
 #include <iostream>
 
+#include "core/logging.h"
 #include "core/ir/tensor.h"
 #include "core/ir/chunk.h"
 
@@ -49,12 +50,14 @@ Tensor::Tensor(const std::vector<int>& dims, DataType data_type, void* mem) {
 }
 
 void Tensor::set_data(const std::vector<int>& dims, DataType data_type, void* mem) {
-    if (dims.size() == 0 || (uint8_t)dims.size() > MAX_DIMS_SIZE) return;//todo log here
+    CHECK(dims.size() != 0) << "Please make sure your dims size is not 0.";
+    CHECK(dims.size() <= MAX_DIMS_SIZE)
+        << "Please make sure your dims size is not greater than " << MAX_DIMS_SIZE;
     dims_ = dims;
     int elem_num = 1;
     for (auto& it : dims) {
         elem_num *= it;
-    }    
+    }
     byte_size_ = (uint32_t)(get_data_type_byte(data_type)*elem_num);
     mem_->set_data(this, byte_size_, mem);
 }
