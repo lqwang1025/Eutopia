@@ -47,13 +47,14 @@ Tensor::Tensor(std::vector<int>& dims, DataType data_type, void* mem) {
 
 void Tensor::set_data(std::vector<int>& dims, DataType data_type, void* mem) {
     if (dims.size() == 0) return;//todo log here
+    dims_ = dims;
     int elem_num = 1;
     for (auto& it : dims) {
         elem_num *= it;
     }
     
     byte_size_ = (uint32_t)(get_data_type_byte(data_type)*elem_num);
-    mem_->set_data(byte_size_, mem);
+    mem_->set_data(this, byte_size_, mem);
 }
 
 void Tensor::set_name(const std::string& name) {

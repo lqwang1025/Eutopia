@@ -28,7 +28,9 @@
 
 #include <stdlib.h>
 
+#include <iostream>
 #include "core/ir/chunk.h"
+#include "core/ir/tensor.h"
 
 namespace eutopia {
 namespace core {
@@ -38,17 +40,18 @@ Chunk::Chunk() {
     byte_size_ = 0;
     data_      = nullptr;
     own_data_  = false;
+    owner_     = nullptr;
 }
 
-Chunk::Chunk(uint32_t byte_size, void* data) {
-    set_data(byte_size, data);
+Chunk::Chunk(Tensor* owner, uint32_t byte_size, void* data) {
+    set_data(owner, byte_size, data);
 }
 
 Chunk::~Chunk() {
     _release_data();
 }
 
-void Chunk::set_data(uint32_t byte_size, void* data) {
+void Chunk::set_data(Tensor* owner, uint32_t byte_size, void* data) {
     if (data == nullptr) {
         data_ = malloc(byte_size);//todo:check data is not null
         own_data_ = true;
@@ -58,6 +61,7 @@ void Chunk::set_data(uint32_t byte_size, void* data) {
         own_data_ = false;
     }
     byte_size_ = byte_size;
+    owner_ = owner;
 }
 
 uint32_t Chunk::get_byte_size() const {
