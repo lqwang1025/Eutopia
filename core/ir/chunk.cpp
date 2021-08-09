@@ -83,34 +83,19 @@ void Chunk::_release_data() {
 }
 
 template <typename T>
-const T& Chunk::operator[](const uint32_t index) const {
-    uint8_t data_type_bytes = get_data_type_byte(owner_->data_type_);
-    void* data = data_;
-    return ((T*)((uint8_t*)data + index * data_type_bytes))[0];
-}
-
-template <typename T>
-T& Chunk::operator[](const uint32_t index) {
+T& Chunk::at(const uint32_t index) {
     void* data = data_;
     uint8_t data_type_bytes = get_data_type_byte(owner_->data_type_);
     return ((T*)((uint8_t*)data + index * data_type_bytes))[0];
 }
 
-template const uint8_t& Chunk::operator[]<uint8_t>(const uint32_t index) const;
-template const int8_t& Chunk::operator[]<int8_t>(const uint32_t index) const;
-template const int16_t& Chunk::operator[]<int16_t>(const uint32_t index) const;
-template const uint16_t& Chunk::operator[]<uint16_t>(const uint32_t index) const;
-template const uint32_t& Chunk::operator[]<const uint32_t>(const uint32_t index) const;
-template const int32_t& Chunk::operator[]<int32_t>(const uint32_t index) const;
-template const float& Chunk::operator[]<float>(const uint32_t index) const;
-
-template uint8_t& Chunk::operator[]<uint8_t>(const uint32_t index);
-template int8_t& Chunk::operator[]<int8_t>(const uint32_t index);
-template int16_t& Chunk::operator[]<int16_t>(const uint32_t index);
-template uint16_t& Chunk::operator[]<uint16_t>(const uint32_t index);
-template uint32_t& Chunk::operator[]<uint32_t>(const uint32_t index);
-template int32_t& Chunk::operator[]<int32_t>(const uint32_t index);
-template float& Chunk::operator[]<float>(const uint32_t index);
+template uint8_t& Chunk::at<uint8_t>(const uint32_t index);
+template int8_t& Chunk::at<int8_t>(const uint32_t index);
+template int16_t& Chunk::at<int16_t>(const uint32_t index);
+template uint16_t& Chunk::at<uint16_t>(const uint32_t index);
+template uint32_t& Chunk::at<uint32_t>(const uint32_t index);
+template int32_t& Chunk::at<int32_t>(const uint32_t index);
+template float& Chunk::at<float>(const uint32_t index);
 
 } // namespace ir
 } //namespace eutopia

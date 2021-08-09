@@ -87,13 +87,28 @@ const T& Tensor::data(const std::vector<uint32_t>& indices) const {
         }
         index += strides[i]*indices[i];
     }
-    const T& value = (*mem_)[index];
+    const T& value = mem_->at<T>(index);
     return value;
 }
 
 template<typename T>
 T& Tensor::mutable_data(const std::vector<uint32_t>& indices) {
-    
+    if (indices.size() != dims_size()) {
+        std::cout<<"err:"<<std::endl;
+    }
+    std::vector<uint32_t> strides(dims_size(), 1);
+    uint32_t index = 0;
+    for (int i = 0; i < (int)indices.size(); ++i) {
+        if (dims_[i] <= indices[i]) {
+            std::cout<<"err:"<<std::endl;
+        }
+        for (int _i = i+1; _i < indices.size(); ++_i) {
+            strides[i] *= dims_[_i];
+        }
+        index += strides[i]*indices[i];
+    }
+    T& value = mem_->at<T>(index);
+    return value;
 }
 
 template const uint8_t& Tensor::data(const std::vector<uint32_t>& dims) const;

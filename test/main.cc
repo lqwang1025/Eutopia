@@ -39,5 +39,8 @@ int main(int argc, char** argv) {
     std::vector<int> dims{224, 224, 3};
     tensor.set_data(dims, eutopia::core::DataType::EUTOPIA_DT_UINT8);
     const uint8_t& s = tensor.data<uint8_t>({112, 112, 2});
+    std::cout<<(int)s<<std::endl;
+    tensor.mutable_data<uint8_t>({112, 112, 2}) = 255;
+    std::cout<<(int)s<<std::endl;
     return 0;
 }
