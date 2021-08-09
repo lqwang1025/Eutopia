@@ -46,10 +46,10 @@ public:
     uint32_t get_byte_size() const;
     
     template <typename T>
-    const T operator[](uint32_t index) const;
+    const T& operator[](const uint32_t index) const;
     
     template <typename T>
-    T& operator[](uint32_t index);
+    T& operator[](const uint32_t index);
     
     const void* get_data_ptr() const;
     void* get_mutable_data_ptr() const;

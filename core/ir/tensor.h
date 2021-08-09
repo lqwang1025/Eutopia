@@ -31,6 +31,7 @@
 
 #include <vector>
 #include <string>
+#include <cstdarg>
 
 #include "core/data_type.h"
 
@@ -44,11 +45,16 @@ class Tensor final {
     friend class Chunk;
 public:
     Tensor();
-    Tensor(std::vector<int>& dims, DataType data_type, void* mem=nullptr);
+    Tensor(const std::vector<int>& dims, DataType data_type, void* mem=nullptr);
     ~Tensor();
-    void set_data(std::vector<int>& dims, DataType data_type, void* mem=nullptr);
+    void set_data(const std::vector<int>& dims, DataType data_type, void* mem=nullptr);
     void set_name(const std::string& name);
     const std::string& get_name() const;
+    template<typename T>
+    const T& data(const std::vector<uint32_t>& indices) const;
+    template<typename T>
+    T& mutable_data(const std::vector<uint32_t>& indices);
+    uint8_t dims_size() const;
 private:
     std::string name_;
     DataType data_type_;

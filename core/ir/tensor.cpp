@@ -26,8 +26,9 @@
  * Description:
  */
 
-#include <math.h>
+#include <cstdarg>
 #include <iostream>
+
 #include "core/ir/tensor.h"
 #include "core/ir/chunk.h"
 
@@ -35,26 +36,31 @@ namespace eutopia {
 namespace core {
 namespace ir {
 
+const static uint8_t MAX_DIMS_SIZE = 32;
+
 Tensor::Tensor() {
     data_type_ = DataType::EUTOPIA_DT_UNKNOWN;
     byte_size_ = 0;
     mem_       = new Chunk;
 }
 
-Tensor::Tensor(std::vector<int>& dims, DataType data_type, void* mem) {
+Tensor::Tensor(const std::vector<int>& dims, DataType data_type, void* mem) {
     set_data(dims, data_type, mem);
 }
 
-void Tensor::set_data(std::vector<int>& dims, DataType data_type, void* mem) {
-    if (dims.size() == 0) return;//todo log here
+void Tensor::set_data(const std::vector<int>& dims, DataType data_type, void* mem) {
+    if (dims.size() == 0 || (uint8_t)dims.size() > MAX_DIMS_SIZE) return;//todo log here
     dims_ = dims;
     int elem_num = 1;
     for (auto& it : dims) {
         elem_num *= it;
-    }
-    
+    }    
     byte_size_ = (uint32_t)(get_data_type_byte(data_type)*elem_num);
     mem_->set_data(this, byte_size_, mem);
+}
+
+uint8_t Tensor::dims_size() const {
+    return (uint8_t)dims_.size();
 }
 
 void Tensor::set_name(const std::string& name) {
@@ -64,6 +70,47 @@ void Tensor::set_name(const std::string& name) {
 const std::string& Tensor::get_name() const {
     return name_;
 }
+
+template<typename T>
+const T& Tensor::data(const std::vector<uint32_t>& indices) const {
+    if (indices.size() != dims_size()) {
+        std::cout<<"err:"<<std::endl;
+    }
+    std::vector<uint32_t> strides(dims_size(), 1);
+    uint32_t index = 0;
+    for (int i = 0; i < (int)indices.size(); ++i) {
+        if (dims_[i] <= indices[i]) {
+            std::cout<<"err:"<<std::endl;
+        }
+        for (int _i = i+1; _i < indices.size(); ++_i) {
+            strides[i] *= dims_[_i];
+        }
+        index += strides[i]*indices[i];
+    }
+    const T& value = (*mem_)[index];
+    return value;
+}
+
+template<typename T>
+T& Tensor::mutable_data(const std::vector<uint32_t>& indices) {
+    
+}
+
+template const uint8_t& Tensor::data(const std::vector<uint32_t>& dims) const;
+template const int8_t& Tensor::data(const std::vector<uint32_t>& dims) const;
+template const int16_t& Tensor::data(const std::vector<uint32_t>& dims) const;
+template const uint16_t& Tensor::data(const std::vector<uint32_t>& dims) const;
+template const uint32_t& Tensor::data(const std::vector<uint32_t>& dims) const;
+template const int32_t& Tensor::data(const std::vector<uint32_t>& dims) const;
+template const float& Tensor::data(const std::vector<uint32_t>& dims) const;
+
+template uint8_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
+template int8_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
+template int16_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
+template uint16_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
+template uint32_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
+template int32_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
+template float& Tensor::mutable_data(const std::vector<uint32_t>& dims);
 
 Tensor::~Tensor() {
     delete mem_;

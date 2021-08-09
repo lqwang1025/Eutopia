@@ -36,8 +36,8 @@ using namespace std;
 
 int main(int argc, char** argv) {
     eutopia::core::ir::Tensor tensor;
-    std::vector<int> dims{3, 3};
+    std::vector<int> dims{224, 224, 3};
     tensor.set_data(dims, eutopia::core::DataType::EUTOPIA_DT_UINT8);
-    
+    const uint8_t& s = tensor.data<uint8_t>({112, 112, 2});
     return 0;
 }
