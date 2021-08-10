@@ -31,78 +31,51 @@
 
 #include <iostream>
 #include <string>
-#include <memory>
+#include <assert.h>
 
 namespace eutopia {
 namespace core {
 
-using log_stream_t = std::unique_ptr<std::ostream>;
+#define RESET   "\033[0m\n"
+#define BLACK   "\033[30m"      /* Black */
+#define RED     "\033[31m"      /* Red */
+#define GREEN   "\033[32m"      /* Green */
+#define YELLOW  "\033[33m"      /* Yellow */
+#define BLUE    "\033[34m"      /* Blue */
+#define MAGENTA "\033[35m"      /* Magenta */
+#define CYAN    "\033[36m"      /* Cyan */
+#define WHITE   "\033[37m"      /* White */
+#define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
+#define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
+#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
+#define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
+#define BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
+#define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
+#define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
+#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
-enum LogLevel {
-    kEmerg = 0,
-    kAlert,
-    kCrit,
-    kError,
-    kWarn,
-    kNotice,
-    kInfo,
-    kDebug
-};
+#define EU_LOG std::cout<<BOLDGREEN
+#define EU_ERROR std::cout<<BOLDRED
+#define EU_WARN std::cout<<BOLDYELLOW
+#define EU_ENDL RESET
 
-struct LogOption {
-    std::string prefix;
-    int max_line_size;
-    int rate_limit; /* KB per second */
-    bool log_level;
-    bool log_date;
-};
+#ifdef DEBUG
+#define EU_ASSERT(x)                                            \
+    do {                                                        \
+        if (!(x)) {                                             \
+            EU_ERROR<<"Assert failed: "<< #x<<__FILE<<EU_ENDL;  \
+            assert(0);                                          \
+        }                                                       \
+    } while (false)
+#else
+#define EU_ASSERT(x)
+#endif
 
-struct Logger {
-    virtual bool set_log_level(LogLevel level) = 0;
-    virtual LogLevel get_log_level(void) = 0;
-
-    /*option part */
-    virtual bool set_log_option(const LogOption& opt) = 0;
-
-    virtual LogOption get_log_option(void) = 0;
-
-    virtual void set_log_output_func(void (*func)(const char*)) = 0;
-
-    /*Log part */
-    virtual log_stream_t Log(LogLevel) = 0;
-
-    virtual ~Logger(){};
-
-    static Logger* get_logger(); /* get the global logger */
-    static void set_logger(Logger* log); /* set the global logger */
-    static const char* log_level_str(LogLevel level);
-};
-
-/* the wrapper for other to use log utilities */
-
-#define SET_LOG_OUTPUT(func) Logger::get_logger()->set_log_output_func(func)
-
-#define DO_LOG(level) (*Logger::get_logger()->Log(level))
-#define GET_LOG_OPTION() Logger::get_logger()->get_log_option()
-#define SET_LOG_OPTION(opt) Logger::get_logger()->set_log_option(opt)
-#define GET_LOG_LEVEL() Logger::get_logger()->get_log_level()
-#define SET_LOG_LEVEL(l) Logger::get_logger()->set_log_level(l)
-
-#define LOG_DEBUG() DO_LOG(kDebug)
-#define LOG_INFO() DO_LOG(kInfo)
-#define LOG_WARN() DO_LOG(kWarn)
-#define LOG_ERROR() DO_LOG(kError)
-#define LOG_ALERT() DO_LOG(kAlert)
-#define LOG_FATAL() DO_LOG(kCrit)
-
-#define XLOG_DEBUG() LOG_DEBUG() << __FILE__ << ":" << __LINE__ << " "
-#define XLOG_INFO() LOG_INFO() << __FILE__ << ":" << __LINE__ << " "
-#define XLOG_WARN() LOG_WARN() << __FILE__ << ":" << __LINE__ << " "
-#define XLOG_ERROR() LOG_ERROR() << __FILE__ << ":" << __LINE__ << " "
-#define XLOG_ALERT() LOG_ALERT() << __FILE__ << ":" << __LINE__ << " "
-#define XLOG_FATAL() LOG_FATAL() << __FILE__ << ":" << __LINE__ << " "
-
-
+#define CHECK(success, log)                                             \
+    if(!(success)){                                                     \
+        EU_ERROR<<"Check failed: "<< #success <<"==>"<< #log <<EU_ENDL;  \
+        exit(0);                                                        \
+    }
 
 } // namespace core
 } // namespace eutopia

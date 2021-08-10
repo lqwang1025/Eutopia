@@ -50,9 +50,8 @@ Tensor::Tensor(const std::vector<int>& dims, DataType data_type, void* mem) {
 }
 
 void Tensor::set_data(const std::vector<int>& dims, DataType data_type, void* mem) {
-    CHECK(dims.size() != 0) << "Please make sure your dims size is not 0.";
-    CHECK(dims.size() <= MAX_DIMS_SIZE)
-        << "Please make sure your dims size is not greater than " << MAX_DIMS_SIZE;
+    CHECK(dims.size() != 0, "Please make sure your dims size is not 0.");
+    CHECK(dims.size() <= MAX_DIMS_SIZE, "Please make sure your dims size is not out of range.");
     dims_ = dims;
     int elem_num = 1;
     for (auto& it : dims) {
@@ -76,15 +75,11 @@ const std::string& Tensor::get_name() const {
 
 template<typename T>
 const T& Tensor::data(const std::vector<uint32_t>& indices) const {
-    if (indices.size() != dims_size()) {
-        std::cout<<"err:"<<std::endl;
-    }
+    CHECK(indices.size() == dims_size(), "Wrong indices size.");
     std::vector<uint32_t> strides(dims_size(), 1);
     uint32_t index = 0;
     for (int i = 0; i < (int)indices.size(); ++i) {
-        if (dims_[i] <= indices[i]) {
-            std::cout<<"err:"<<std::endl;
-        }
+        CHECK(indices[i] < dims_[i], "Wrong indices.");
         for (int _i = i+1; _i < indices.size(); ++_i) {
             strides[i] *= dims_[_i];
         }
@@ -96,15 +91,11 @@ const T& Tensor::data(const std::vector<uint32_t>& indices) const {
 
 template<typename T>
 T& Tensor::mutable_data(const std::vector<uint32_t>& indices) {
-    if (indices.size() != dims_size()) {
-        std::cout<<"err:"<<std::endl;
-    }
+    CHECK(indices.size() == dims_size(), "Wrong indices size.");
     std::vector<uint32_t> strides(dims_size(), 1);
     uint32_t index = 0;
     for (int i = 0; i < (int)indices.size(); ++i) {
-        if (dims_[i] <= indices[i]) {
-            std::cout<<"err:"<<std::endl;
-        }
+        CHECK(indices[i] < dims_[i], "Wrong indices.");
         for (int _i = i+1; _i < indices.size(); ++_i) {
             strides[i] *= dims_[_i];
         }

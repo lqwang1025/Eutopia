@@ -37,7 +37,7 @@ namespace ir {
 
 class Tensor;
 
-class Chunk {
+class Chunk final {
 public:
   Chunk();
   virtual ~Chunk();

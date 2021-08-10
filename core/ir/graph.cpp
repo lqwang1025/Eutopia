@@ -19,28 +19,11 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : main.cc
+ * File       : graph.cpp
  * Authors    : Daniel Wang
- * Create Time: 2021-08-08:13:30:59
+ * Create Time: 2021-08-09:22:04:36
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include <iostream>
-#include <cstdlib>
-
-#include "core/data_type.h"
-#include "core/ir/tensor.h"
-
-using namespace std;
-
-int main(int argc, char** argv) {
-    eutopia::core::ir::Tensor tensor;
-    std::vector<int> dims = {224, 224, 3};
-    tensor.set_data(dims, eutopia::core::DataType::EUTOPIA_DT_UINT8);
-    const uint8_t& s = tensor.data<uint8_t>({112, 112, 2});
-    std::cout<<(int)s<<std::endl;
-    tensor.mutable_data<uint8_t>({112, 112, 2}) = 255;
-    std::cout<<(int)s<<std::endl;
-    return 0;
-}
+#include "graph.h"

@@ -19,19 +19,15 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : logging.cpp
+ * File       : graph.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-08:16:28:46
+ * Create Time: 2021-08-09:22:04:27
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include "core/logging.h"
+#ifndef __GRAPH_H__
+#define __GRAPH_H__
 
-namespace eutopia {
-namespace core {
+#endif /* __GRAPH_H__ */
 
-
-
-} // namespce core
-} // namespace eutopia
