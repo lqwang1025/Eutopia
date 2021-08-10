@@ -75,28 +75,9 @@ Node* Graph::get_node(const std::string& node_name) const {
     return nodes_map_.find(node_name)->second;
 }
 
-void Graph::add_input_tensor(Tensor* tensor) {
-    input_tensors_.push_back(tensor);
-}
-
-std::vector<Tensor*>& Graph::get_input_tensors() const {
-    return input_tensors_;
-}
-
-void Graph::add_output_tensor(Tensor* tensor) {
-    output_tensors_.push_back(tensor);
-}
-
-std::vector<Tensor*>& Graph::get_output_tensors() const {
-    return output_tensors_;
-}
-
-void Graph::add_tensor(Tensor* tensor) {
-    all_tensors_.push_back(tensor);
-}
-
-std::vector<Tensor*>& Graph::get_all_tensor() const {
-    return all_tensors_;
+Tensor* Graph::get_output_tensor(const std::string& node_name) const {
+    CHECK(output_tensors_.count(node_name) != 0, "Do not find your node in graph.");
+    return output_tensors_.find(node_name)->second;
 }
 
 bool Graph::is_trainning() const {

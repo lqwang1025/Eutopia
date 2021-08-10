@@ -57,16 +57,13 @@ public:
     Tensor* get_input_tensor(const std::string& tensor_name) const;
     
     void add_output_tensor(Tensor* tensor);
-    Tensor* get_output_tensor(const std::string& tensor_name) const;
+    Tensor* get_output_tensor(const std::string& node_name) const;
     
-    void add_tensor(Tensor* tensor);
-    std::vector<Tensor*>& get_all_tensor() const;
     bool is_trainning() const;
     void set_is_trainning(bool is_trainning);
 private:
     bool is_trainning_;
     std::string name_;
-    std::map<std::string, Tensor*> all_tensors_;
     std::map<std::string, Tensor*> input_tensors_;
     std::map<std::string, Tensor*> output_tensors_;
     std::vector<Node*> nodes_;
