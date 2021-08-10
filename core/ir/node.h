@@ -31,6 +31,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace eutopia {
 namespace core {
@@ -44,43 +45,51 @@ public:
     ~Node();
     const std::string& get_name() const;
     void set_name(std::string& name);
-    const uint16_t& get_index() const;
-    void set_index(uint16_t index);
+    uint16_t get_index() const;
+    void set_index(const uint16_t index);
     const std::string& get_op_type() const;
-    void set_op_type(std::string& op_type);
-    void set_output_shape(std::vector<uint32_t>& output_shape);
+    void set_op_type(const std::string& op_type);
+    void set_output_shape(const std::vector<uint32_t>& output_shape);
     const std::vector<uint32_t>& get_output_shape() const;
-    void set_producer(std::string& producer);
+    void add_producer(const std::string& producer);
     const std::vector<std::string>& get_producers() const;
-    void set_consumer(std::string& consumer);
+    void add_consumer(const std::string& consumer);
     const std::vector<std::string>& get_consumers() const;
-    void set_is_input(bool is_input);
-    void set_is_output(bool is_output);
-    bool is_input() const;
-    bool is_output() const;
+    void set_is_first_node(bool is_input);
+    void set_is_last_node(bool is_output);
+    bool is_first_node() const;
+    bool is_last_node() const;
     void set_dynamic_shape(bool dynamic_shape);
     bool dynamic_shape() const;
     void set_is_sparse(bool is_sparse);
     bool is_sparse() const;
     void set_is_quantize(bool is_quantize);
     bool is_quantize() const;
-    void set_in_inplace(bool in_inplace);
-    bool in_inplace() const;
+    void set_in_place(bool in_inplace);
+    bool in_place() const;
     void set_with_bias(bool with_bias);
     bool with_bias() const;
     void set_weight_shared(bool weight_shared);
     bool weight_shared() const;
+    bool is_trainning() const;
+    void set_is_trainning(bool is_trainning);
+    const Tensor* get_output_tensor() const;
+    void dump();
+    void forward();
+    void backward();
+    void update();
     void run();
 private:
     std::string name_;
     uint16_t index_;
     std::string op_type_;
     std::vector<uint32_t> output_shape_;
+    bool is_trainning_;
     bool is_quantize_;
     bool weight_shared_;
     bool is_sparse_;
-    bool is_input_;
-    bool is_output_;
+    bool is_first_node_;
+    bool is_last_node_;
     bool dynamic_shape_;
     bool in_place_;
     bool with_bias_;
@@ -88,14 +97,12 @@ private:
     std::vector<std::string> consumers_;
     std::vector<Tensor*> weights_;
     std::vector<Tensor*> biases_;
-    std::vector<Tensor*> inputs_;
-    Tensor* output_;
+    Tensor* output_tensor_;
 };
 
 } // namespace ir
 } // namespace core
 } // namespace eutopia
-
 
 #endif /* __NODE_H__ */
 

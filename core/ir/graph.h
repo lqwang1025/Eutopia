@@ -29,5 +29,53 @@
 #ifndef __GRAPH_H__
 #define __GRAPH_H__
 
+#include <map>
+#include <string>
+#include <vector>
+
+namespace eutopia {
+namespace core {
+namespace ir {
+
+class Node;
+class Tensor;
+class Graph final {
+public:
+    Graph();
+    ~Graph();
+    void forward();
+    void backward();
+    void update();
+    void run();
+    void dump();
+    void set_name(const std::string& name);
+    const std::string& get_name() const;
+    void add_node(Node* node);
+    Node* get_node(const std::string& node_name) const;
+    
+    void add_input_tensor(Tensor* tensor);
+    Tensor* get_input_tensor(const std::string& tensor_name) const;
+    
+    void add_output_tensor(Tensor* tensor);
+    Tensor* get_output_tensor(const std::string& tensor_name) const;
+    
+    void add_tensor(Tensor* tensor);
+    std::vector<Tensor*>& get_all_tensor() const;
+    bool is_trainning() const;
+    void set_is_trainning(bool is_trainning);
+private:
+    bool is_trainning_;
+    std::string name_;
+    std::map<std::string, Tensor*> all_tensors_;
+    std::map<std::string, Tensor*> input_tensors_;
+    std::map<std::string, Tensor*> output_tensors_;
+    std::vector<Node*> nodes_;
+    std::map<std::string, Node*> nodes_map_;
+};
+
+} // namespace ir
+} // namespace core
+} // namespace eutopia
+
 #endif /* __GRAPH_H__ */
 

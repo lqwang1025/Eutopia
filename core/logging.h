@@ -54,9 +54,9 @@ namespace core {
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
-#define EU_LOG std::cout<<BOLDGREEN
-#define EU_ERROR std::cout<<BOLDRED
-#define EU_WARN std::cout<<BOLDYELLOW
+#define EU_LOG std::cout<<BOLDGREEN<<"Log: "
+#define EU_ERROR std::cout<<BOLDRED<<"Error: "
+#define EU_WARN std::cout<<BOLDYELLOW<<"Warning: "
 #define EU_ENDL RESET
 
 #ifdef DEBUG
