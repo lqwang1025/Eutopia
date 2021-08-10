@@ -39,7 +39,7 @@ namespace ir {
 class Tensor;
 
 class Node final {
-pubilc:
+public:
     Node();
     ~Node();
     const std::string& get_name() const;
@@ -58,6 +58,18 @@ pubilc:
     void set_is_output(bool is_output);
     bool is_input() const;
     bool is_output() const;
+    void set_dynamic_shape(bool dynamic_shape);
+    bool dynamic_shape() const;
+    void set_is_sparse(bool is_sparse);
+    bool is_sparse() const;
+    void set_is_quantize(bool is_quantize);
+    bool is_quantize() const;
+    void set_in_inplace(bool in_inplace);
+    bool in_inplace() const;
+    void set_with_bias(bool with_bias);
+    bool with_bias() const;
+    void set_weight_shared(bool weight_shared);
+    bool weight_shared() const;
     void run();
 private:
     std::string name_;
