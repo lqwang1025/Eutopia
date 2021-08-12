@@ -40,4 +40,4 @@ link_directories(${CMAKE_BINARY_DIR}/core)
 
 add_executable(test_bin ${EUTOPIA_TEST_SOURCE_FILES})
 
-target_link_libraries(test_bin eutopia)
+target_link_libraries(test_bin eutopia-core)

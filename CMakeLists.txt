@@ -88,6 +88,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Main source files
 ADD_SUBDIRECTORY (core)
+ADD_SUBDIRECTORY (op)
 ADD_SUBDIRECTORY (test)
 
 # Report summary

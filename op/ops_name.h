@@ -19,30 +19,26 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : main.cc
+ * File       : ops_name.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-08:13:30:59
+ * Create Time: 2021-08-12:07:49:42
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include <iostream>
-#include <cstdlib>
+#ifndef __OPS_NAME_H__
+#define __OPS_NAME_H__
 
-#include "core/data_type.h"
-#include "core/ir/tensor.h"
-#include "core/ir/graph.h"
+#define MUL "Mul"
+#define CONCAT "Concat"
+#define MAXPOOL "MaxPool"
+#define DROPOUT "DropOut"
+#define MEANPOOL "MeanPool"
+#define BATCHNORM "BatchNorm"
+#define CONVOLUTION "Convolution"
+#define FULLYCONNECT "FullyConnect"
+#define GLOBALAVGPOOL "GlobalAVGPool"
+#define DEPTHWISECONVOLUTION "DepthWiseConvolution"
 
-using namespace std;
+#endif /* __OPS_NAME_H__ */
 
-int main(int argc, char** argv) {
-    eutopia::core::ir::Tensor tensor;
-    std::vector<int> dims = {224, 224, 3};
-    tensor.set_data(dims, eutopia::core::DataType::EUTOPIA_DT_UINT8);
-    const uint8_t& s = tensor.data<uint8_t>({112, 112, 2});
-    std::cout<<(int)s<<std::endl;
-    tensor.mutable_data<uint8_t>({112, 112, 2}) = 255;
-    eutopia::core::ir::Graph g;
-    std::cout<<(int)s<<std::endl;
-    return 0;
-}
