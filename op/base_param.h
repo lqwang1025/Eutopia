@@ -19,36 +19,35 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : convolution2d.cpp
+ * File       : base_param.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-12:07:50:53
+ * Create Time: 2021-08-12:16:35:16
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include "op/op.h"
+#ifndef __BASE_PARAM_H__
+#define __BASE_PARAM_H__
+
+#include <string>
+#include <vector>
 
 namespace eutopia {
 namespace op {
-namespace cpu {
 
-DECLARE_OPERATOR(Convolution2d);
+class Operator;
 
-void Convolution2d::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
-    
-}
+class BaseParam {
+    friend class Operator;
+public:
+    OpParam()=default;
+    virtual ~OpParam()=default;
+protected:
+    std::string op_type_;
+    std::string op_name_; 
+};
 
-void Convolution2d::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
-}
-
-void Convolution2d::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
-}
-
-REGISTER_OPERATOR(EConvolution2d, Convolution2d);
-
-} // namespace cpu
 } // namespace op
 } // namespace eutopia
 
+#endif /* __BASE_PARAM_H__ */

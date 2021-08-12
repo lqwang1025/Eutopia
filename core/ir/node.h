@@ -33,6 +33,8 @@
 #include <vector>
 #include <cstdint>
 
+#include "op/op.h"
+
 namespace eutopia {
 namespace core {
 namespace ir {
@@ -80,8 +82,9 @@ public:
     void update();
     void run();
 private:
+    op::Operator* op_;
     std::string name_;
-    uint16_t index_;
+    uint16_t index_; // squence index
     std::string op_type_;
     std::vector<uint32_t> output_shape_;
     bool is_trainning_;

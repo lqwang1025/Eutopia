@@ -39,13 +39,18 @@
 namespace eutopia {
 namespace op {
 
+class BaseParam;
+
 class Operator {
 public:
     Operator()=default;
+    void warm_up(BaseParam* op_param);
     virtual ~Operator()=default;
     virtual void infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape);
     virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
     virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
+protected:
+    BaseParam* op_param_;
 };
 
 class Holder {
@@ -98,7 +103,7 @@ public:
 #define DECLARE_OPERATOR(sub_class)                                     \
     class sub_class : public Operator {                                 \
     public:                                                             \
-    sub_class() = default;                                              \
+    sub_class()=default;                                                \
     virtual void infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape); \
     virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
     virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
@@ -108,4 +113,3 @@ public:
 } // namespace eutopia
 
 #endif /* __OP_H__ */
-
