@@ -98,6 +98,9 @@ private:
     std::vector<Tensor*> weights_;
     std::vector<Tensor*> biases_;
     Tensor* output_tensor_;
+private:
+    Node& operator=(Node&){}
+    Node(const Node&){}
 };
 
 } // namespace ir

@@ -25,3 +25,26 @@
  * Email      : wangliquan21@qq.com
  * Description:
  */
+
+#include "op/op.h"
+#include "core/logging.h"
+#include "core/ir/tensor.h"
+
+namespace eutopia {
+namespace op {
+
+void Operator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+    
+    return;
+}
+
+void Operator::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+    return;
+}
+
+void Operator::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+    return;
+}
+
+} // namespace op
+} // namespace eutopia

@@ -68,6 +68,9 @@ private:
     std::map<std::string, Tensor*> output_tensors_;
     std::vector<Node*> nodes_;
     std::map<std::string, Node*> nodes_map_;
+private:
+    Graph& operator=(Graph&){}
+    Graph(Graph&){}
 };
 
 } // namespace ir
