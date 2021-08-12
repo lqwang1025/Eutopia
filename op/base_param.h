@@ -40,8 +40,8 @@ class Operator;
 class BaseParam {
     friend class Operator;
 public:
-    OpParam()=default;
-    virtual ~OpParam()=default;
+    BaseParam()=default;
+    virtual ~BaseParam()=default;
 protected:
     std::string op_type_;
     std::string op_name_; 

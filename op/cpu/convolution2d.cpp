@@ -27,26 +27,31 @@
  */
 
 #include "op/op.h"
+#include "op/base_param.h"
 
 namespace eutopia {
 namespace op {
 namespace cpu {
 
-DECLARE_OPERATOR(Convolution2d);
+DECLARE_OPERATOR(Convolution2DOperator);
 
-void Convolution2d::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+Convolution2DOperator::Convolution2DOperator(const BaseParam* op_param): Operator(op_param) {
     
 }
 
-void Convolution2d::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+void Convolution2DOperator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
     
 }
 
-void Convolution2d::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+void Convolution2DOperator::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
     
 }
 
-REGISTER_OPERATOR(EConvolution2d, Convolution2d);
+void Convolution2DOperator::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+    
+}
+
+REGISERT_OP_CLASS(Convolution2D, Convolution2DOperator);
 
 } // namespace cpu
 } // namespace op

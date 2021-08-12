@@ -43,70 +43,79 @@ class BaseParam;
 
 class Operator {
 public:
-    Operator()=default;
-    void warm_up(BaseParam* op_param);
+    Operator(const BaseParam* op_param);
     virtual ~Operator()=default;
     virtual void infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape);
     virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
     virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
 protected:
     BaseParam* op_param_;
+private:
+    Operator();
+    Operator(const Operator&);
+    Operator& operator=(const Operator&);
 };
 
 class Holder {
 public:
-    using OperatorMap = std::map<std::string, Operator*>;
-    static OperatorMap& new_operator() {
-        static OperatorMap* operator_map = new OperatorMap();
-        return *operator_map;
+    typedef Operator* (*Creator)(const BaseParam* op_param);
+    typedef std::map<std::string, Creator> OpCreatorMap;
+    
+    static OpCreatorMap& new_op_creator() {
+        static OpCreatorMap* op_creator_map = new OpCreatorMap();
+        return *op_creator_map;
     }
     
-    static void add_operator(const std::string& op_type, Operator* op) {
-        OperatorMap& operator_map = new_operator();
-        if (operator_map.count(op_type) == 1) {
+    static void add_op_crreator(const std::string& op_type, Creator creator) {
+        OpCreatorMap& op_creator_map = new_op_creator();
+        if (op_creator_map.count(op_type) == 1) {
             EU_WARN << op_type << " had already been registered. "<<EU_ENDL;
             return;
         }
-        operator_map[op_type] = op;
+        op_creator_map[op_type] = creator;
     }
     
-    static Operator* get_operator(const std::string& op_type) {
-        OperatorMap& operator_map = new_operator();
-        if (operator_map.count(op_type) == 0) {
+    static Creator get_op_creator(const std::string& op_type) {
+        OpCreatorMap& op_creator_map = new_op_creator();
+        if (op_creator_map.count(op_type) == 0) {
             return nullptr;
         }
-        return operator_map[op_type];
+        return op_creator_map[op_type];
     }
     
-    static void release() {
-        OperatorMap& operator_map = new_operator();
-        for (auto& it : operator_map) {
-            delete it.second;
-        }
-        delete &operator_map;
-    }
 private:
-    Holder() {}
-    Holder& operator=(Holder&) {}
+    Holder();
+    Holder(const Holder&);
+    Holder& operator=(const Holder&);
 };
 
 class ToHolder {
 public:
-    ToHolder(const std::string& op_type, Operator* op) {
-        Holder::add_operator(op_type, op);
+    typedef Operator* (*Creator)(const BaseParam* op_param);
+    ToHolder(const std::string& op_type, Creator creator) {
+        Holder::add_op_crreator(op_type, creator);
     }
 };
 
-#define REGISTER_OPERATOR(op_type, operator)                           \
-    static ToHolder g_creator_operator_##op_type(#op_type, new operator)
+#define REGISTER_OP_CREATOR(op_type, creator)                       \
+    static ToHolder g_creator_operator_##op_type(#op_type, creator)
+
+
+#define REGISERT_OP_CLASS(op_type, op)                          \
+    Operator* Creator_##op_type(const BaseParam* op_param) {    \
+        return new op(op_param);                                \
+    }                                                           \
+    REGISTER_OP_CREATOR(op_type, Creator_##op_type)
 
 #define DECLARE_OPERATOR(sub_class)                                     \
     class sub_class : public Operator {                                 \
     public:                                                             \
-    sub_class()=default;                                                \
+    sub_class(const BaseParam* op_param);                              \
     virtual void infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape); \
     virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
     virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
+    private:                                                            \
+    sub_class();                                                        \
     }
 
 } // namespace op
