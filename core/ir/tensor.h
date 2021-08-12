@@ -45,9 +45,9 @@ class Tensor final {
     friend class Chunk;
 public:
     Tensor();
-    Tensor(const std::vector<int>& dims, DataType data_type, void* mem=nullptr);
+    Tensor(const std::vector<uint32_t>& dims, DataType data_type, void* mem=nullptr);
     ~Tensor();
-    void set_data(const std::vector<int>& dims, DataType data_type, void* mem=nullptr);
+    void set_data(const std::vector<uint32_t>& dims, DataType data_type, void* mem=nullptr);
     void set_name(const std::string& name);
     const std::string& get_name() const;
     template<typename T>
@@ -58,7 +58,7 @@ public:
 private:
     std::string name_;
     DataType data_type_;
-    std::vector<int> dims_;
+    std::vector<uint32_t> dims_;
     uint32_t byte_size_;
     Chunk* mem_;
 };

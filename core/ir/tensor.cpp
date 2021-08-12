@@ -45,11 +45,11 @@ Tensor::Tensor() {
     mem_       = new Chunk;
 }
 
-Tensor::Tensor(const std::vector<int>& dims, DataType data_type, void* mem) {
+Tensor::Tensor(const std::vector<uint32_t>& dims, DataType data_type, void* mem) {
     set_data(dims, data_type, mem);
 }
 
-void Tensor::set_data(const std::vector<int>& dims, DataType data_type, void* mem) {
+void Tensor::set_data(const std::vector<uint32_t>& dims, DataType data_type, void* mem) {
     CHECK(dims.size() != 0, "Please make sure your dims size is not 0.");
     CHECK(dims.size() <= MAX_DIMS_SIZE, "Please make sure your dims size is not out of range.");
     dims_ = dims;
