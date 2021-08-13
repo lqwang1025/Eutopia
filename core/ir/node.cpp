@@ -172,7 +172,7 @@ const Tensor* Node::get_output_tensor() const {
     return output_tensor_;
 }
 
-void Node::forward() {
+void Node::forward(const std::vector<Tensor*> input_tensors) {
     
 }
 

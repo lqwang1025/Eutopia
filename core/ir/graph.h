@@ -66,7 +66,9 @@ private:
     std::string name_;
     std::map<std::string, Tensor*> input_tensors_;
     std::map<std::string, Tensor*> output_tensors_;
-    std::vector<Node*> nodes_;
+    std::vector<Node*> input_nodes;
+    std::vector<Node*> output_nodes;
+    std::vector<Node*> seq_nodes_;
     std::map<std::string, Node*> nodes_map_;
 private:
     Graph& operator=(Graph&);
