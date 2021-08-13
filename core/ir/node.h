@@ -33,6 +33,7 @@
 #include <vector>
 #include <cstdint>
 
+#include "op/base_param.h"
 #include "op/op.h"
 
 namespace eutopia {
@@ -44,9 +45,11 @@ class Tensor;
 class Node final {
 public:
     Node();
+    Node(const struct op::BaseParam* param);
     ~Node();
+    void setup_op(const struct op::BaseParam* param);
     const std::string& get_name() const;
-    void set_name(std::string& name);
+    void set_name(const std::string& name);
     uint16_t get_index() const;
     void set_index(const uint16_t index);
     const std::string& get_op_type() const;
@@ -69,15 +72,13 @@ public:
     bool is_quantize() const;
     void set_in_place(bool in_inplace);
     bool in_place() const;
-    void set_with_bias(bool with_bias);
-    bool with_bias() const;
     void set_weight_shared(bool weight_shared);
     bool weight_shared() const;
     bool is_trainning() const;
     void set_is_trainning(bool is_trainning);
     const Tensor* get_output_tensor() const;
     void dump();
-    void forward();
+    void forward(const std::vector<Tensor*> input_tensors);
     void backward();
     void update();
     void run();
@@ -95,12 +96,12 @@ private:
     bool is_last_node_;
     bool dynamic_shape_;
     bool in_place_;
-    bool with_bias_;
     std::vector<std::string> producers_;
     std::vector<std::string> consumers_;
     std::vector<Tensor*> weights_;
     std::vector<Tensor*> biases_;
     Tensor* output_tensor_;
+    Tensor* diff_tensor_;
 private:
     Node& operator=(Node&);
     Node(const Node&);

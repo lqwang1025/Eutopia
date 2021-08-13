@@ -80,7 +80,7 @@ const T& Tensor::data(const std::vector<uint32_t>& indices) const {
     uint32_t index = 0;
     for (int i = 0; i < (int)indices.size(); ++i) {
         CHECK(indices[i] < dims_[i], "Wrong indices.");
-        for (int _i = i+1; _i < indices.size(); ++_i) {
+        for (int _i = i+1; _i < (int)indices.size(); ++_i) {
             strides[i] *= dims_[_i];
         }
         index += strides[i]*indices[i];
@@ -96,7 +96,7 @@ T& Tensor::mutable_data(const std::vector<uint32_t>& indices) {
     uint32_t index = 0;
     for (int i = 0; i < (int)indices.size(); ++i) {
         CHECK(indices[i] < dims_[i], "Wrong indices.");
-        for (int _i = i+1; _i < indices.size(); ++_i) {
+        for (int _i = i+1; _i < (int)indices.size(); ++_i) {
             strides[i] *= dims_[_i];
         }
         index += strides[i]*indices[i];

@@ -28,6 +28,7 @@
 
 #include "op/op.h"
 #include "op/base_param.h"
+#include "op/ops_param/convolution2D_param.h"
 
 namespace eutopia {
 namespace op {
@@ -35,8 +36,10 @@ namespace cpu {
 
 DECLARE_OPERATOR(Convolution2DOperator);
 
-Convolution2DOperator::Convolution2DOperator(const BaseParam* op_param): Operator(op_param) {
-    
+Convolution2DOperator::Convolution2DOperator(const struct BaseParam* op_param) {
+    Convolution2DParam* conv_param = new Convolution2DParam;
+    conv_param->copy_from(op_param);
+    op_param_ = conv_param;
 }
 
 void Convolution2DOperator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {

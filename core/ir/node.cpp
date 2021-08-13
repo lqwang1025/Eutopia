@@ -27,24 +27,40 @@
  */
 
 #include "core/ir/node.h"
+#include "op/op.h"
+#include "op/base_param.h"
+
+#include <iostream>
 
 namespace eutopia {
 namespace core {
 namespace ir {
 
 Node::Node() {
-    
+    set_is_trainning(false);
+    set_dynamic_shape(false);
 }
 
-Node::~Node() {
-    
+Node::Node(const struct op::BaseParam* param): Node() {
+    setup_op(param);
+}
+
+void Node::setup_op(const struct op::BaseParam* param) {
+    set_op_type(param->op_type);
+    set_name(param->op_name);
+    set_is_sparse(param->sparse);
+    set_is_quantize(param->quantize);
+    set_weight_shared(param->weight_shared);
+    set_is_first_node(param->first_op);
+    set_is_last_node(param->last_op);
+    op_ = op::Holder::get_op_creator(op_type_)(param);
 }
 
 const std::string& Node::get_name() const {
     return name_;
 }
 
-void Node::set_name(std::string& name) {
+void Node::set_name(const std::string& name) {
     name_ = name;
 }
 
@@ -136,14 +152,6 @@ bool Node::in_place() const {
     return in_place_;
 }
 
-void Node::set_with_bias(bool with_bias) {
-    with_bias_ = with_bias;
-}
-
-bool Node::with_bias() const {
-    return with_bias_;
-}
-
 void Node::set_weight_shared(bool weight_shared) {
     weight_shared_ = weight_shared;
 }
@@ -181,6 +189,10 @@ void Node::run() {
 }
 
 void Node::dump() {
+    
+}
+
+Node::~Node() {
     
 }
 

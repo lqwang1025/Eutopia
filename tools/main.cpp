@@ -31,18 +31,25 @@
 
 #include "core/data_type.h"
 #include "core/ir/tensor.h"
+#include "core/ir/node.h"
 #include "core/ir/graph.h"
+// #include "op/op_register.h"
+#include "op/ops_param/convolution2D_param.h"
 
 using namespace std;
 
 int main(int argc, char** argv) {
-    eutopia::core::ir::Tensor tensor;
-    std::vector<uint32_t> dims = {224, 224, 3};
-    tensor.set_data(dims, eutopia::core::DataType::EUTOPIA_DT_UINT8);
-    const uint8_t& s = tensor.data<uint8_t>({112, 112, 2});
-    std::cout<<(int)s<<std::endl;
-    tensor.mutable_data<uint8_t>({112, 112, 2}) = 255;
-    eutopia::core::ir::Graph g;
-    std::cout<<(int)s<<std::endl;
+    // eutopia::core::ir::Tensor tensor;
+    // std::vector<uint32_t> dims = {224, 224, 3};
+    // tensor.set_data(dims, eutopia::core::DataType::EUTOPIA_DT_UINT8);
+    // const uint8_t& s = tensor.data<uint8_t>({112, 112, 2});
+    // std::cout<<(int)s<<std::endl;
+    // tensor.mutable_data<uint8_t>({112, 112, 2}) = 255;
+    // eutopia::core::ir::Graph g;
+    // std::cout<<(int)s<<std::endl;
+    eutopia::core::ir::Node node;
+    struct eutopia::op::Convolution2DParam conv_param;
+    conv_param.pad_type = "SAME";
+    node.setup_op(&conv_param);
     return 0;
 }

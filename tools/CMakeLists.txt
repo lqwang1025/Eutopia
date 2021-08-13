@@ -23,21 +23,10 @@
 # Email      : wangliquan21@qq.com
 # Description:
 
-UNSET (EUTOPIA_TEST_SOURCE_FILES)
-UNSET (EUTOPIA_CPP_FILE)
-UNSET (EUTOPIA_CC_FILE)
-UNSET (EUTOPIA_C_FILE)
+file(GLOB_RECURSE MAIN_SRCS *.cpp)
 
-file(GLOB_RECURSE EUTOPIA_CPP_FILE *.cpp)
-file(GLOB_RECURSE EUTOPIA_CC_FILE *.cc)
-file(GLOB_RECURSE EUTOPIA_C_FILE *.c)
+link_directories(${CMAKE_BINARY_DIR})
 
-LIST (APPEND EUTOPIA_TEST_SOURCE_FILES       ${EUTOPIA_CPP_FILE})
-LIST (APPEND EUTOPIA_TEST_SOURCE_FILES       ${EUTOPIA_C_FILE})
-LIST (APPEND EUTOPIA_TEST_SOURCE_FILES       ${EUTOPIA_CC_FILE})
+add_executable(test_bin ${MAIN_SRCS})
 
-link_directories(${CMAKE_BINARY_DIR}/core)
-
-add_executable(test_bin ${EUTOPIA_TEST_SOURCE_FILES})
-
-target_link_libraries(test_bin eutopia-core)
+target_link_libraries(test_bin  eutopia)

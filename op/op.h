@@ -39,26 +39,25 @@
 namespace eutopia {
 namespace op {
 
-class BaseParam;
+struct BaseParam;
 
 class Operator {
 public:
-    Operator(const BaseParam* op_param);
-    virtual ~Operator()=default;
+    Operator(){};
+    virtual ~Operator(){};
     virtual void infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape);
     virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
     virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
 protected:
-    BaseParam* op_param_;
+    struct BaseParam* op_param_;
 private:
-    Operator();
     Operator(const Operator&);
     Operator& operator=(const Operator&);
 };
 
 class Holder {
 public:
-    typedef Operator* (*Creator)(const BaseParam* op_param);
+    typedef Operator* (*Creator)(const struct BaseParam* op_param);
     typedef std::map<std::string, Creator> OpCreatorMap;
     
     static OpCreatorMap& new_op_creator() {
@@ -77,9 +76,7 @@ public:
     
     static Creator get_op_creator(const std::string& op_type) {
         OpCreatorMap& op_creator_map = new_op_creator();
-        if (op_creator_map.count(op_type) == 0) {
-            return nullptr;
-        }
+        CHECK(op_creator_map.count(op_type) != 0, "This op have not been register.");
         return op_creator_map[op_type];
     }
     
@@ -91,7 +88,7 @@ private:
 
 class ToHolder {
 public:
-    typedef Operator* (*Creator)(const BaseParam* op_param);
+    typedef Operator* (*Creator)(const struct BaseParam* op_param);
     ToHolder(const std::string& op_type, Creator creator) {
         Holder::add_op_crreator(op_type, creator);
     }
@@ -101,21 +98,23 @@ public:
     static ToHolder g_creator_operator_##op_type(#op_type, creator)
 
 
-#define REGISERT_OP_CLASS(op_type, op)                          \
-    Operator* Creator_##op_type(const BaseParam* op_param) {    \
-        return new op(op_param);                                \
-    }                                                           \
+#define REGISERT_OP_CLASS(op_type, op)                              \
+    Operator* Creator_##op_type(const struct BaseParam* op_param) { \
+        return new op(op_param);                                    \
+    }                                                               \
     REGISTER_OP_CREATOR(op_type, Creator_##op_type)
 
 #define DECLARE_OPERATOR(sub_class)                                     \
     class sub_class : public Operator {                                 \
     public:                                                             \
-    sub_class(const BaseParam* op_param);                              \
+    sub_class(const struct BaseParam* op_param);                        \
     virtual void infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape); \
     virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
     virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
     private:                                                            \
     sub_class();                                                        \
+    sub_class(const sub_class&);                                        \
+    sub_class& operator=(const sub_class&);                             \
     }
 
 } // namespace op

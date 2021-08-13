@@ -35,6 +35,7 @@ ENDIF ()
 IF (NOT DEFINED CMAKE_INSTALL_PREFIX)
   SET (CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Eutopia Installation Directory")
 ENDIF()
+message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
 # Enable the languages which in use
 ENABLE_LANGUAGE (C CXX)
@@ -46,57 +47,63 @@ ENDIF()
 # Project name
 PROJECT (eutopia)
 
-# Enable cmake ctest module
-ENABLE_TESTING ()
+SET(CMAKE_CXX_STANDARD 11)
+SET(CXX_STANDARD_REQUIRED ON)
 
-# clear all var
-UNSET (EUTOPIA_COMMON_OPTIONS)
-UNSET (EUTOPIA_COMMON_LINKER_OPTIONS)
+# building flags
+ADD_DEFINITIONS(-Wl,-Bsymbolic)
+ADD_DEFINITIONS(-Wl,-Bsymbolic-functions)
+ADD_DEFINITIONS(-Wno-unused-command-line-argument)
+ADD_DEFINITIONS(-funroll-loops)
+ADD_DEFINITIONS(-Wno-deprecated-register)
+ADD_DEFINITIONS(-Wno-overloaded-virtual)
+ADD_DEFINITIONS(-fPIC)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
-IF (${CMAKE_BUILD_TYPE} MATCHES "Check" OR ${CMAKE_BUILD_TYPE} MATCHES "CHECK")
-  # warning local redefined same name variable
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Wshadow")
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Wunreachable-code")
-  # LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Werror")
+OPTION(DEBUGEUTOPIA "This option is for open debug mode" ON)
 
-  # show all warnings
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Wall")
+if(DEBUGEUTOPIA)
+  ADD_DEFINITIONS(-DDEBUGEUTOPIA)
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+endif()
 
-  # more warning details
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Wextra")
-
-  # warning all unused part
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Wunknown-pragmas")
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Wunused-label")
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Wunused-value")
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Wunused-function")
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-Wunused-variable")
-
-  # check memory issues
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-fsanitize=address")
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-fno-omit-frame-pointer")
-
-  LIST (APPEND EUTOPIA_COMMON_LINKER_OPTIONS "-fsanitize=address")
-ELSEIF(${CMAKE_BUILD_TYPE} MATCHES "Debug" OR ${CMAKE_BUILD_TYPE} MATCHES "DEBUG")
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-g")
-  LIST (APPEND EUTOPIA_COMMON_OPTIONS "-O0")
-ENDIF()
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
+# add all header file folder
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-# Main source files
-ADD_SUBDIRECTORY (core)
-ADD_SUBDIRECTORY (op)
-ADD_SUBDIRECTORY (test)
+#add source file
+file(GLOB_RECURSE CORE_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.cpp"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.cpp")
+file(GLOB_RECURSE OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp"          "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp")
+
+# add header file
+file(GLOB_RECURSE CORE_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
+file(GLOB_RECURSE OP_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
 
 # Report summary
 INCLUDE ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/summary.cmake")
 
-# # install tengine libraries
-# INSTALL (TARGETS ${CMAKE_PROJECT_NAME}        LIBRARY DESTINATION lib)
-# INSTALL (TARGETS ${CMAKE_PROJECT_NAME}-static ARCHIVE DESTINATION lib)
+#add exec
+ADD_LIBRARY (${CMAKE_PROJECT_NAME}-static STATIC)
+ADD_LIBRARY (${CMAKE_PROJECT_NAME}        SHARED)
 
-# # install header files
-# INSTALL (FILES ${EUTOPIA_H_FILE} DESTINATION include/eutopia/core)
+# add source files to each target
+TARGET_SOURCES (${CMAKE_PROJECT_NAME}-static PRIVATE ${CORE_SRC} ${OP_SRC})
+TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${CORE_SRC} ${OP_SRC})
+
+#set .a version
+set_target_properties(${CMAKE_PROJECT_NAME}-static PROPERTIES VERSION 0.0.0 SOVERSION 0)
+
+#set .so version
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES VERSION 0.0.0 SOVERSION 0)
+
+set_target_properties(${CMAKE_PROJECT_NAME}-static PROPERTIES OUTPUT_NAME "eutopia")
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME "eutopia")
+
+# # install tengine libraries
+INSTALL (TARGETS ${CMAKE_PROJECT_NAME}        LIBRARY DESTINATION lib)
+INSTALL (TARGETS ${CMAKE_PROJECT_NAME}-static ARCHIVE DESTINATION lib)
+
+# install header files
+INSTALL (FILES ${OP_HEAD} ${CORE_HEAD} DESTINATION include/eutopia/)
+
+add_subdirectory(tools)

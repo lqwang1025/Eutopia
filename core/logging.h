@@ -31,51 +31,36 @@
 
 #include <iostream>
 #include <string>
-#include <assert.h>
+#include <cstdlib>
 
 namespace eutopia {
 namespace core {
 
 #define RESET   "\033[0m\n"
-#define BLACK   "\033[30m"      /* Black */
-#define RED     "\033[31m"      /* Red */
-#define GREEN   "\033[32m"      /* Green */
-#define YELLOW  "\033[33m"      /* Yellow */
-#define BLUE    "\033[34m"      /* Blue */
-#define MAGENTA "\033[35m"      /* Magenta */
-#define CYAN    "\033[36m"      /* Cyan */
-#define WHITE   "\033[37m"      /* White */
-#define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
 #define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
 #define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
 #define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
-#define BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
-#define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
-#define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
-#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
 #define EU_LOG std::cout<<BOLDGREEN<<"Log: "
 #define EU_ERROR std::cout<<BOLDRED<<"Error: "
 #define EU_WARN std::cout<<BOLDYELLOW<<"Warning: "
 #define EU_ENDL RESET
 
-#ifdef DEBUG
-#define EU_ASSERT(x)                                            \
-    do {                                                        \
-        if (!(x)) {                                             \
-            EU_ERROR<<"Assert failed: "<< #x<<__FILE<<EU_ENDL;  \
-            assert(0);                                          \
-        }                                                       \
-    } while (false)
-#else
-#define EU_ASSERT(x)
-#endif
-
+#ifdef DEBUGEUTOPIA
 #define CHECK(success, log)                                             \
     if(!(success)){                                                     \
-        EU_ERROR<<"Check failed: "<< #success <<"==>"<< #log <<EU_ENDL;  \
-        exit(0);                                                        \
+        EU_ERROR<<"Check failed: "<< #success <<" ==>["<<__FILE__<<": " \
+                <<__LINE__<<"]"<< #log <<EU_ENDL;                       \
+        abort();                                                        \
     }
+#else
+#define CHECK(success, log)                                             \
+    if(!(success)){                                                     \
+        EU_ERROR<<"Check failed: "<< #success <<"==>"<< #log <<EU_ENDL; \
+        abort();                                                        \
+    }
+#endif
+
 
 } // namespace core
 } // namespace eutopia

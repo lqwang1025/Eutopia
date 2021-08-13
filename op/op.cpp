@@ -29,6 +29,7 @@
 #include "op/op.h"
 #include "core/logging.h"
 #include "core/ir/tensor.h"
+#include "op/base_param.h"
 
 namespace eutopia {
 namespace op {

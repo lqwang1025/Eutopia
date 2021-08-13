@@ -30,15 +30,32 @@
 #define __OPS_NAME_H__
 
 #define MUL "Mul"
+#define POOL "Pool"
 #define CONCAT "Concat"
-#define MAXPOOL "MaxPool"
 #define DROPOUT "DropOut"
-#define MEANPOOL "MeanPool"
 #define BATCHNORM "BatchNorm"
-#define CONVOLUTION "Convolution"
-#define FULLYCONNECT "FullyConnect"
+#define CONVOLUTION2D "Convolution2D"
+#define FULLYCONNECTED "FullyConnected"
 #define GLOBALAVGPOOL "GlobalAVGPool"
-#define DEPTHWISECONVOLUTION "DepthWiseConvolution"
+#define DEPTHWISECONVOLUTION2D "DepthWiseConvolution2D"
+
+namespace eutopia {
+namespace op {
+
+static const std::set<std::string> EUTOPIA_SUPPORT_OPS = {
+    MUL,
+    CONCAT,
+    POOL,
+    DROPOUT,
+    BATCHNORM,
+    CONVOLUTION2D,
+    FULLYCONNECTED,
+    GLOBALAVGPOOL,
+    DEPTHWISECONVOLUTION2D,
+};
+
+} // namespace op
+} // namespace eutopia
 
 #endif /* __OPS_NAME_H__ */
 
