@@ -41,51 +41,54 @@ namespace core {
 namespace ir {
 
 class Tensor;
-
+class Graph;
 class Node final {
+    friend class graph;
 public:
-    Node();
-    Node(const struct op::BaseParam* param);
-    ~Node();
-    void setup_op(const struct op::BaseParam* param);
-    const std::string& get_name() const;
+    Node(Graph* graph);
+    Node(Graph* graph, const struct op::BaseParam* param);
+    ~Node(void);
+    void setup(const struct op::BaseParam* param);
+    const std::string& get_name(void) const;
     void set_name(const std::string& name);
-    uint16_t get_index() const;
-    void set_index(const uint16_t index);
-    const std::string& get_op_type() const;
+    int32_t get_index(void) const;
+    void set_index(const int32_t index);
+    const std::string& get_op_type(void) const;
     void set_op_type(const std::string& op_type);
     void set_output_shape(const std::vector<uint32_t>& output_shape);
-    const std::vector<uint32_t>& get_output_shape() const;
+    const std::vector<uint32_t>& get_output_shape(void) const;
     void add_producer(const std::string& producer);
-    const std::vector<std::string>& get_producers() const;
+    const std::vector<std::string>& get_producers(void) const;
     void add_consumer(const std::string& consumer);
-    const std::vector<std::string>& get_consumers() const;
+    const std::vector<std::string>& get_consumers(void) const;
     void set_is_first_node(bool is_input);
     void set_is_last_node(bool is_output);
-    bool is_first_node() const;
-    bool is_last_node() const;
+    bool is_first_node(void) const;
+    bool is_last_node(void) const;
     void set_dynamic_shape(bool dynamic_shape);
-    bool dynamic_shape() const;
+    bool dynamic_shape(void) const;
     void set_is_sparse(bool is_sparse);
-    bool is_sparse() const;
+    bool is_sparse(void) const;
     void set_is_quantize(bool is_quantize);
-    bool is_quantize() const;
+    bool is_quantize(void) const;
     void set_in_place(bool in_inplace);
-    bool in_place() const;
+    bool in_place(void) const;
     void set_weight_shared(bool weight_shared);
-    bool weight_shared() const;
-    bool is_trainning() const;
+    bool weight_shared(void) const;
+    bool is_trainning(void) const;
     void set_is_trainning(bool is_trainning);
-    const Tensor* get_output_tensor() const;
-    void dump();
+    const Tensor* get_output_tensor(void) const;
+    void set_graph(Graph* graph);
+    const Graph* get_graph(void) const;
+    void dump(void);
     void forward(const std::vector<Tensor*> input_tensors);
-    void backward();
-    void update();
-    void run();
+    void backward(void);
+    void update(void);
+    void run(void);
 private:
     op::Operator* op_;
     std::string name_;
-    uint16_t index_; // squence index
+    int32_t index_; // squence index
     std::string op_type_;
     std::vector<uint32_t> output_shape_;
     bool is_trainning_;
@@ -96,12 +99,14 @@ private:
     bool is_last_node_;
     bool dynamic_shape_;
     bool in_place_;
+    std::string device_;
     std::vector<std::string> producers_;
     std::vector<std::string> consumers_;
     std::vector<Tensor*> weights_;
     std::vector<Tensor*> biases_;
     Tensor* output_tensor_;
     Tensor* diff_tensor_;
+    Graph* graph_; // The graph that owned this node.
 private:
     Node& operator=(Node&);
     Node(const Node&);

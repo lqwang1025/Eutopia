@@ -30,15 +30,13 @@
 #include "core/ir/node.h"
 #include "core/logging.h"
 
+
+#include <cstdio>
 namespace eutopia {
 namespace core {
 namespace ir {
 
 Graph::Graph() {
-    
-}
-
-Graph::~Graph() {
     
 }
 
@@ -62,17 +60,28 @@ void Graph::dump() {
     
 }
 
-void Graph::add_node(Node* node) {
-    const std::string& node_name = node->get_name();
-    if (nodes_map_.count(node_name) != 0) {
-        EU_WARN<<node_name<<" "<<"has alreadly in graph."<<EU_ENDL;
+Node* Graph::add_node(struct op::BaseParam* param) {
+    Node* node = nullptr;
+    if (param == nullptr) {
+        node = new Node(this, param);
+    } else {
+        node = new Node(this);
     }
-    nodes_map_[node_name] = node;
+    own_nodes_.push_back(node);
+    CHECK(node!=nullptr, "Graph add node failed.");
+    return node;
 }
 
 Node* Graph::get_node(const std::string& node_name) const {
-    CHECK(nodes_map_.count(node_name) != 0, "Do not find your node in graph.");
-    return nodes_map_.find(node_name)->second;
+    int len = node_name.size();
+    for (int i = 0; i < own_nodes_.size(); ++i) {
+        Node* node = own_nodes_[i];
+        const std::string& target_name = node->get_name();
+        int start = target_name.size() - len;
+        if (start) continue;
+        return node;
+    }
+    return nullptr;
 }
 
 Tensor* Graph::get_output_tensor(const std::string& node_name) const {
@@ -94,6 +103,14 @@ void Graph::set_name(const std::string& name) {
 
 const std::string& Graph::get_name() const {
     return name_;
+}
+
+Graph::~Graph() {
+    for (int i = 0; i < (int)own_nodes_.size(); ++i) {
+        if (own_nodes_[i]->get_graph() == this) {
+            delete own_nodes_[i];
+        }
+    }
 }
 
 } // namespace ir

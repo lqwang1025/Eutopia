@@ -29,9 +29,11 @@
 #ifndef __GRAPH_H__
 #define __GRAPH_H__
 
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
+
+#include "op/base_param.h"
 
 namespace eutopia {
 namespace core {
@@ -39,6 +41,7 @@ namespace ir {
 
 class Node;
 class Tensor;
+struct BaseParam;
 class Graph final {
 public:
     Graph();
@@ -50,7 +53,8 @@ public:
     void dump();
     void set_name(const std::string& name);
     const std::string& get_name() const;
-    void add_node(Node* node);
+    
+    Node* add_node(struct op::BaseParam* param = nullptr);
     Node* get_node(const std::string& node_name) const;
     
     void add_input_tensor(Tensor* tensor);
@@ -64,12 +68,13 @@ public:
 private:
     bool is_trainning_;
     std::string name_;
-    std::map<std::string, Tensor*> input_tensors_;
-    std::map<std::string, Tensor*> output_tensors_;
-    std::vector<Node*> input_nodes;
-    std::vector<Node*> output_nodes;
+    std::vector<Node*> input_nodes_;
+    std::vector<Node*> output_nodes_;
     std::vector<Node*> seq_nodes_;
-    std::map<std::string, Node*> nodes_map_;
+    std::vector<Node*> own_nodes_;
+    std::unordered_map<std::string, Node*> node_name_map_;
+    std::unordered_map<std::string, Tensor*> input_tensors_;
+    std::unordered_map<std::string, Tensor*> output_tensors_;
 private:
     Graph& operator=(Graph&);
     Graph(Graph&);

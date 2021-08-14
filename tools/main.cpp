@@ -33,8 +33,13 @@
 #include "core/ir/tensor.h"
 #include "core/ir/node.h"
 #include "core/ir/graph.h"
-// #include "op/op_register.h"
 #include "op/ops_param/convolution2D_param.h"
+
+#include <iostream>
+#include <utility>
+#include <vector>
+#include <string>
+#include <cstdio>
 
 using namespace std;
 
@@ -45,11 +50,12 @@ int main(int argc, char** argv) {
     // const uint8_t& s = tensor.data<uint8_t>({112, 112, 2});
     // std::cout<<(int)s<<std::endl;
     // tensor.mutable_data<uint8_t>({112, 112, 2}) = 255;
-    // eutopia::core::ir::Graph g;
-    // std::cout<<(int)s<<std::endl;
-    eutopia::core::ir::Node node;
+    eutopia::core::ir::Graph graph;
     struct eutopia::op::Convolution2DParam conv_param;
     conv_param.pad_type = "SAME";
-    node.setup_op(&conv_param);
+    eutopia::core::ir::Node* node = graph.add_node(&conv_param);
+    printf("debug:%p %p\n",node->get_graph(), &graph);
+    std::cout<<"debug:"<<(node->get_graph()==&graph)<<std::endl;
+    std::cout<<"done."<<std::endl;
     return 0;
 }

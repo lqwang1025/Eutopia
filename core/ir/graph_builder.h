@@ -37,6 +37,8 @@ namespace ir {
 
 class GraphBuilder final {
 public:
+    GraphBuilder(){}
+    
 };
 
 } // namespace ir
