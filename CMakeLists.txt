@@ -95,7 +95,7 @@ file(GLOB_RECURSE OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp"          "
 list(APPEND EUPOTIA_SRC ${CORE_SRC} ${CORE_FRAMEWOEK_SRC} ${OP_SRC})
 
 # add header file
-file(GLOB_RECURSE CORE_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
+file(GLOB CORE_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
 
 # Report summary
 INCLUDE ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/summary.cmake")
