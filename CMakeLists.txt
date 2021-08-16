@@ -50,6 +50,21 @@ PROJECT (eutopia)
 SET(CMAKE_CXX_STANDARD 11)
 SET(CXX_STANDARD_REQUIRED ON)
 
+exec_program(protoc ARGS "--version 2>&1 | sed -n '/libprotoc/p' | awk -F ' ' '{print $2}'" OUTPUT_VARIABLE PROTO_VERSION RETURN_VALUE CMD_RETURN)
+if(${PROTO_VERSION} VERSION_LESS "3.6.0")
+  message(FATAL_ERROR "protoc version must be greater than 3.6.0.")
+endif()
+
+set(THIRD_PARTY_DIR "${CMAKE_CURRENT_LIST_DIR}/third_party")
+set(PROTOBUF_DIR "${THIRD_PARTY_DIR}/protobuf")
+
+file(GLOB_RECURSE PROTO_FILE_LIST_TMP ${CMAKE_CURRENT_LIST_DIR}/core/framework/*.proto)
+foreach(FILE_TMP ${PROTO_FILE_LIST_TMP})
+  file(RELATIVE_PATH FILE_RES ${PROJECT_SOURCE_DIR} ${FILE_TMP})
+  execute_process(COMMAND protoc --proto_path=./ --cpp_out=./ ${FILE_RES}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+endforeach()
+
 # building flags
 ADD_DEFINITIONS(-Wl,-Bsymbolic)
 ADD_DEFINITIONS(-Wl,-Bsymbolic-functions)
@@ -70,14 +85,17 @@ endif()
 
 # add all header file folder
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${PROTOBUF_DIR}/include)
+link_directories(${PROTOBUF_DIR}/lib)
 
 #add source file
 file(GLOB_RECURSE CORE_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.cpp"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.cpp")
-file(GLOB_RECURSE OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp"          "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp")
+file(GLOB_RECURSE CORE_FRAMEWOEK_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cc" "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cpp")
+file(GLOB_RECURSE OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp"          "${CMAKE_CURRENT_SOURCE_DIR}/op/cpu/*.cpp")
+list(APPEND EUPOTIA_SRC ${CORE_SRC} ${CORE_FRAMEWOEK_SRC} ${OP_SRC})
 
 # add header file
 file(GLOB_RECURSE CORE_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
-file(GLOB_RECURSE OP_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
 
 # Report summary
 INCLUDE ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/summary.cmake")
@@ -90,10 +108,11 @@ ADD_LIBRARY (${CMAKE_PROJECT_NAME}        SHARED)
 TARGET_SOURCES (${CMAKE_PROJECT_NAME}-static PRIVATE ${CORE_SRC} ${OP_SRC})
 TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${CORE_SRC} ${OP_SRC})
 
-#set .a version
-set_target_properties(${CMAKE_PROJECT_NAME}-static PROPERTIES VERSION 0.0.0 SOVERSION 0)
+target_link_libraries(${CMAKE_PROJECT_NAME}-static libprotoc.a libprotobuf.a libprotobuf-lite.a)
+target_link_libraries(${CMAKE_PROJECT_NAME} protoc protobuf protobuf-lite)
 
-#set .so version
+#set version
+set_target_properties(${CMAKE_PROJECT_NAME}-static PROPERTIES VERSION 0.0.0 SOVERSION 0)
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES VERSION 0.0.0 SOVERSION 0)
 
 set_target_properties(${CMAKE_PROJECT_NAME}-static PROPERTIES OUTPUT_NAME "eutopia")

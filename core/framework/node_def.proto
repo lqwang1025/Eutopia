@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package eutopia.framework;
+option cc_enable_arenas = true;
+option java_outer_classname = "NodeDefProtos";
+option java_multiple_files = true;
+option java_package = "org.eutopia.framework";
+
+import "core/framework/attr_value.proto";
+
+message NodeDef {
+    // The name given to this layer. Used for naming inputs,
+    // logging, visualization, etc.  Unique within a single GraphDef.
+    // Must match the regexp "[A-Za-z0-9.][A-Za-z0-9_./]*".
+    string name = 1;
+
+    // The operation name.  There may be custom parameters in attrs.
+    // Op names starting with an underscore are reserved for internal use.
+    string op = 2;
+
+    // Each input is "node:src_output" with "node" being a string name and
+    // "src_output" indicating which output tensor to use from "node". If
+    // "src_output" is 0 the ":0" suffix can be omitted.  Regular inputs
+    // may optionally be followed by control inputs that have the format
+    // "^node".
+    repeated string input = 3;
+
+    string device = 4;
+
+    // Operation-specific graph-construction-time configuration.
+    // Note that this should include all attrs defined in the
+    // corresponding OpDef, including those with a value matching
+    // the default -- this allows the default to change and makes
+    // NodeDefs easier to interpret on their own.  However, if
+    // an attr with a default is not specified in this list, the
+    // default will be used.
+    // The "names" (keys) must match the regexp "[a-z][a-z0-9_]+" (and
+    // one of the names from the corresponding OpDef's attr field).
+    // The values must have a type matching the corresponding OpDef
+    // attr's type field.
+    // TODO(josh11b): Add some examples here showing best practices.
+    map<string, AttrValue> attr = 5;
+
+}

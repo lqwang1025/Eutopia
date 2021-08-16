@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package eutopia.framework;
+option cc_enable_arenas = true;
+option java_outer_classname = "GraphDefProtos";
+option java_multiple_files = true;
+option java_package = "org.eutopia.framework";
+
+import "core/framework/node_def.proto";
+import "core/framework/attr_value.proto";
+
+message GraphDef {
+
+    repeated NodeDef node = 1;
+
+    // the model name, Should match the regexp "[a-z][a-z0-9_]*".
+    string name = 2;
+
+    // Deprecated single version field; use versions above instead.  Since all
+    // GraphDef changes before "versions" was introduced were forward
+    // compatible, this field is entirely ignored.
+    int32 version = 3 [deprecated = true];
+
+    // The "names" (keys) must match the regexp "[a-z][a-z0-9_]+" (and
+    // one of the names from the corresponding GraphDef's attr field).
+    // The values must have a type matching the corresponding GraphDef
+    // attr's type field.
+    map<string, AttrValue> attr = 5;
+}
