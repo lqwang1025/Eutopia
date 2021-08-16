@@ -54,8 +54,9 @@ int main(int argc, char** argv) {
     struct eutopia::op::Convolution2DParam conv_param;
     conv_param.pad_type = "SAME";
     eutopia::core::ir::Node* node = graph.add_node(&conv_param);
-    printf("debug:%p %p\n",node->get_graph(), &graph);
-    std::cout<<"debug:"<<(node->get_graph()==&graph)<<std::endl;
-    std::cout<<"done."<<std::endl;
+    std::vector<int> s;
+    s.push_back(10);
+    s.push_back(8);
+    std::cout<<"debug:"<<s[0]<<s[1]<<std::endl;
     return 0;
 }

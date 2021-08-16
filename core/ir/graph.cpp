@@ -36,27 +36,27 @@ namespace eutopia {
 namespace core {
 namespace ir {
 
-Graph::Graph() {
+Graph::Graph(void) {
     
 }
 
-void Graph::forward() {
+void Graph::forward(void) {
     
 }
 
-void Graph::backward() {
+void Graph::backward(void) {
     
 }
 
-void Graph::update() {
+void Graph::update(void) {
     
 }
 
-void Graph::run() {
+void Graph::run(void) {
     
 }
 
-void Graph::dump() {
+void Graph::dump(void) {
     
 }
 
@@ -67,8 +67,8 @@ Node* Graph::add_node(struct op::BaseParam* param) {
     } else {
         node = new Node(this);
     }
-    own_nodes_.push_back(node);
     CHECK(node!=nullptr, "Graph add node failed.");
+    own_nodes_.push_back(node);
     return node;
 }
 
@@ -84,12 +84,16 @@ Node* Graph::get_node(const std::string& node_name) const {
     return nullptr;
 }
 
+void Graph::sort_by_execute(void) {
+    
+}
+
 Tensor* Graph::get_output_tensor(const std::string& node_name) const {
     CHECK(output_tensors_.count(node_name) != 0, "Do not find your node in graph.");
     return output_tensors_.find(node_name)->second;
 }
 
-bool Graph::is_trainning() const {
+bool Graph::is_trainning(void) const {
     return is_trainning_;
 }
 
@@ -101,11 +105,11 @@ void Graph::set_name(const std::string& name) {
     name_ = name;
 }
 
-const std::string& Graph::get_name() const {
+const std::string& Graph::get_name(void) const {
     return name_;
 }
 
-Graph::~Graph() {
+Graph::~Graph(void) {
     for (int i = 0; i < (int)own_nodes_.size(); ++i) {
         if (own_nodes_[i]->get_graph() == this) {
             delete own_nodes_[i];
