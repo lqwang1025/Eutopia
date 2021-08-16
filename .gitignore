@@ -34,3 +34,6 @@
 # Directory
 build
 release
+
+#protoc generate file
+*.pb.*
