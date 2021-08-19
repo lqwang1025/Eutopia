@@ -57,6 +57,7 @@ endif()
 
 set(THIRD_PARTY_DIR "${CMAKE_CURRENT_LIST_DIR}/third_party")
 set(PROTOBUF_DIR "${THIRD_PARTY_DIR}/protobuf")
+set(CJSON_DIR "${THIRD_PARTY_DIR}/CJsonObject")
 
 file(GLOB_RECURSE PROTO_FILE_LIST_TMP ${CMAKE_CURRENT_LIST_DIR}/core/framework/*.proto)
 foreach(FILE_TMP ${PROTO_FILE_LIST_TMP})
@@ -86,16 +87,20 @@ endif()
 # add all header file folder
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${PROTOBUF_DIR}/include)
+include_directories(${CJSON_DIR})
+
 link_directories(${PROTOBUF_DIR}/lib)
 
 #add source file
-file(GLOB_RECURSE CORE_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.cpp"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.cpp")
-file(GLOB_RECURSE CORE_FRAMEWOEK_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cc" "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cpp")
-file(GLOB_RECURSE OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp"          "${CMAKE_CURRENT_SOURCE_DIR}/op/cpu/*.cpp")
-list(APPEND EUPOTIA_SRC ${CORE_SRC} ${CORE_FRAMEWOEK_SRC} ${OP_SRC})
+file(GLOB CORE_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.cpp"   "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.cpp")
+file(GLOB CORE_FRAMEWOEK_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cc" "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cpp")
+file(GLOB OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp"          "${CMAKE_CURRENT_SOURCE_DIR}/op/cpu/*.cpp")
+file(GLOB THIRD_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/third_party/CJsonObject/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/CJsonObject/*.c")
+
+list(APPEND EUPOTIA_SRC ${CORE_SRC} ${CORE_FRAMEWOEK_SRC} ${OP_SRC} ${THIRD_SRC})
 
 # add header file
-file(GLOB CORE_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"          "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
+file(GLOB CORE_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"  "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
 
 # Report summary
 INCLUDE ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/summary.cmake")
@@ -105,8 +110,8 @@ ADD_LIBRARY (${CMAKE_PROJECT_NAME}-static STATIC)
 ADD_LIBRARY (${CMAKE_PROJECT_NAME}        SHARED)
 
 # add source files to each target
-TARGET_SOURCES (${CMAKE_PROJECT_NAME}-static PRIVATE ${CORE_SRC} ${OP_SRC})
-TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${CORE_SRC} ${OP_SRC})
+TARGET_SOURCES (${CMAKE_PROJECT_NAME}-static PRIVATE ${EUPOTIA_SRC})
+TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${EUPOTIA_SRC})
 
 target_link_libraries(${CMAKE_PROJECT_NAME}-static libprotoc.a libprotobuf.a libprotobuf-lite.a)
 target_link_libraries(${CMAKE_PROJECT_NAME} protoc protobuf protobuf-lite)

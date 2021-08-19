@@ -19,7 +19,7 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : graph.h
+ * File       : graph_builder.h
  * Authors    : Daniel Wang
  * Create Time: 2021-08-13:17:24:02
  * Email      : wangliquan21@qq.com
@@ -33,17 +33,15 @@
 
 namespace eutopia {
 namespace core {
-namespace ir {
 
-class GraphBuilder final {
+class GraphBuilder {
 public:
     GraphBuilder(){}
+    ~GraphBuilder(){}
     
 };
 
-} // namespace ir
 } // namespace core
 } // namespace eutopia
 
 #endif /* __GRAPH_BUILDER_H__ */
-
