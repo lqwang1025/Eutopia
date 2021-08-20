@@ -29,4 +29,4 @@ link_directories(${CMAKE_BINARY_DIR})
 
 add_executable(test_bin ${MAIN_SRCS})
 
-target_link_libraries(test_bin  eutopia)
+target_link_libraries(test_bin  libeutopia.a)
