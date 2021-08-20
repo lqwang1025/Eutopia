@@ -44,6 +44,8 @@ std::list<op::BaseParam*> CfgParser::operator() (const char* file_name) {
     if (file.is_open()) {
         std::string s;
         while(std::getline(file, s)) {
+            if (s == "") continue;
+            if (s[0] == '#')  continue;
             std::cout<<"debug:"<<s<<std::endl;
         }
     } else {
