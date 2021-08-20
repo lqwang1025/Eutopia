@@ -32,7 +32,7 @@
 #include "core/ir/graph.h"
 
 namespace eutopia {
-namespace core {
+namespace io {
 
 class GraphBuilder {
 public:
@@ -41,7 +41,7 @@ public:
     
 };
 
-} // namespace core
+} // namespace io
 } // namespace eutopia
 
 #endif /* __GRAPH_BUILDER_H__ */

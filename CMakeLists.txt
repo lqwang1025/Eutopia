@@ -58,6 +58,7 @@ endif()
 set(THIRD_PARTY_DIR "${CMAKE_CURRENT_LIST_DIR}/third_party")
 set(PROTOBUF_DIR "${THIRD_PARTY_DIR}/protobuf")
 set(CJSON_DIR "${THIRD_PARTY_DIR}/CJsonObject")
+set(ABSEIL_DIR "${THIRD_PARTY_DIR}/abseil")
 
 file(GLOB_RECURSE PROTO_FILE_LIST_TMP ${CMAKE_CURRENT_LIST_DIR}/core/framework/*.proto)
 foreach(FILE_TMP ${PROTO_FILE_LIST_TMP})
@@ -65,6 +66,14 @@ foreach(FILE_TMP ${PROTO_FILE_LIST_TMP})
   execute_process(COMMAND protoc --proto_path=./ --cpp_out=./ ${FILE_RES}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 endforeach()
+
+EXEC_PROGRAM(git  ARGS  "log --pretty=format:%h --max-count=1 | awk '{print $1}'" OUTPUT_VARIABLE CMD_OUT RETURN_VALUE CMD_RET)
+STRING(TIMESTAMP BUILD_TIME "%Y%m%d-%H%M")
+SET(BUILD_INFO "${BUILD_TIME}")
+ADD_DEFINITIONS(-D__BUILD_INFO__=${BUILD_INFO})
+ADD_DEFINITIONS(-D__GIT_VER__=${CMD_OUT})
+message(STATUS "BUILD_INFO: " ${BUILD_INFO})
+message(STATUS "GIT_VER: " ${CMD_OUT})
 
 # building flags
 ADD_DEFINITIONS(-Wl,-Bsymbolic)
@@ -88,16 +97,21 @@ endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${PROTOBUF_DIR}/include)
 include_directories(${CJSON_DIR})
+include_directories(${ABSEIL_DIR}/include)
 
 link_directories(${PROTOBUF_DIR}/lib)
+link_directories(${ABSEIL_DIR}/lib)
 
 #add source file
 file(GLOB CORE_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.cpp"   "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.cpp")
 file(GLOB CORE_FRAMEWOEK_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cc" "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cpp")
-file(GLOB OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp"          "${CMAKE_CURRENT_SOURCE_DIR}/op/cpu/*.cpp")
+file(GLOB_RECURSE OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp")
+file(GLOB_RECURSE IO_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/io/*.cpp")
 file(GLOB THIRD_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/third_party/CJsonObject/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/CJsonObject/*.c")
 
-list(APPEND EUPOTIA_SRC ${CORE_SRC} ${CORE_FRAMEWOEK_SRC} ${OP_SRC} ${THIRD_SRC})
+list(APPEND EUPOTIA_SRC
+  ${CORE_SRC} ${CORE_FRAMEWOEK_SRC}
+  ${OP_SRC} ${THIRD_SRC} ${IO_SRC})
 
 # add header file
 file(GLOB CORE_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"  "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
@@ -113,7 +127,7 @@ ADD_LIBRARY (${CMAKE_PROJECT_NAME}        SHARED)
 TARGET_SOURCES (${CMAKE_PROJECT_NAME}-static PRIVATE ${EUPOTIA_SRC})
 TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${EUPOTIA_SRC})
 
-target_link_libraries(${CMAKE_PROJECT_NAME}-static libprotoc.a libprotobuf.a libprotobuf-lite.a)
+target_link_libraries(${CMAKE_PROJECT_NAME}-static libprotoc.a libprotobuf.a libprotobuf-lite.a libabsl.a)
 target_link_libraries(${CMAKE_PROJECT_NAME} protoc protobuf protobuf-lite)
 
 #set version

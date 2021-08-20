@@ -21,45 +21,28 @@
  * (C) COPYRIGHT Daniel Wang Limited.
  * File       : base_param.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-12:16:35:16
+ * Create Time: 2021-08-20:09:42:02
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#ifndef __BASE_PARAM_H__
-#define __BASE_PARAM_H__
-
-#include <string>
-#include <vector>
-#include <set>
-
-#include "op/ops_name.h"
-#include "core/logging.h"
+#include <iostream>
+#include "op/ops_param/convolution2D_param.h"
 
 namespace eutopia {
 namespace op {
-    
-struct BaseParam {
-    bool sparse = false;
-    bool quantize = false;
-    bool weight_shared = false;
-    bool first_op = false;
-    bool last_op  = false;
-    std::string op_type;
-    std::string op_name;
-    void copy_from(const struct BaseParam* param) {
-        sparse        = param->sparse;
-        quantize      = param->quantize;
-        weight_shared = param->weight_shared;
-        first_op      = param->first_op;
-        last_op       = param->last_op;
-        op_type       = param->op_type;
-        op_name       = param->op_name;
-        CHECK(EUTOPIA_SUPPORT_OPS.count(op_type) != 0, "Unsupport operator type.");
-    }
-};
+
+void Convolution2DParam::copy_from(const struct BaseParam* param) {
+    this->BaseParam::copy_from(param);
+    const struct Convolution2DParam* con_param = static_cast<const struct Convolution2DParam*>(param);
+    kernel_shape = con_param->kernel_shape;
+    stride       = con_param->stride;
+    dilations    = con_param->dilations;
+    pads         = con_param->pads;
+    pad_type     = con_param->pad_type;
+    group        = con_param->group;
+    CHECK(SUPPORT_PAD_TYPES.count(pad_type)!=0, "Unsupport pad type.");
+}
 
 } // namespace op
 } // namespace eutopia
-
-#endif /* __BASE_PARAM_H__ */

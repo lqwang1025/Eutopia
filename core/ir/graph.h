@@ -33,7 +33,7 @@
 #include <string>
 #include <vector>
 
-#include "op/base_param.h"
+#include "op/ops_param.h"
 
 namespace eutopia {
 namespace core {

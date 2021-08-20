@@ -33,7 +33,7 @@
 #include <vector>
 #include <cstdint>
 
-#include "op/base_param.h"
+#include "op/ops_param.h"
 #include "op/op.h"
 
 namespace eutopia {

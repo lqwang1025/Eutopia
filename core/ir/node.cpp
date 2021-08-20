@@ -28,7 +28,7 @@
 
 #include "core/ir/node.h"
 #include "op/op.h"
-#include "op/base_param.h"
+#include "op/ops_param.h"
 
 #include <iostream>
 

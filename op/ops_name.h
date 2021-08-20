@@ -28,6 +28,8 @@
 
 #ifndef __OPS_NAME_H__
 #define __OPS_NAME_H__
+#include <set>
+#include <string>
 
 #define MUL "Mul"
 #define POOL "Pool"

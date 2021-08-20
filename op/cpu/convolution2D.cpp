@@ -27,8 +27,7 @@
  */
 
 #include "op/op.h"
-#include "op/base_param.h"
-#include "op/ops_param/convolution2D_param.h"
+#include "op/ops_param.h"
 
 namespace eutopia {
 namespace op {
