@@ -145,3 +145,5 @@ INSTALL (TARGETS ${CMAKE_PROJECT_NAME}-static ARCHIVE DESTINATION lib)
 INSTALL (FILES ${OP_HEAD} ${CORE_HEAD} DESTINATION include/eutopia/)
 
 add_subdirectory(tools)
+
+install(TARGETS eutopia-train-tools RUNTIME DESTINATION bin)

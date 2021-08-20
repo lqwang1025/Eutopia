@@ -34,7 +34,6 @@ link_directories(${PROTOBUF_DIR}/lib)
 link_directories(${ABSEIL_DIR}/lib)
 link_directories(${CMAKE_BINARY_DIR})
 
-link_directories(${CMAKE_BINARY_DIR})
-add_executable(test_bin ${MAIN_SRCS})
+add_executable(eutopia-train-tools ${MAIN_SRCS})
 
-target_link_libraries(test_bin  libeutopia.a libabsl.a)
+target_link_libraries(eutopia-train-tools  libeutopia.a libabsl.a)
