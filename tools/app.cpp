@@ -27,20 +27,15 @@
  */
 
 #include <iostream>
-#include <cstdlib>
-
-#include "io/parser.h"
-
-#include <iostream>
-#include <utility>
-#include <vector>
 #include <string>
-#include <cstdio>
-
-using namespace std;
+#include "io/parser.h"
+#include "tools/cmdline.h"
 
 int main(int argc, char** argv) {
     eutopia::io::Parser p;
-    p.run("helelo.cfg");
+    cmdline::parser a;
+    a.set_program_name("eutopia-train-tools");
+    a.parse_check(argc, argv);
+    p.run("/home/lqwang/project/Eutopia/tools/cfg/alexnet.cfg");
     return 0;
 }
