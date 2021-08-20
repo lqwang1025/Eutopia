@@ -125,6 +125,7 @@ class BigUnsigned {
     }
   }
 
+
   // Multiplies by v in-place.
   void MultiplyBy(uint32_t v) {
     if (size_ == 0 || v == 1) {

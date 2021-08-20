@@ -19,8 +19,7 @@
 #include <type_traits>
 
 #include "gmock/gmock.h"
-#include "gtest/gtest.h"
-#include "absl/base/internal/fast_type_id.h"
+#include "absl/random/internal/mock_helpers.h"
 #include "absl/random/mocking_bit_gen.h"
 
 namespace absl {
@@ -37,22 +36,21 @@ struct MockSingleOverload;
 // `mock_single_overload.gmock_Call(...)`. Because expectations are stored on
 // the MockingBitGen (an argument passed inside `Call(...)`), this forwards to
 // arguments to MockingBitGen::Register.
+//
+// The underlying KeyT must match the KeyT constructed by DistributionCaller.
 template <typename DistrT, typename Ret, typename... Args>
 struct MockSingleOverload<DistrT, Ret(MockingBitGen&, Args...)> {
   static_assert(std::is_same<typename DistrT::result_type, Ret>::value,
                 "Overload signature must have return type matching the "
                 "distribution result_type.");
-  using ArgTupleT = std::tuple<Args...>;
-  auto gmock_Call(
-      absl::MockingBitGen& gen,  // NOLINT(google-runtime-references)
-      const ::testing::Matcher<Args>&... matchers)
-      -> decltype(gen.RegisterMock<Ret, ArgTupleT>(
-                         std::declval<::absl::base_internal::FastTypeIdType>())
-                      .gmock_Call(matchers...)) {
-    return gen
-        .RegisterMock<Ret, ArgTupleT>(
-            ::absl::base_internal::FastTypeId<Ret(DistrT, ArgTupleT)>())
-        .gmock_Call(matchers...);
+  using KeyT = Ret(DistrT, std::tuple<Args...>);
+
+  template <typename MockURBG>
+  auto gmock_Call(MockURBG& gen, const ::testing::Matcher<Args>&... matchers)
+      -> decltype(MockHelpers::MockFor<KeyT>(gen).gmock_Call(matchers...)) {
+    static_assert(std::is_base_of<MockingBitGen, MockURBG>::value,
+                  "Mocking requires an absl::MockingBitGen");
+    return MockHelpers::MockFor<KeyT>(gen).gmock_Call(matchers...);
   }
 };
 
@@ -61,18 +59,16 @@ struct MockSingleOverload<DistrT, Ret(Arg, MockingBitGen&, Args...)> {
   static_assert(std::is_same<typename DistrT::result_type, Ret>::value,
                 "Overload signature must have return type matching the "
                 "distribution result_type.");
-  using ArgTupleT = std::tuple<Arg, Args...>;
-  auto gmock_Call(
-      const ::testing::Matcher<Arg>& matcher,
-      absl::MockingBitGen& gen,  // NOLINT(google-runtime-references)
-      const ::testing::Matcher<Args>&... matchers)
-      -> decltype(gen.RegisterMock<Ret, ArgTupleT>(
-                         std::declval<::absl::base_internal::FastTypeIdType>())
-                      .gmock_Call(matcher, matchers...)) {
-    return gen
-        .RegisterMock<Ret, ArgTupleT>(
-            ::absl::base_internal::FastTypeId<Ret(DistrT, ArgTupleT)>())
-        .gmock_Call(matcher, matchers...);
+  using KeyT = Ret(DistrT, std::tuple<Arg, Args...>);
+
+  template <typename MockURBG>
+  auto gmock_Call(const ::testing::Matcher<Arg>& matcher, MockURBG& gen,
+                  const ::testing::Matcher<Args>&... matchers)
+      -> decltype(MockHelpers::MockFor<KeyT>(gen).gmock_Call(matcher,
+                                                             matchers...)) {
+    static_assert(std::is_base_of<MockingBitGen, MockURBG>::value,
+                  "Mocking requires an absl::MockingBitGen");
+    return MockHelpers::MockFor<KeyT>(gen).gmock_Call(matcher, matchers...);
   }
 };
 

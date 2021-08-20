@@ -251,6 +251,7 @@
 // but the compiler cannot confirm that.
 #define TS_UNCHECKED_READ(x) thread_safety_analysis::ts_unchecked_read(x)
 
+
 namespace thread_safety_analysis {
 
 // Takes a reference to a guarded data member, and returns an unguarded

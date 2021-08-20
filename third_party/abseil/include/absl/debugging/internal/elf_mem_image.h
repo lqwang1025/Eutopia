@@ -83,6 +83,7 @@ class ElfMemImage {
     const void *const image_;
   };
 
+
   explicit ElfMemImage(const void *base);
   void                 Init(const void *base);
   bool                 IsPresent() const { return ehdr_ != nullptr; }

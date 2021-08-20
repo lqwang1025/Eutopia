@@ -56,27 +56,27 @@ struct tzhead {
 /*
 ** . . .followed by. . .
 **
-**    tzh_timecnt (char [4])s        coded transition times a la time(2)
-**    tzh_timecnt (unsigned char)s    types of local time starting at above
-**    tzh_typecnt repetitions of
-**        one (char [4])        coded UT offset in seconds
-**        one (unsigned char)    used to set tm_isdst
-**        one (unsigned char)    that's an abbreviation list index
-**    tzh_charcnt (char)s        '\0'-terminated zone abbreviations
-**    tzh_leapcnt repetitions of
-**        one (char [4])        coded leap second transition times
-**        one (char [4])        total correction after above
-**    tzh_ttisstdcnt (char)s        indexed by type; if 1, transition
-**                    time is standard time, if 0,
-**                    transition time is local (wall clock)
-**                    time; if absent, transition times are
-**                    assumed to be local time
-**    tzh_ttisutcnt (char)s        indexed by type; if 1, transition
-**                    time is UT, if 0, transition time is
-**                    local time; if absent, transition
-**                    times are assumed to be local time.
-**                    When this is 1, the corresponding
-**                    std/wall indicator must also be 1.
+**	tzh_timecnt (char [4])s		coded transition times a la time(2)
+**	tzh_timecnt (unsigned char)s	types of local time starting at above
+**	tzh_typecnt repetitions of
+**		one (char [4])		coded UT offset in seconds
+**		one (unsigned char)	used to set tm_isdst
+**		one (unsigned char)	that's an abbreviation list index
+**	tzh_charcnt (char)s		'\0'-terminated zone abbreviations
+**	tzh_leapcnt repetitions of
+**		one (char [4])		coded leap second transition times
+**		one (char [4])		total correction after above
+**	tzh_ttisstdcnt (char)s		indexed by type; if 1, transition
+**					time is standard time, if 0,
+**					transition time is local (wall clock)
+**					time; if absent, transition times are
+**					assumed to be local time
+**	tzh_ttisutcnt (char)s		indexed by type; if 1, transition
+**					time is UT, if 0, transition time is
+**					local time; if absent, transition
+**					times are assumed to be local time.
+**					When this is 1, the corresponding
+**					std/wall indicator must also be 1.
 */
 
 /*

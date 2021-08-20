@@ -25,8 +25,16 @@
 
 file(GLOB_RECURSE MAIN_SRCS *.cpp)
 
+set(THIRD_PARTY_DIR "${CMAKE_SOURCE_DIR}/third_party")
+set(PROTOBUF_DIR "${THIRD_PARTY_DIR}/protobuf")
+set(ABSEIL_DIR "${THIRD_PARTY_DIR}/abseil")
+message("${PROTOBUF_DIR}")
+
+link_directories(${PROTOBUF_DIR}/lib)
+link_directories(${ABSEIL_DIR}/lib)
 link_directories(${CMAKE_BINARY_DIR})
 
+link_directories(${CMAKE_BINARY_DIR})
 add_executable(test_bin ${MAIN_SRCS})
 
-target_link_libraries(test_bin  libeutopia.a)
+target_link_libraries(test_bin  libeutopia.a libabsl.a)

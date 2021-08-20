@@ -127,8 +127,8 @@ ADD_LIBRARY (${CMAKE_PROJECT_NAME}        SHARED)
 TARGET_SOURCES (${CMAKE_PROJECT_NAME}-static PRIVATE ${EUPOTIA_SRC})
 TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${EUPOTIA_SRC})
 
-target_link_libraries(${CMAKE_PROJECT_NAME}-static libprotoc.a libprotobuf.a libprotobuf-lite.a libabsl.a)
-target_link_libraries(${CMAKE_PROJECT_NAME} protoc protobuf protobuf-lite)
+target_link_libraries(${CMAKE_PROJECT_NAME}-static)
+target_link_libraries(${CMAKE_PROJECT_NAME} protoc)
 
 #set version
 set_target_properties(${CMAKE_PROJECT_NAME}-static PROPERTIES VERSION 0.0.0 SOVERSION 0)

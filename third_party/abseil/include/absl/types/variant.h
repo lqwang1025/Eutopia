@@ -452,6 +452,7 @@ constexpr bool operator>=(monostate, monostate) noexcept { return true; }
 constexpr bool operator==(monostate, monostate) noexcept { return true; }
 constexpr bool operator!=(monostate, monostate) noexcept { return false; }
 
+
 //------------------------------------------------------------------------------
 // `absl::variant` Template Definition
 //------------------------------------------------------------------------------
@@ -600,9 +601,13 @@ class variant<T0, Tn...> : private variant_internal::VariantBase<T0, Tn...> {
     return *this;
   }
 
+
   // emplace() Functions
 
-  // Constructs a value of the given alternative type T within the variant.
+  // Constructs a value of the given alternative type T within the variant. The
+  // existing value of the variant is destroyed first (provided that
+  // `absl::valueless_by_exception()` is false). Requires that T is unambiguous
+  // in the variant.
   //
   // Example:
   //
@@ -622,7 +627,9 @@ class variant<T0, Tn...> : private variant_internal::VariantBase<T0, Tn...> {
   }
 
   // Constructs a value of the given alternative type T within the variant using
-  // an initializer list.
+  // an initializer list. The existing value of the variant is destroyed first
+  // (provided that `absl::valueless_by_exception()` is false). Requires that T
+  // is unambiguous in the variant.
   //
   // Example:
   //
@@ -641,7 +648,7 @@ class variant<T0, Tn...> : private variant_internal::VariantBase<T0, Tn...> {
   }
 
   // Destroys the current value of the variant (provided that
-  // `absl::valueless_by_exception()` is false, and constructs a new value at
+  // `absl::valueless_by_exception()` is false) and constructs a new value at
   // the given index.
   //
   // Example:
@@ -660,7 +667,7 @@ class variant<T0, Tn...> : private variant_internal::VariantBase<T0, Tn...> {
   }
 
   // Destroys the current value of the variant (provided that
-  // `absl::valueless_by_exception()` is false, and constructs a new value at
+  // `absl::valueless_by_exception()` is false) and constructs a new value at
   // the given index using an initializer list and the provided arguments.
   //
   // Example:
