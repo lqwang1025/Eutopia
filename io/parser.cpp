@@ -33,27 +33,11 @@
 
 #include "io/parser.h"
 #include "core/logging.h"
+#include "io/cfg_parser.h"
 #include "absl/strings/str_split.h"
 
 namespace eutopia {
 namespace io {
-
-std::list<op::BaseParam*> CfgParser::operator() (const char* file_name) {
-    std::fstream file;
-    file.open(file_name, std::fstream::in);
-    if (file.is_open()) {
-        std::string s;
-        while(std::getline(file, s)) {
-            if (s == "") continue;
-            if (s[0] == '#')  continue;
-            std::cout<<"debug:"<<s<<std::endl;
-        }
-    } else {
-        EU_ERROR<<"Open" <<file_name<<" failed."<<EU_ENDL;
-    }
-    file.close();
-    exit(0);
-}
 
 Parser::Parser() {
     
@@ -63,7 +47,7 @@ Parser::~Parser() {
     
 }
 
-std::list<op::BaseParam*> Parser::run(const char* file_name) {
+std::vector<op::BaseParam*> Parser::run(const char* file_name) {
     std::vector<std::string> spilt_names = absl::StrSplit(file_name, absl::ByString("."));
     CHECK(spilt_names.size()!=0, "Get file name failed.");
     if (spilt_names[spilt_names.size()-1] == "cfg") {

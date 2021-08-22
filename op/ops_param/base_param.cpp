@@ -31,7 +31,7 @@
 namespace eutopia {
 namespace op {
 
-void BaseParam::copy_from(const struct BaseParam* param) {
+void BaseParam::copy_from(const BaseParam* param) {
     sparse        = param->sparse;
     quantize      = param->quantize;
     weight_shared = param->weight_shared;

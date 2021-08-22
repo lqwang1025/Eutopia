@@ -34,7 +34,6 @@
 #include <set>
 
 #include "op/ops_param/base_param.h"
-#include "core/logging.h"
 
 namespace eutopia {
 namespace op {
@@ -46,12 +45,12 @@ struct Convolution2DParam : public BaseParam {
         op_type = CONVOLUTION2D;
     }
     std::vector<uint32_t> kernel_shape; // h w ic oc
-    std::vector<uint32_t> stride;
+    std::vector<uint32_t> strides;
     std::vector<uint32_t> dilations;
     std::vector<int32_t> pads;
     std::string pad_type;
     uint32_t group;
-    void copy_from(const struct BaseParam* param);
+    void copy_from(const BaseParam* param);
     virtual ~Convolution2DParam() {}
 };
 

@@ -49,7 +49,7 @@ public:
     virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
     virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
 protected:
-    struct BaseParam* op_param_;
+    BaseParam* op_param_;
 private:
     Operator(const Operator&);
     Operator& operator=(const Operator&);
@@ -57,7 +57,7 @@ private:
 
 class Holder {
 public:
-    typedef Operator* (*Creator)(const struct BaseParam* op_param);
+    typedef Operator* (*Creator)(const BaseParam* op_param);
     typedef std::map<std::string, Creator> OpCreatorMap;
     
     static OpCreatorMap& new_op_creator() {
@@ -88,7 +88,7 @@ private:
 
 class ToHolder {
 public:
-    typedef Operator* (*Creator)(const struct BaseParam* op_param);
+    typedef Operator* (*Creator)(const BaseParam* op_param);
     ToHolder(const std::string& op_type, Creator creator) {
         Holder::add_op_crreator(op_type, creator);
     }
@@ -99,7 +99,7 @@ public:
 
 
 #define REGISERT_OP_CLASS(op_type, op)                              \
-    Operator* Creator_##op_type(const struct BaseParam* op_param) { \
+    Operator* Creator_##op_type(const BaseParam* op_param) { \
         return new op(op_param);                                    \
     }                                                               \
     REGISTER_OP_CREATOR(op_type, Creator_##op_type)
@@ -107,7 +107,7 @@ public:
 #define DECLARE_OPERATOR(sub_class)                                     \
     class sub_class : public Operator {                                 \
     public:                                                             \
-    sub_class(const struct BaseParam* op_param);                        \
+    sub_class(const BaseParam* op_param);                               \
     virtual void infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape); \
     virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
     virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \

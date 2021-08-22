@@ -46,9 +46,9 @@ class Node final {
     friend class graph;
 public:
     Node(Graph* graph);
-    Node(Graph* graph, const struct op::BaseParam* param);
+    Node(Graph* graph, const op::BaseParam* param);
     ~Node(void);
-    void setup(const struct op::BaseParam* param);
+    void setup(const op::BaseParam* param);
     const std::string& get_name(void) const;
     void set_name(const std::string& name);
     int32_t get_index(void) const;

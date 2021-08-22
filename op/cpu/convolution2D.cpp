@@ -35,7 +35,7 @@ namespace cpu {
 
 DECLARE_OPERATOR(Convolution2DOperator);
 
-Convolution2DOperator::Convolution2DOperator(const struct BaseParam* op_param) {
+Convolution2DOperator::Convolution2DOperator(const BaseParam* op_param) {
     Convolution2DParam* conv_param = new Convolution2DParam;
     conv_param->copy_from(op_param);
     op_param_ = conv_param;

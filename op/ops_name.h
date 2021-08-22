@@ -32,8 +32,8 @@
 #include <string>
 
 #define MUL "Mul"
-#define POOL "Pool"
 #define CONCAT "Concat"
+#define POOLING "Pooling"
 #define DROPOUT "DropOut"
 #define BATCHNORM "BatchNorm"
 #define CONVOLUTION2D "Convolution2D"
@@ -47,8 +47,8 @@ namespace op {
 static const std::set<std::string> EUTOPIA_SUPPORT_OPS = {
     MUL,
     CONCAT,
-    POOL,
     DROPOUT,
+    POOLING,
     BATCHNORM,
     CONVOLUTION2D,
     FULLYCONNECTED,

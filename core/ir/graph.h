@@ -42,6 +42,7 @@ namespace ir {
 class Node;
 class Tensor;
 struct BaseParam;
+
 class Graph final {
 public:
     Graph(void);
@@ -54,7 +55,7 @@ public:
     void set_name(const std::string& name);
     const std::string& get_name(void) const;
     
-    Node* add_node(struct op::BaseParam* param = nullptr);
+    Node* add_node(op::BaseParam* param = nullptr);
     Node* get_node(const std::string& node_name) const;
     
     void remove_node(Node* node);//todo

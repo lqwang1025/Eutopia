@@ -29,22 +29,18 @@
 #ifndef __PARSER_H__
 #define __PARSER_H__
 
-#include <list>
+#include <vector>
 
 #include "op/ops_param.h"
 
 namespace eutopia {
 namespace io {
 
-struct CfgParser {
-    std::list<op::BaseParam*> operator() (const char* file_name);
-};
-
 class Parser {
 public:
     Parser();
     ~Parser();
-    std::list<op::BaseParam*> run(const char* file_name);
+    std::vector<op::BaseParam*> run(const char* file_name);
 };
     
 } // namespace io

@@ -37,7 +37,7 @@
 namespace eutopia {
 namespace op {
     
-typedef struct BaseParam {
+struct BaseParam {
     BaseParam() {}
     bool sparse = false;
     bool quantize = false;
@@ -46,9 +46,11 @@ typedef struct BaseParam {
     bool last_op  = false;
     std::string op_type;
     std::string op_name;
-    void copy_from(const struct BaseParam* param);
+    void copy_from(const BaseParam* param);
     virtual ~BaseParam() {}
-} BaseParam;
+};
+
+typedef struct BaseParam BaseParam;
 
 } // namespace op
 } // namespace eutopia

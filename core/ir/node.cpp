@@ -61,11 +61,11 @@ Node::Node(Graph* graph): graph_(graph) {
     set_dynamic_shape(false);
 }
 
-Node::Node(Graph* graph, const struct op::BaseParam* param): Node(graph) {
+Node::Node(Graph* graph, const op::BaseParam* param): Node(graph) {
     setup(param);
 }
 
-void Node::setup(const struct op::BaseParam* param) {
+void Node::setup(const op::BaseParam* param) {
     set_op_type(param->op_type);
     set_name(param->op_name);
     set_is_sparse(param->sparse);

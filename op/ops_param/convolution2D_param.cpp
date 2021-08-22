@@ -26,17 +26,16 @@
  * Description:
  */
 
-#include <iostream>
 #include "op/ops_param/convolution2D_param.h"
 
 namespace eutopia {
 namespace op {
 
-void Convolution2DParam::copy_from(const struct BaseParam* param) {
+void Convolution2DParam::copy_from(const BaseParam* param) {
     this->BaseParam::copy_from(param);
-    const struct Convolution2DParam* con_param = static_cast<const struct Convolution2DParam*>(param);
+    const Convolution2DParam* con_param = static_cast<const Convolution2DParam*>(param);
     kernel_shape = con_param->kernel_shape;
-    stride       = con_param->stride;
+    strides      = con_param->strides;
     dilations    = con_param->dilations;
     pads         = con_param->pads;
     pad_type     = con_param->pad_type;

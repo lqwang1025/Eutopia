@@ -60,7 +60,7 @@ void Graph::dump(void) {
     
 }
 
-Node* Graph::add_node(struct op::BaseParam* param) {
+Node* Graph::add_node(op::BaseParam* param) {
     Node* node = nullptr;
     if (param == nullptr) {
         node = new Node(this, param);

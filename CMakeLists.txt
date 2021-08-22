@@ -83,6 +83,7 @@ ADD_DEFINITIONS(-funroll-loops)
 ADD_DEFINITIONS(-Wno-deprecated-register)
 ADD_DEFINITIONS(-Wno-overloaded-virtual)
 ADD_DEFINITIONS(-fPIC)
+ADD_DEFINITIONS(-w)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
 OPTION(DEBUGEUTOPIA "This option is for open debug mode" ON)
