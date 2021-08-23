@@ -119,8 +119,10 @@ void CfgParser::init_input_param(std::fstream& file, core::ir::Graph* graph) {
         if (param[0] == "name") {
             input_param.op_name = param[1];
         } else if (param[0] == "dims") {
-            std::cout<<"debug:........................"<<param[1]<<std::endl;
-            neb::CJsonObject c_json(param[1].c_str());
+            neb::CJsonObject c_json;
+            if (!c_json.Parse(param[1].c_str())) {
+                EU_ERROR<<"Invaild json format"<<EU_ENDL;
+            }
             std::cout<<"debug:........................"<<c_json.ToString()<<std::endl;
         } else if (param[0] == "preprocess") {
             
