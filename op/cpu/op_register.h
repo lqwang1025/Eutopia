@@ -19,39 +19,27 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : input.cpp
+ * File       : op_register.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-23:20:09:19
+ * Create Time: 2021-08-23:21:33:14
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
+#ifndef __OP_REGISTER_H__
+#define __OP_REGISTER_H__
 #include "op/cpu/input.h"
-#include "op/ops_param.h"
-
+#include "op/cpu/convolution2D.h"
 namespace eutopia {
 namespace op {
 namespace cpu {
 
-InputOperator::InputOperator(const BaseParam* op_param) {
-    InputParam* input_param = new InputParam;
-    input_param->copy_from(op_param);
-    op_param_ = input_param;
-}
-
-void InputOperator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
-    
-}
-
-void InputOperator::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
-}
-
-void InputOperator::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
-}
+REGISERT_OP_CLASS(Input, InputOperator);
+REGISERT_OP_CLASS(Convolution2D, Convolution2DOperator);
 
 } // namespace cpu
 } // namespace op
 } // namespace eutopia
+
+#endif /* __OP_REGISTER_H__ */
 

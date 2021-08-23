@@ -19,39 +19,27 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : input.cpp
+ * File       : convolution2D.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-23:20:09:19
+ * Create Time: 2021-08-23:21:35:59
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include "op/cpu/input.h"
+#ifndef __CONVOLUTION2D_H__
+#define __CONVOLUTION2D_H__
+#include "op/op.h"
 #include "op/ops_param.h"
 
 namespace eutopia {
 namespace op {
 namespace cpu {
 
-InputOperator::InputOperator(const BaseParam* op_param) {
-    InputParam* input_param = new InputParam;
-    input_param->copy_from(op_param);
-    op_param_ = input_param;
-}
-
-void InputOperator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
-    
-}
-
-void InputOperator::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
-}
-
-void InputOperator::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
-}
+DECLARE_OPERATOR(Convolution2DOperator);
 
 } // namespace cpu
 } // namespace op
 } // namespace eutopia
+
+#endif /* __CONVOLUTION2D_H__ */
 

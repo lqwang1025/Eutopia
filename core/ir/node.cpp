@@ -29,7 +29,7 @@
 #include "core/ir/node.h"
 #include "op/op.h"
 #include "op/ops_param.h"
-
+#include "op/cpu/op_register.h"
 #include <iostream>
 
 namespace eutopia {
