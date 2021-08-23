@@ -34,12 +34,12 @@
 #include <vector>
 
 #include "op/ops_param.h"
+#include "core/ir/node.h"
 
 namespace eutopia {
 namespace core {
 namespace ir {
 
-class Node;
 class Tensor;
 struct BaseParam;
 

@@ -67,6 +67,7 @@ public:
     
     static void add_op_crreator(const std::string& op_type, Creator creator) {
         OpCreatorMap& op_creator_map = new_op_creator();
+        std::cout<<"d:"<<op_type<<std::endl;
         if (op_creator_map.count(op_type) == 1) {
             EU_WARN << op_type << " had already been registered. "<<EU_ENDL;
             return;
@@ -76,6 +77,7 @@ public:
     
     static Creator get_op_creator(const std::string& op_type) {
         OpCreatorMap& op_creator_map = new_op_creator();
+        std::cout<<"d:"<<op_type<<" "<<op_creator_map.size()<<std::endl;
         CHECK(op_creator_map.count(op_type) != 0, "This op have not been register.");
         return op_creator_map[op_type];
     }

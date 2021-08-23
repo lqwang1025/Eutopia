@@ -19,23 +19,43 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : fully_connected_param.cpp
+ * File       : input.cpp
  * Authors    : Daniel Wang
- * Create Time: 2021-08-23:14:57:42
+ * Create Time: 2021-08-23:20:09:19
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include "op/ops_param/fully_connected_param.h"
+#include "op/op.h"
+#include "op/ops_param.h"
 
 namespace eutopia {
 namespace op {
+namespace cpu {
 
-void FullyConnectedParam::copy_from(const BaseParam* param) {
-    this->BaseParam::copy_from(param);
-    const FullyConnectedParam* fully_connected_param = static_cast<const FullyConnectedParam*>(param);
-    num_outputs = fully_connected_param->num_outputs;
+DECLARE_OPERATOR(InputOperator);
+
+InputOperator::InputOperator(const BaseParam* op_param) {
+    InputParam* input_param = new InputParam;
+    input_param->copy_from(op_param);
+    op_param_ = input_param;
 }
 
+void InputOperator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+    
+}
+
+void InputOperator::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+    
+}
+
+void InputOperator::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+    
+}
+
+REGISERT_OP_CLASS(Input, InputOperator);
+
+} // namespace cpu
 } // namespace op
 } // namespace eutopia
+

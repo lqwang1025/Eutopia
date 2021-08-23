@@ -80,9 +80,9 @@ ADD_DEFINITIONS(-Wl,-Bsymbolic)
 ADD_DEFINITIONS(-Wl,-Bsymbolic-functions)
 ADD_DEFINITIONS(-Wno-unused-command-line-argument)
 ADD_DEFINITIONS(-funroll-loops)
-ADD_DEFINITIONS(-Wno-deprecated-register)
-ADD_DEFINITIONS(-Wno-overloaded-virtual)
-ADD_DEFINITIONS(-fPIC)
+# ADD_DEFINITIONS(-Wno-deprecated-register)
+# ADD_DEFINITIONS(-Wno-overloaded-virtual)
+# ADD_DEFINITIONS(-fPIC)
 ADD_DEFINITIONS(-w)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 
@@ -122,24 +122,24 @@ INCLUDE ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/summary.cmake")
 
 #add exec
 ADD_LIBRARY (${CMAKE_PROJECT_NAME}-static STATIC)
-ADD_LIBRARY (${CMAKE_PROJECT_NAME}        SHARED)
+# ADD_LIBRARY (${CMAKE_PROJECT_NAME}        SHARED)
 
 # add source files to each target
 TARGET_SOURCES (${CMAKE_PROJECT_NAME}-static PRIVATE ${EUPOTIA_SRC})
-TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${EUPOTIA_SRC})
+# TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${EUPOTIA_SRC})
 
 target_link_libraries(${CMAKE_PROJECT_NAME}-static)
-target_link_libraries(${CMAKE_PROJECT_NAME})
+# target_link_libraries(${CMAKE_PROJECT_NAME})
 
 #set version
 set_target_properties(${CMAKE_PROJECT_NAME}-static PROPERTIES VERSION 0.0.0 SOVERSION 0)
-set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES VERSION 0.0.0 SOVERSION 0)
+# set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES VERSION 0.0.0 SOVERSION 0)
 
 set_target_properties(${CMAKE_PROJECT_NAME}-static PROPERTIES OUTPUT_NAME "eutopia")
-set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME "eutopia")
+# set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES OUTPUT_NAME "eutopia")
 
 # # install tengine libraries
-INSTALL (TARGETS ${CMAKE_PROJECT_NAME}        LIBRARY DESTINATION lib)
+# INSTALL (TARGETS ${CMAKE_PROJECT_NAME}        LIBRARY DESTINATION lib)
 INSTALL (TARGETS ${CMAKE_PROJECT_NAME}-static ARCHIVE DESTINATION lib)
 
 # install header files

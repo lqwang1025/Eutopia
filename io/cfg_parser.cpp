@@ -111,11 +111,12 @@ void CfgParser::init_base_param(std::fstream& file, core::ir::Graph* graph) {
 void CfgParser::init_input_param(std::fstream& file, core::ir::Graph* graph) {
     std::vector<std::string> params = get_param(file);
     op::InputParam input_param;
+    std::vector<std::string> producers;
+    core::ir::Node* node = graph->add_node();
     for (const auto& it : params) {
         std::vector<std::string> param = absl::StrSplit(it, absl::ByChar('='));
         if(param.size() == 1) continue;
         CHECK(param.size() > 1, "Wrong config file format.");
-        std::cout<<"debug:"<<param[0]<<std::endl;
         if (param[0] == "name") {
             input_param.op_name = param[1];
         } else if (param[0] == "dims") {
@@ -123,16 +124,37 @@ void CfgParser::init_input_param(std::fstream& file, core::ir::Graph* graph) {
             if (!c_json.Parse(param[1].c_str())) {
                 EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
-            std::cout<<"debug:........................"<<c_json.ToString()<<std::endl;
+            uint32_t batch, height, width, channels;
+            c_json["shape"].Get("batch", batch);
+            c_json["shape"].Get("height", height);
+            c_json["shape"].Get("width", width);
+            c_json["shape"].Get("channels", channels);
+            input_param.input_dims = {batch, height, width, channels};
         } else if (param[0] == "preprocess") {
-            
+            neb::CJsonObject c_json;
+            if (!c_json.Parse(param[1].c_str())) {
+                EU_ERROR<<"Invaild json format"<<EU_ENDL;
+            }
+            c_json.Get("mean", input_param.mean);
+            c_json.Get("std", input_param.std);
+        } else if (param[0] == "producer") {
+            std::vector<std::string> p_param= absl::StrSplit(param[1].substr(1, param[1].size()-2), absl::ByChar(','));
+            for (auto it : p_param) {
+                absl::string_view param_item = it;
+                do {
+                    absl::ConsumePrefix(&param_item, " ");
+                    absl::ConsumeSuffix(&param_item, " ");
+                } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
+                node->add_producer(std::string(param_item.data()));
+            }
+            if (node->get_producers().size() == 0) {
+                input_param.first_op = true;
+            }
         } else {
             EU_WARN<<"Need to add param " <<param[0]<<" to input node."<<EU_ENDL;
         }
     }
-    
-    // input_param.mean = 
-    // core::ir::Node* node = graph->add_node(&input_param);
+    node->setup(&input_param);
 }
 
 void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {

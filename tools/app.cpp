@@ -36,6 +36,6 @@ int main(int argc, char** argv) {
     cmdline::parser a;
     a.set_program_name("eutopia-train-tools");
     a.parse_check(argc, argv);
-    p.run("/home/lqwang/project/Eutopia/tools/cfg/alexnet.cfg");
+    p.run("/home/parallels/project/Eutopia/tools/cfg/alexnet.cfg");
     return 0;
 }
