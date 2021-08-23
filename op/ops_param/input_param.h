@@ -19,23 +19,38 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : app.cpp
+ * File       : input_param.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-08:13:30:59
+ * Create Time: 2021-08-23:14:39:35
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include <iostream>
-#include <string>
-#include "io/parser.h"
-#include "tools/cmdline.h"
+#ifndef __INPUT_PARAM_H__
+#define __INPUT_PARAM_H__
 
-int main(int argc, char** argv) {
-    eutopia::io::Parser p;
-    cmdline::parser a;
-    a.set_program_name("eutopia-train-tools");
-    a.parse_check(argc, argv);
-    p.run("/home/lqwang/project/Eutopia/tools/cfg/alexnet.cfg");
-    return 0;
-}
+#include <vector>
+
+#include "op/ops_param/base_param.h"
+
+namespace eutopia {
+namespace op {
+
+struct InputParam : public BaseParam {
+    InputParam() {
+        op_type = INPUT;
+    }
+    float mean;
+    float std;
+    std::vector<uint32_t> input_dims;
+    void copy_from(const BaseParam* param);
+    virtual ~InputParam() {}
+};
+
+typedef struct InputParam InputParam;
+
+} // namespace op
+} // namespace eutopia
+
+#endif /* __INPUT_PARAM_H__ */
+

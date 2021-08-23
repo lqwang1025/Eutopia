@@ -29,9 +29,11 @@
 #ifndef __OPS_PARAM_H__
 #define __OPS_PARAM_H__
 
+#include "op/ops_param/input_param.h"
 #include "op/ops_param/base_param.h"
 #include "op/ops_param/pooling_param.h"
 #include "op/ops_param/convolution2D_param.h"
+#include "op/ops_param/fully_connected_param.h"
 
 #endif /* __OPS_PARAM_H__ */
 

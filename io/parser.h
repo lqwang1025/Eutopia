@@ -31,6 +31,7 @@
 
 #include <vector>
 
+#include "core/ir/graph.h"
 #include "op/ops_param.h"
 
 namespace eutopia {
@@ -40,7 +41,7 @@ class Parser {
 public:
     Parser();
     ~Parser();
-    std::vector<op::BaseParam*> run(const char* file_name);
+    core::ir::Graph* run(const char* file_name);
 };
     
 } // namespace io

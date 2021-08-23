@@ -19,23 +19,25 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : app.cpp
+ * File       : input_param.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-08:13:30:59
+ * Create Time: 2021-08-23:14:40:04
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include <iostream>
-#include <string>
-#include "io/parser.h"
-#include "tools/cmdline.h"
+#include "op/ops_param/input_param.h"
 
-int main(int argc, char** argv) {
-    eutopia::io::Parser p;
-    cmdline::parser a;
-    a.set_program_name("eutopia-train-tools");
-    a.parse_check(argc, argv);
-    p.run("/home/lqwang/project/Eutopia/tools/cfg/alexnet.cfg");
-    return 0;
+namespace eutopia {
+namespace op {
+
+void InputParam::copy_from(const BaseParam* param) {
+    this->BaseParam::copy_from(param);
+    const InputParam* input_param = static_cast<const InputParam*>(param);
+    mean       = input_param->mean;
+    std        = input_param->std;
+    input_dims = input_param->input_dims;
 }
+
+} // namespace eutopia
+} // namespace op

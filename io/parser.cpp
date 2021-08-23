@@ -47,7 +47,7 @@ Parser::~Parser() {
     
 }
 
-std::vector<op::BaseParam*> Parser::run(const char* file_name) {
+core::ir::Graph* Parser::run(const char* file_name) {
     std::vector<std::string> spilt_names = absl::StrSplit(file_name, absl::ByString("."));
     CHECK(spilt_names.size()!=0, "Get file name failed.");
     if (spilt_names[spilt_names.size()-1] == "cfg") {

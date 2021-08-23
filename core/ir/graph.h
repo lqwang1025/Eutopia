@@ -47,6 +47,14 @@ class Graph final {
 public:
     Graph(void);
     ~Graph(void);
+    
+    struct TrainParam {
+        int batch;
+        int epoch;
+        std::string optimize_type;
+        std::string loss_type;
+    };
+    
     void forward(void);
     void backward(void);
     void update(void);
@@ -73,6 +81,7 @@ public:
 private:
     bool is_trainning_;
     std::string name_;
+    TrainParam train_param_;
     std::vector<Node*> input_nodes_;
     std::vector<Node*> output_nodes_;
     std::vector<Node*> seq_nodes_;

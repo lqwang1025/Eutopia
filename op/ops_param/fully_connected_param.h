@@ -19,23 +19,35 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : app.cpp
+ * File       : fully_connected_param.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-08:13:30:59
+ * Create Time: 2021-08-23:14:53:15
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include <iostream>
-#include <string>
-#include "io/parser.h"
-#include "tools/cmdline.h"
+#ifndef __FULLY_CONNECTED_PARAM_H__
+#define __FULLY_CONNECTED_PARAM_H__
+#include <vector>
 
-int main(int argc, char** argv) {
-    eutopia::io::Parser p;
-    cmdline::parser a;
-    a.set_program_name("eutopia-train-tools");
-    a.parse_check(argc, argv);
-    p.run("/home/lqwang/project/Eutopia/tools/cfg/alexnet.cfg");
-    return 0;
-}
+#include "op/ops_param/base_param.h"
+
+namespace eutopia {
+namespace op {
+
+struct FullyConnectedParam : public BaseParam {
+    FullyConnectedParam() {
+        op_type = FULLYCONNECTED;
+    }
+    uint32_t num_outputs;
+    void copy_from(const BaseParam* param);
+    virtual ~FullyConnectedParam() {}
+};
+
+typedef struct FullyConnectedParam FullyConnectedParam;
+
+} // namespace op
+} // namespace eutopia
+
+#endif /* __FULLY_CONNECTED_PARAM_H__ */
+

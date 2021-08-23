@@ -29,30 +29,34 @@
 #ifndef __CFG_PARSER_H__
 #define __CFG_PARSER_H__
 
+#include <map>
 #include <vector>
 #include <fstream>
 
 #include "op/ops_param.h"
+#include "core/ir/graph.h" 
 
 namespace eutopia {
 namespace io {
 
 struct CfgParser {
-    std::vector<op::BaseParam*> operator() (const char* file_name);
+    core::ir::Graph* operator() (const char* file_name);
+    std::vector<std::string> get_param(std::fstream& file);
+    typedef void (CfgParser::*ParamFunc)(std::fstream& file, core::ir::Graph* graph);
+    void init_graph(std::fstream& file, core::ir::Graph* graph);
+    void init_base_param(std::fstream& file, core::ir::Graph* graph);
+    void init_input_param(std::fstream& file, core::ir::Graph* graph);
+    void init_fc_param(std::fstream& file, core::ir::Graph* graph);
+    void init_conv2d_param(std::fstream& file, core::ir::Graph* graph);
+    void init_pooling_param(std::fstream& file, core::ir::Graph* graph);
+    std::map<std::string, ParamFunc> param_parse_methods {
+        {"Graph", &CfgParser::init_graph},
+        {INPUT, &CfgParser::init_input_param},
+        {FULLYCONNECTED, &CfgParser::init_fc_param},
+        {POOLING, &CfgParser::init_pooling_param},
+        {CONVOLUTION2D, &CfgParser::init_conv2d_param},
+    };
 };
-
-struct BaseParamParser {
-    op::BaseParam* operator() (std::fstream& file);
-};
-
-struct Conv2dParamParser {
-    op::Convolution2DParam* operator() (std::fstream& file);
-};
-
-struct PoolingParamParser {
-    op::PoolingParam* operator() (std::fstream& file);
-};
-
 
 } // namespace io
 } // namespace eutopia

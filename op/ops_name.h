@@ -32,6 +32,7 @@
 #include <string>
 
 #define MUL "Mul"
+#define INPUT "Input"
 #define CONCAT "Concat"
 #define POOLING "Pooling"
 #define DROPOUT "DropOut"
@@ -39,6 +40,7 @@
 #define CONVOLUTION2D "Convolution2D"
 #define FULLYCONNECTED "FullyConnected"
 #define GLOBALAVGPOOL "GlobalAVGPool"
+#define FULLYCONNECTED "FullyConnected"
 #define DEPTHWISECONVOLUTION2D "DepthWiseConvolution2D"
 
 namespace eutopia {
@@ -46,6 +48,7 @@ namespace op {
 
 static const std::set<std::string> EUTOPIA_SUPPORT_OPS = {
     MUL,
+    INPUT,
     CONCAT,
     DROPOUT,
     POOLING,
@@ -53,6 +56,7 @@ static const std::set<std::string> EUTOPIA_SUPPORT_OPS = {
     CONVOLUTION2D,
     FULLYCONNECTED,
     GLOBALAVGPOOL,
+    FULLYCONNECTED,
     DEPTHWISECONVOLUTION2D,
 };
 
