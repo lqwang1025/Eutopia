@@ -48,20 +48,17 @@ core::ir::Graph* CfgParser::operator() (const char* file_name) {
     if (file.is_open()) {
         std::string line;
         while(std::getline(file, line)) {
-            absl::string_view strip_line = line.c_str();
+            absl::string_view strip_line = line;
             absl::ConsumePrefix(&strip_line, " ");
             absl::ConsumeSuffix(&strip_line, " ");
-            if (strip_line == "") continue;
-            if (strip_line[0] == '#')  continue;
+            if (strip_line == "" || strip_line[0] == '#') continue;
             if (strip_line[0] == '[') {
-                absl::ConsumePrefix(&strip_line, "[");
-                absl::ConsumeSuffix(&strip_line, "]");
-                std::cout<<"line:"<<line<<std::endl;
-                // if (param_parse_methods.count(strip_line.c_str()) != 0) {
-                //     (this->*param_parse_methods[strip_line.c_str()])(file, graph);
-                // } else {
-                //     EU_ERROR<<"Unsupport " <<strip_line<<" type."<<EU_ENDL;
-                // }
+                line = line.substr(1, line.size()-2);                
+                if (param_parse_methods.count(line) != 0) {
+                    (this->*param_parse_methods[line])(file, graph);
+                } else {
+                    EU_ERROR<<"Unsupport " <<strip_line<<" type."<<EU_ENDL;
+                }
             }
         }
     } else {
@@ -113,9 +110,27 @@ void CfgParser::init_base_param(std::fstream& file, core::ir::Graph* graph) {
 
 void CfgParser::init_input_param(std::fstream& file, core::ir::Graph* graph) {
     std::vector<std::string> params = get_param(file);
-    for (auto& it : params) {
-        std::cout<<it<<std::endl;
+    op::InputParam input_param;
+    for (const auto& it : params) {
+        std::vector<std::string> param = absl::StrSplit(it, absl::ByChar('='));
+        if(param.size() == 1) continue;
+        CHECK(param.size() > 1, "Wrong config file format.");
+        std::cout<<"debug:"<<param[0]<<std::endl;
+        if (param[0] == "name") {
+            input_param.op_name = param[1];
+        } else if (param[0] == "dims") {
+            std::cout<<"debug:........................"<<param[1]<<std::endl;
+            neb::CJsonObject c_json(param[1].c_str());
+            std::cout<<"debug:........................"<<c_json.ToString()<<std::endl;
+        } else if (param[0] == "preprocess") {
+            
+        } else {
+            EU_WARN<<"Need to add param " <<param[0]<<" to input node."<<EU_ENDL;
+        }
     }
+    
+    // input_param.mean = 
+    // core::ir::Node* node = graph->add_node(&input_param);
 }
 
 void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
