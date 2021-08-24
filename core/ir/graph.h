@@ -56,6 +56,7 @@ public:
     };
     
     void forward(void);
+    void forward(const Tensor* input_tensor);
     void backward(void);
     void update(void);
     void run(void);
@@ -68,11 +69,10 @@ public:
     
     void remove_node(Node* node);//todo
     
-    void add_input_tensor(Tensor* tensor);//todo
-    Tensor* get_input_tensor(const std::string& tensor_name) const;//todo
+    void add_input_tensor(const std::string& tensor_name, const Tensor* tensor);
+    const Tensor* get_input_tensor(const std::string& tensor_name) const;
     
-    void add_output_tensor(Tensor* tensor);//todo
-    Tensor* get_output_tensor(const std::string& node_name) const;//todo
+    const Tensor* get_output_tensor(const std::string& node_name) const;
 
     void sort_by_execute(void);
     
@@ -87,7 +87,7 @@ private:
     std::vector<Node*> seq_nodes_;
     std::vector<Node*> own_nodes_;
     std::unordered_map<std::string, Node*> node_name_map_;
-    std::unordered_map<std::string, Tensor*> input_tensors_;
+    std::unordered_map<std::string, const Tensor*> input_tensors_;
     std::unordered_map<std::string, Tensor*> output_tensors_;
 private:
     void _top_sort(std::unordered_map< std::string, std::vector<std::string> >& name_producers);

@@ -49,8 +49,7 @@ void Graph::forward() {
         const std::vector<std::string>& cur_producers = cur_node->get_producers();
         std::string cur_name = cur_node->get_name();
         if (cur_producers.size() == 0) {
-            CHECK(input_tensors_.count(cur_name)!=0, "Please set inputs to graph.");
-            cur_inputs.push_back(input_tensors_[cur_name]);
+            cur_inputs.push_back(get_input_tensor(cur_name));
         } else {
             for (auto& it : cur_producers) {
                 CHECK(node_name_map_.count(it)!=0, "Do not find the Node.");
@@ -60,6 +59,13 @@ void Graph::forward() {
         }
         cur_node->forward(cur_inputs);
     }
+}
+
+void Graph::forward(const Tensor* input_tensor) {
+    CHECK(input_nodes_.size() == 1, "The graph must have one input node.");
+    std::string name = input_nodes_[0]->get_name();
+    add_input_tensor(name, input_tensor);
+    forward();
 }
 
 void Graph::backward() {
@@ -76,6 +82,15 @@ void Graph::run() {
 
 void Graph::dump() {
     
+}
+
+void Graph::add_input_tensor(const std::string& tensor_name, const Tensor* tensor) {
+    input_tensors_[tensor_name] = tensor;
+}
+
+const Tensor* Graph::get_input_tensor(const std::string& tensor_name) const {
+    CHECK(input_tensors_.count(tensor_name)!=0, "Don't find input tensor.");
+    return input_tensors_.at(tensor_name);
 }
 
 Node* Graph::add_node(op::BaseParam* param) {
@@ -153,7 +168,7 @@ void Graph::sort_by_execute(void) {
     }
 }
 
-Tensor* Graph::get_output_tensor(const std::string& node_name) const {
+const Tensor* Graph::get_output_tensor(const std::string& node_name) const {
     CHECK(output_tensors_.count(node_name) != 0, "Do not find your node in graph.");
     return output_tensors_.find(node_name)->second;
 }
