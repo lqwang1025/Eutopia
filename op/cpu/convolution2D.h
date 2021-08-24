@@ -35,7 +35,7 @@ namespace eutopia {
 namespace op {
 namespace cpu {
 
-DECLARE_OPERATOR(Convolution2DOperator);
+DECLARE_OPERATOR(Convolution2DParam, Convolution2DOperator);
 
 } // namespace cpu
 } // namespace op

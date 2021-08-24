@@ -82,7 +82,7 @@ ADD_DEFINITIONS(-Wno-unused-command-line-argument)
 ADD_DEFINITIONS(-funroll-loops)
 # ADD_DEFINITIONS(-Wno-deprecated-register)
 # ADD_DEFINITIONS(-Wno-overloaded-virtual)
-# ADD_DEFINITIONS(-fPIC)
+ADD_DEFINITIONS(-fPIC)
 ADD_DEFINITIONS(-w)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 

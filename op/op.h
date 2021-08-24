@@ -45,11 +45,9 @@ class Operator {
 public:
     Operator(){};
     virtual ~Operator(){};
-    virtual void infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape);
-    virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
-    virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
-protected:
-    BaseParam* op_param_;
+    virtual void infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape);
+    virtual void forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
+    virtual void backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
 private:
     Operator(const Operator&);
     Operator& operator=(const Operator&);
@@ -104,14 +102,15 @@ public:
     }                                                               \
     REGISTER_OP_CREATOR(op_type, Creator_##op_type)
 
-#define DECLARE_OPERATOR(sub_class)                                     \
+#define DECLARE_OPERATOR(param_type, sub_class)                         \
     class sub_class : public Operator {                                 \
     public:                                                             \
     sub_class(const BaseParam* op_param);                               \
-    virtual void infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape); \
-    virtual void forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
-    virtual void backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
+    virtual void infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape); \
+    virtual void forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
+    virtual void backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
     private:                                                            \
+    param_type* op_param_;                                              \
     sub_class();                                                        \
     sub_class(const sub_class&);                                        \
     sub_class& operator=(const sub_class&);                             \

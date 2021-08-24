@@ -45,7 +45,7 @@ Tensor::Tensor() {
     mem_       = new Chunk;
 }
 
-Tensor::Tensor(const std::vector<uint32_t>& dims, DataType data_type, void* mem) {
+Tensor::Tensor(const std::vector<uint32_t>& dims, DataType data_type, void* mem) : Tensor() {
     set_data(dims, data_type, mem);
 }
 
@@ -103,6 +103,10 @@ T& Tensor::mutable_data(const std::vector<uint32_t>& indices) {
     }
     T& value = mem_->at<T>(index);
     return value;
+}
+
+const std::vector<uint32_t>& Tensor::dims() const {
+    return dims_;
 }
 
 template const uint8_t& Tensor::data(const std::vector<uint32_t>& dims) const;

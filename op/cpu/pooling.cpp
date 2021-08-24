@@ -39,15 +39,15 @@ PoolingOperator::PoolingOperator(const BaseParam* op_param) {
     op_param_ = pool_param;
 }
 
-void PoolingOperator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+void PoolingOperator::infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+    std::cout<<"pooling"<<std::endl;
+}
+
+void PoolingOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
     
 }
 
-void PoolingOperator::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
-}
-
-void PoolingOperator::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+void PoolingOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
     
 }
 

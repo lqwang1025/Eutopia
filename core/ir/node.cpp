@@ -201,7 +201,7 @@ void Node::set_is_trainning(bool is_trainning) {
 }
 
 void Node::forward(const std::vector<const Tensor*> input_tensors) {
-    
+    op_->infer_shape(input_tensors, output_shape_);
 }
 
 void Node::backward(void) {

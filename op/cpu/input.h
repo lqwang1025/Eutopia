@@ -36,7 +36,7 @@ namespace eutopia {
 namespace op {
 namespace cpu {
 
-DECLARE_OPERATOR(InputOperator);
+DECLARE_OPERATOR(InputParam, InputOperator);
 
 } // namespace cpu
 } // namespace op

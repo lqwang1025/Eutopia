@@ -39,15 +39,15 @@ Convolution2DOperator::Convolution2DOperator(const BaseParam* op_param) {
     op_param_ = conv_param;
 }
 
-void Convolution2DOperator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+void Convolution2DOperator::infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+    std::cout<<"conv2d"<<std::endl;
+}
+
+void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
     
 }
 
-void Convolution2DOperator::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
-}
-
-void Convolution2DOperator::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+void Convolution2DOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
     
 }
 

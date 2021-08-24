@@ -31,6 +31,7 @@
 #include <iostream>
 #include "core/ir/chunk.h"
 #include "core/ir/tensor.h"
+#include "core/logging.h"
 
 namespace eutopia {
 namespace core {
@@ -53,7 +54,8 @@ Chunk::~Chunk() {
 
 void Chunk::set_data(Tensor* owner, uint32_t byte_size, void* data) {
     if (data == nullptr) {
-        data_ = malloc(byte_size);//todo:check data is not null
+        data_ = malloc(byte_size);
+        CHECK(data_!=nullptr, "Alloc memory failed.");
         own_data_ = true;
     } else {
         _release_data();

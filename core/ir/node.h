@@ -90,7 +90,6 @@ private:
     std::string name_;
     int32_t index_; // squence index
     std::string op_type_;
-    std::vector<uint32_t> output_shape_;
     bool is_trainning_;
     bool is_quantize_;
     bool weight_shared_;
@@ -100,6 +99,7 @@ private:
     bool dynamic_shape_;
     bool in_place_;
     std::string device_;
+    std::vector<uint32_t> output_shape_;
     std::vector<std::string> producers_;
     std::vector<std::string> consumers_;
     std::vector<Tensor*> weights_;

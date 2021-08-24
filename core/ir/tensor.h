@@ -55,6 +55,7 @@ public:
     template<typename T>
     T& mutable_data(const std::vector<uint32_t>& indices);
     uint8_t dims_size() const;
+    const std::vector<uint32_t>& dims() const;
 private:
     std::string name_;
     DataType data_type_;

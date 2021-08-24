@@ -35,7 +35,7 @@ namespace eutopia {
 namespace op {
 namespace cpu {
 
-DECLARE_OPERATOR(FullyConnectedOperator);
+DECLARE_OPERATOR(FullyConnectedParam, FullyConnectedOperator);
 
 } // namespace cpu
 } // namespace op

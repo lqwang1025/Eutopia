@@ -36,7 +36,7 @@ namespace eutopia {
 namespace op {
 namespace cpu {
 
-DECLARE_OPERATOR(PoolingOperator);
+DECLARE_OPERATOR(PoolingParam, PoolingOperator);
 
 } // namespace cpu
 } // namespace op
