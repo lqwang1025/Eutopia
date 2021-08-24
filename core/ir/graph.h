@@ -78,7 +78,7 @@ public:
     
     bool is_trainning(void) const;
     void set_is_trainning(bool is_trainning);
-private:
+public:
     bool is_trainning_;
     std::string name_;
     TrainParam train_param_;

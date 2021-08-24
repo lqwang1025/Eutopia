@@ -29,6 +29,7 @@
 #include <iostream>
 #include <string>
 #include "io/parser.h"
+#include "core/ir/graph.h"
 #include "tools/cmdline.h"
 
 int main(int argc, char** argv) {
@@ -36,6 +37,7 @@ int main(int argc, char** argv) {
     cmdline::parser a;
     a.set_program_name("eutopia-train-tools");
     a.parse_check(argc, argv);
-    p.run("/home/parallels/project/Eutopia/tools/cfg/alexnet.cfg");
+    eutopia::core::ir::Graph* graph = p.run("/home/parallels/project/Eutopia/tools/cfg/alexnet.cfg");
+    std::cout<<"debug:"<<graph->own_nodes_.size()<<std::endl;
     return 0;
 }

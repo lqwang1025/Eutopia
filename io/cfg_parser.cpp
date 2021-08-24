@@ -173,19 +173,43 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
             if (!c_json.Parse(param[1].c_str())) {
                 EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
-            uint32_t batch, height, width, channels;
-            c_json["shape"].Get("batch", batch);
-            c_json["shape"].Get("height", height);
-            c_json["shape"].Get("width", width);
-            c_json["shape"].Get("channels", channels);
-            input_param.input_dims = {batch, height, width, channels};
-        } else if (param[0] == "preprocess") {
-            neb::CJsonObject c_json;
-            if (!c_json.Parse(param[1].c_str())) {
-                EU_ERROR<<"Invaild json format"<<EU_ENDL;
+            uint32_t oc, kh, kw, ic = 0;
+            c_json.Get("filters", oc);
+            uint32_t value = 0;
+            CHECK(c_json["kernels"].GetArraySize() > 1, "Conv parameter kernels size must be greater than 1.");
+            c_json["kernels"].Get(0, kh);
+            c_json["kernels"].Get(1, kw);
+            if (c_json["kernels"].GetArraySize() > 3) {
+                c_json["kernels"].Get(1, ic);
             }
-            c_json.Get("mean", input_param.mean);
-            c_json.Get("std", input_param.std);
+            conv_param.kernel_shape = {kh, kw, ic, oc};
+            
+            conv_param.strides.resize(2);
+            CHECK(c_json["strides"].GetArraySize() == 2, "Conv parameter stride size must be 2.");
+            c_json["strides"].Get(0, conv_param.strides[0]);
+            c_json["strides"].Get(1, conv_param.strides[1]);
+            conv_param.pad_type = c_json("padding");
+            
+            CHECK(c_json["pads"].GetArraySize() == 4, "Conv parameter pads size must be 4.");
+            conv_param.pads.resize(4);
+            c_json["pads"].Get(0, conv_param.pads[0]);
+            c_json["pads"].Get(1, conv_param.pads[1]);
+            c_json["pads"].Get(2, conv_param.pads[2]);
+            c_json["pads"].Get(3, conv_param.pads[3]);
+
+            CHECK(c_json["dilations"].GetArraySize() == 4, "Conv parameter dilations size must be 4.");
+            conv_param.dilations.resize(4);
+            c_json["dilations"].Get(0, conv_param.dilations[0]);
+            c_json["dilations"].Get(1, conv_param.dilations[1]);
+            c_json["dilations"].Get(2, conv_param.dilations[2]);
+            c_json["dilations"].Get(3, conv_param.dilations[3]);
+            std::cout<<"debug:"<<c_json("activation")<<std::endl;
+            c_json.Get("group", conv_param.group);
+            
+        } else if (param[0] == "weight_filler") {
+            
+        } else if (param[0] == "bias_filler") {
+            
         } else if (param[0] == "producer") {
             std::vector<std::string> p_param= absl::StrSplit(param[1].substr(1, param[1].size()-2), absl::ByChar(','));
             for (auto it : p_param) {
@@ -197,13 +221,13 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
                 node->add_producer(std::string(param_item.data()));
             }
             if (node->get_producers().size() == 0) {
-                input_param.first_op = true;
+                conv_param.first_op = true;
             }
         } else {
             EU_WARN<<"Need to add param " <<param[0]<<" to input node."<<EU_ENDL;
         }
     }
-    node->setup(&input_param);
+    node->setup(&conv_param);
 }
 
 void CfgParser::init_pooling_param(std::fstream& file, core::ir::Graph* graph) {
