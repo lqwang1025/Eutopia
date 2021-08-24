@@ -26,37 +26,55 @@
  * Description:
  */
 
+#include <vector>
+#include <cstdio>
+
 #include "core/ir/graph.h"
 #include "core/ir/node.h"
+#include "core/ir/tensor.h"
 #include "core/logging.h"
 
-
-#include <cstdio>
 namespace eutopia {
 namespace core {
 namespace ir {
 
-Graph::Graph(void) {
+Graph::Graph() {
     
 }
 
-void Graph::forward(void) {
+void Graph::forward() {
+    for (int i = 0; i < seq_nodes_.size(); ++i) {
+        Node* cur_node = seq_nodes_[i];
+        std::vector<const Tensor*> cur_inputs(0);
+        const std::vector<std::string>& cur_producers = cur_node->get_producers();
+        std::string cur_name = cur_node->get_name();
+        if (cur_producers.size() == 0) {
+            CHECK(input_tensors_.count(cur_name)!=0, "Please set inputs to graph.");
+            cur_inputs.push_back(input_tensors_[cur_name]);
+        } else {
+            for (auto& it : cur_producers) {
+                CHECK(node_name_map_.count(it)!=0, "Do not find the Node.");
+                const Node* papa = node_name_map_[it];
+                cur_inputs.push_back(papa->get_output_tensor());
+            }
+        }
+        cur_node->forward(cur_inputs);
+    }
+}
+
+void Graph::backward() {
     
 }
 
-void Graph::backward(void) {
+void Graph::update() {
     
 }
 
-void Graph::update(void) {
+void Graph::run() {
     
 }
 
-void Graph::run(void) {
-    
-}
-
-void Graph::dump(void) {
+void Graph::dump() {
     
 }
 
@@ -84,8 +102,55 @@ Node* Graph::get_node(const std::string& node_name) const {
     return nullptr;
 }
 
+void Graph::_top_sort(std::unordered_map< std::string, std::vector<std::string> >& name_producers) {
+    if (name_producers.size() == 0) return;
+    for (auto& it : name_producers) {
+        if (it.second.size() == 0) {
+            std::string name = it.first;
+            name_producers.erase(name);
+            CHECK(node_name_map_.count(name) != 0, "Do not find your node.");
+            seq_nodes_.push_back(node_name_map_[name]);
+            for (auto& _it : name_producers) {
+                for (int i = 0; i < _it.second.size(); ++i) {
+                    if (_it.second[i] == name) {
+                        _it.second.erase(_it.second.begin()+i);
+                    }
+                }
+            }
+            break;
+        }
+    }
+    _top_sort(name_producers);
+}
+
 void Graph::sort_by_execute(void) {
-    
+    std::unordered_map< std::string, std::vector<std::string> > name_producers;
+    for (int i = 0; i < (int)own_nodes_.size(); ++i) {
+        Node* node = own_nodes_[i];
+        name_producers[node->get_name()] = node->get_producers();
+        node_name_map_[node->get_name()] = node;
+    }
+    _top_sort(name_producers);
+    for (int  i = 0; i < seq_nodes_.size(); ++i) {
+        Node* node = seq_nodes_[i];
+        node->set_index(i);
+        std::string cur_name = node->get_name();
+        for (int _i = i; _i < seq_nodes_.size(); ++_i) {
+            Node* next_node = seq_nodes_[_i];
+            for (auto it : next_node->get_producers()) {
+                if (it == cur_name) {
+                    node->add_consumer(next_node->get_name());
+                }
+            }
+        }
+        if (node->get_producers().size() == 0) {
+            input_nodes_.push_back(node);
+        }
+        if (node->get_consumers().size() == 0) {
+            output_nodes_.push_back(node);
+            node->set_is_last_node(true);
+        }
+    }
 }
 
 Tensor* Graph::get_output_tensor(const std::string& node_name) const {

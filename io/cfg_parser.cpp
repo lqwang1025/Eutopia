@@ -145,7 +145,9 @@ void CfgParser::init_input_param(std::fstream& file, core::ir::Graph* graph) {
                     absl::ConsumePrefix(&param_item, " ");
                     absl::ConsumeSuffix(&param_item, " ");
                 } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
-                node->add_producer(std::string(param_item.data()));
+                if (param_item != "") {
+                    node->add_producer(std::string(param_item));
+                }
             }
             if (node->get_producers().size() == 0) {
                 input_param.first_op = true;
@@ -203,7 +205,7 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
             c_json["dilations"].Get(1, conv_param.dilations[1]);
             c_json["dilations"].Get(2, conv_param.dilations[2]);
             c_json["dilations"].Get(3, conv_param.dilations[3]);
-            std::cout<<"debug:"<<c_json("activation")<<std::endl;
+            // std::cout<<"debug:"<<c_json("activation")<<std::endl;
             c_json.Get("group", conv_param.group);
             
         } else if (param[0] == "weight_filler") {
@@ -218,7 +220,9 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
                     absl::ConsumePrefix(&param_item, " ");
                     absl::ConsumeSuffix(&param_item, " ");
                 } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
-                node->add_producer(std::string(param_item.data()));
+                if (param_item != "") {
+                    node->add_producer(std::string(param_item));
+                }
             }
             if (node->get_producers().size() == 0) {
                 conv_param.first_op = true;
@@ -267,7 +271,9 @@ void CfgParser::init_pooling_param(std::fstream& file, core::ir::Graph* graph) {
                     absl::ConsumePrefix(&param_item, " ");
                     absl::ConsumeSuffix(&param_item, " ");
                 } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
-                node->add_producer(std::string(param_item.data()));
+                if (param_item != "") {
+                    node->add_producer(std::string(param_item));
+                }
             }
         } else {
             EU_WARN<<"Need to add param " <<param[0]<<" to pooling node."<<EU_ENDL;
@@ -292,7 +298,8 @@ void CfgParser::init_fc_param(std::fstream& file, core::ir::Graph* graph) {
             if (!c_json.Parse(param[1].c_str())) {
                 EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
-                        
+            c_json.Get("num_outputs", fc_param.num_outputs);
+            
         } else if (param[0] == "producer") {
             std::vector<std::string> p_param= absl::StrSplit(param[1].substr(1, param[1].size()-2), absl::ByChar(','));
             for (auto it : p_param) {
@@ -301,8 +308,14 @@ void CfgParser::init_fc_param(std::fstream& file, core::ir::Graph* graph) {
                     absl::ConsumePrefix(&param_item, " ");
                     absl::ConsumeSuffix(&param_item, " ");
                 } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
-                node->add_producer(std::string(param_item.data()));
+                if (param_item != "") {
+                    node->add_producer(std::string(param_item));
+                }
             }
+        } else if (param[0] == "weight_filler") {
+            
+        } else if (param[0] == "bias_filler") {
+            
         } else {
             EU_WARN<<"Need to add param " <<param[0]<<" to fc node."<<EU_ENDL;
         }

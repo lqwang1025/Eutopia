@@ -92,6 +92,10 @@ void Node::set_name(const std::string& name) {
     name_ = name;
 }
 
+const Tensor* Node::get_output_tensor(void) const {
+    return output_tensor_;
+}
+
 int32_t Node::get_index(void) const {
     return index_;
 }
@@ -196,11 +200,7 @@ void Node::set_is_trainning(bool is_trainning) {
     is_trainning_ = is_trainning;
 }
 
-const Tensor* Node::get_output_tensor(void) const {
-    return output_tensor_;
-}
-
-void Node::forward(const std::vector<Tensor*> input_tensors) {
+void Node::forward(const std::vector<const Tensor*> input_tensors) {
     
 }
 

@@ -81,7 +81,7 @@ public:
     void set_graph(Graph* graph);
     const Graph* get_graph(void) const;
     void dump(void);
-    void forward(const std::vector<Tensor*> input_tensors);
+    void forward(const std::vector<const Tensor*> input_tensors);
     void backward(void);
     void update(void);
     void run(void);

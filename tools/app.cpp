@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
     a.set_program_name("eutopia-train-tools");
     a.parse_check(argc, argv);
     eutopia::core::ir::Graph* graph = p.run("/home/lqwang/project/Eutopia/tools/cfg/alexnet.cfg");
-    std::cout<<"debug:"<<graph->own_nodes_.size()<<std::endl;
+    graph->sort_by_execute();
+    graph->forward();
     return 0;
 }

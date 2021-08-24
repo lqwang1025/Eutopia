@@ -78,7 +78,7 @@ public:
     
     bool is_trainning(void) const;
     void set_is_trainning(bool is_trainning);
-public:
+private:
     bool is_trainning_;
     std::string name_;
     TrainParam train_param_;
@@ -90,6 +90,7 @@ public:
     std::unordered_map<std::string, Tensor*> input_tensors_;
     std::unordered_map<std::string, Tensor*> output_tensors_;
 private:
+    void _top_sort(std::unordered_map< std::string, std::vector<std::string> >& name_producers);
     Graph& operator=(Graph&);
     Graph(Graph&);
 };
