@@ -106,16 +106,22 @@ link_directories(${ABSEIL_DIR}/lib)
 #add source file
 file(GLOB CORE_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.cpp"   "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.cpp")
 file(GLOB CORE_FRAMEWOEK_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cc" "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cpp")
+file(GLOB CORE_CV_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/cv/*.cpp")
 file(GLOB_RECURSE OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp")
 file(GLOB_RECURSE IO_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/io/*.cpp")
 file(GLOB THIRD_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/third_party/CJsonObject/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/third_party/CJsonObject/*.c")
 
 list(APPEND EUPOTIA_SRC
   ${CORE_SRC} ${CORE_FRAMEWOEK_SRC}
-  ${OP_SRC} ${THIRD_SRC} ${IO_SRC})
+  ${OP_SRC} ${THIRD_SRC} ${IO_SRC}
+  ${CORE_CV_SRC})
 
 # add header file
-file(GLOB CORE_HEAD       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"  "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h")
+file(GLOB CORE_HEAD
+  "${CMAKE_CURRENT_SOURCE_DIR}/core/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/core/io/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/core/cv/*.h")
 
 # Report summary
 INCLUDE ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/summary.cmake")
