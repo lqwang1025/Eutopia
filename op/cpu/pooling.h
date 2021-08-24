@@ -19,15 +19,15 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : input.h
+ * File       : pooling.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-23:21:32:34
+ * Create Time: 2021-08-24:10:04:08
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#ifndef __INPUT_H__
-#define __INPUT_H__
+#ifndef __POOLING_H__
+#define __POOLING_H__
 
 #include "op/op.h"
 #include "op/ops_param.h"
@@ -36,11 +36,11 @@ namespace eutopia {
 namespace op {
 namespace cpu {
 
-DECLARE_OPERATOR(InputOperator);
+DECLARE_OPERATOR(PoolingOperator);
 
 } // namespace cpu
 } // namespace op
 } // namespace eutopia
 
-#endif /* __INPUT_H__ */
+#endif /* __POOLING_H__ */
 

@@ -19,28 +19,39 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : input.h
+ * File       : pooling.cpp
  * Authors    : Daniel Wang
- * Create Time: 2021-08-23:21:32:34
+ * Create Time: 2021-08-24:10:04:08
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#ifndef __INPUT_H__
-#define __INPUT_H__
-
-#include "op/op.h"
+#include "op/cpu/pooling.h"
 #include "op/ops_param.h"
 
 namespace eutopia {
 namespace op {
 namespace cpu {
 
-DECLARE_OPERATOR(InputOperator);
+PoolingOperator::PoolingOperator(const BaseParam* op_param) {
+    PoolingParam* pool_param = new PoolingParam;
+    pool_param->copy_from(op_param);
+    op_param_ = pool_param;
+}
+
+void PoolingOperator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+    
+}
+
+void PoolingOperator::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+    
+}
+
+void PoolingOperator::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+    
+}
 
 } // namespace cpu
 } // namespace op
 } // namespace eutopia
-
-#endif /* __INPUT_H__ */
 

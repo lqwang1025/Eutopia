@@ -19,28 +19,39 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : input.h
+ * File       : fully_connected.cpp
  * Authors    : Daniel Wang
- * Create Time: 2021-08-23:21:32:34
+ * Create Time: 2021-08-24:11:44:00
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#ifndef __INPUT_H__
-#define __INPUT_H__
-
-#include "op/op.h"
 #include "op/ops_param.h"
+#include "op/cpu/fully_connected.h"
 
 namespace eutopia {
 namespace op {
 namespace cpu {
 
-DECLARE_OPERATOR(InputOperator);
+FullyConnectedOperator::FullyConnectedOperator(const BaseParam* op_param) {
+    FullyConnectedParam* fc_param = new FullyConnectedParam;
+    fc_param->copy_from(op_param);
+    op_param_ = fc_param;
+}
+
+void FullyConnectedOperator::infer_shape(const std::vector<core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+    
+}
+
+void FullyConnectedOperator::forward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+    
+}
+
+void FullyConnectedOperator::backward(const std::vector<core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+    
+}
 
 } // namespace cpu
 } // namespace op
 } // namespace eutopia
-
-#endif /* __INPUT_H__ */
 

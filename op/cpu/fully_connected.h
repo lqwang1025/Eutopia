@@ -19,16 +19,15 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : input.h
+ * File       : fully_connected.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-23:21:32:34
+ * Create Time: 2021-08-24:11:44:00
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#ifndef __INPUT_H__
-#define __INPUT_H__
-
+#ifndef __FULLY_CONNECTED_H__
+#define __FULLY_CONNECTED_H__
 #include "op/op.h"
 #include "op/ops_param.h"
 
@@ -36,11 +35,11 @@ namespace eutopia {
 namespace op {
 namespace cpu {
 
-DECLARE_OPERATOR(InputOperator);
+DECLARE_OPERATOR(FullyConnectedOperator);
 
 } // namespace cpu
 } // namespace op
 } // namespace eutopia
 
-#endif /* __INPUT_H__ */
+#endif /* __FULLY_CONNECTED_H__ */
 

@@ -224,18 +224,90 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
                 conv_param.first_op = true;
             }
         } else {
-            EU_WARN<<"Need to add param " <<param[0]<<" to input node."<<EU_ENDL;
+            EU_WARN<<"Need to add param " <<param[0]<<" to conv2d node."<<EU_ENDL;
         }
     }
     node->setup(&conv_param);
 }
 
 void CfgParser::init_pooling_param(std::fstream& file, core::ir::Graph* graph) {
-    std::cout<<__func__<<std::endl;
+    std::vector<std::string> params = get_param(file);
+    op::PoolingParam pool_param;
+    std::vector<std::string> producers;
+    core::ir::Node* node = graph->add_node();
+    for (const auto& it : params) {
+        std::vector<std::string> param = absl::StrSplit(it, absl::ByChar('='));
+        if(param.size() == 1) continue;
+        CHECK(param.size() > 1, "Wrong config file format.");
+        if (param[0] == "name") {
+            pool_param.op_name = param[1];
+        } else if (param[0] == "op_param") {
+            neb::CJsonObject c_json;
+            if (!c_json.Parse(param[1].c_str())) {
+                EU_ERROR<<"Invaild json format"<<EU_ENDL;
+            }
+            
+            CHECK(c_json["kernels"].GetArraySize() == 2, "Pool parameter kernels size must be equal 2.");
+            pool_param.kernels.resize(2);
+            c_json["kernels"].Get(0, pool_param.kernels[0]);
+            c_json["kernels"].Get(1, pool_param.kernels[1]);
+            
+            pool_param.strides.resize(2);
+            CHECK(c_json["strides"].GetArraySize() == 2, "Pool parameter stride size must be 2.");
+            c_json["strides"].Get(0, pool_param.strides[0]);
+            c_json["strides"].Get(1, pool_param.strides[1]);
+            
+            pool_param.pool_type = c_json("pool_type");
+            
+        } else if (param[0] == "producer") {
+            std::vector<std::string> p_param= absl::StrSplit(param[1].substr(1, param[1].size()-2), absl::ByChar(','));
+            for (auto it : p_param) {
+                absl::string_view param_item = it;
+                do {
+                    absl::ConsumePrefix(&param_item, " ");
+                    absl::ConsumeSuffix(&param_item, " ");
+                } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
+                node->add_producer(std::string(param_item.data()));
+            }
+        } else {
+            EU_WARN<<"Need to add param " <<param[0]<<" to pooling node."<<EU_ENDL;
+        }
+    }
+    node->setup(&pool_param);
 }
 
 void CfgParser::init_fc_param(std::fstream& file, core::ir::Graph* graph) {
-    std::cout<<__func__<<std::endl;
+    std::vector<std::string> params = get_param(file);
+    op::FullyConnectedParam fc_param;
+    std::vector<std::string> producers;
+    core::ir::Node* node = graph->add_node();
+    for (const auto& it : params) {
+        std::vector<std::string> param = absl::StrSplit(it, absl::ByChar('='));
+        if(param.size() == 1) continue;
+        CHECK(param.size() > 1, "Wrong config file format.");
+        if (param[0] == "name") {
+            fc_param.op_name = param[1];
+        } else if (param[0] == "op_param") {
+            neb::CJsonObject c_json;
+            if (!c_json.Parse(param[1].c_str())) {
+                EU_ERROR<<"Invaild json format"<<EU_ENDL;
+            }
+                        
+        } else if (param[0] == "producer") {
+            std::vector<std::string> p_param= absl::StrSplit(param[1].substr(1, param[1].size()-2), absl::ByChar(','));
+            for (auto it : p_param) {
+                absl::string_view param_item = it;
+                do {
+                    absl::ConsumePrefix(&param_item, " ");
+                    absl::ConsumeSuffix(&param_item, " ");
+                } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
+                node->add_producer(std::string(param_item.data()));
+            }
+        } else {
+            EU_WARN<<"Need to add param " <<param[0]<<" to fc node."<<EU_ENDL;
+        }
+    }
+    node->setup(&fc_param);
 }
 
 } // namespace io

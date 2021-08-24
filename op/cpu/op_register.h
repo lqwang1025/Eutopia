@@ -28,14 +28,20 @@
 
 #ifndef __OP_REGISTER_H__
 #define __OP_REGISTER_H__
+
 #include "op/cpu/input.h"
 #include "op/cpu/convolution2D.h"
+#include "op/cpu/fully_connected.h"
+#include "op/cpu/pooling.h"
+
 namespace eutopia {
 namespace op {
 namespace cpu {
 
 REGISERT_OP_CLASS(Input, InputOperator);
 REGISERT_OP_CLASS(Convolution2D, Convolution2DOperator);
+REGISERT_OP_CLASS(Pooling, PoolingOperator);
+REGISERT_OP_CLASS(FullyConnected, FullyConnectedOperator);
 
 } // namespace cpu
 } // namespace op
