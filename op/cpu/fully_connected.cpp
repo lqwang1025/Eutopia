@@ -39,7 +39,7 @@ FullyConnectedOperator::FullyConnectedOperator(const BaseParam* op_param) {
     op_param_ = fc_param;
 }
 
-void FullyConnectedOperator::infer_shape(const std::vector<uint32_t>& input_shape, std::vector<uint32_t>& output_shape) {
+void FullyConnectedOperator::infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) {
     std::cout<<"fc"<<std::endl;
 }
 

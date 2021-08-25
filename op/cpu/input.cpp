@@ -39,8 +39,9 @@ InputOperator::InputOperator(const BaseParam* op_param) {
     op_param_ = input_param;
 }
 
-void InputOperator::infer_shape(const std::vector<uint32_t>& input_shape, std::vector<uint32_t>& output_shape) {
-    output_shape = input_shape;
+void InputOperator::infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) {
+    CHECK(input_shapes.size() == 1, "Input only have 1 input.");
+    output_shape = input_shapes[0];
     // std::vector<uint32_t> input_dims = op_param_->input_dims;
 }
 

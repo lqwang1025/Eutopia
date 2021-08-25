@@ -131,6 +131,7 @@ void CfgParser::init_input_param(std::fstream& file, core::ir::Graph* graph) {
             c_json["shape"].Get("width", width);
             c_json["shape"].Get("channels", channels);
             input_param.input_dims = {batch, height, width, channels};
+            node->set_input_shape(input_param.input_dims);
         } else if (param[0] == "preprocess") {
             neb::CJsonObject c_json;
             if (!c_json.Parse(param[1].c_str())) {

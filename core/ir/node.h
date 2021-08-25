@@ -50,7 +50,7 @@ namespace ir {
 class Tensor;
 class Graph;
 class Node final {
-    friend class graph;
+    using InputShapes = std::vector< std::vector<uint32_t> >;
 public:
     Node(Graph* graph);
     Node(Graph* graph, const op::BaseParam* param);
@@ -66,6 +66,10 @@ public:
     void set_op_type(const std::string& op_type);
     void set_output_shape(const std::vector<uint32_t>& output_shape);
     const std::vector<uint32_t>& get_output_shape(void) const;
+
+    void set_input_shape(const std::vector<uint32_t>& input_shape);
+    const InputShapes& get_input_shapes(void) const;
+    
     void add_producer(const std::string& producer);
     const std::vector<std::string>& get_producers(void) const;
     void add_consumer(const std::string& consumer);
@@ -96,7 +100,7 @@ public:
     const Tensor* get_output_tensor(void) const;
     void set_graph(Graph* graph);
     const Graph* get_graph(void) const;
-    void infer_shape(const std::vector<uint32_t>& input_shape);
+    void infer_shape(const InputShapes& input_shape);
     void dump(void);
     void forward(const std::vector<const Tensor*> input_tensors);
     void backward(void);
@@ -116,6 +120,7 @@ private:
     bool dynamic_shape_;
     bool in_place_;
     std::string device_;
+    InputShapes input_shapes_;
     std::vector<uint32_t> output_shape_;
     std::vector<std::string> producers_;
     std::vector<std::string> consumers_;

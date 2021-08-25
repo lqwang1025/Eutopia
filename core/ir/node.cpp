@@ -39,6 +39,8 @@ namespace eutopia {
 namespace core {
 namespace ir {
 
+using InputShapes = std::vector< std::vector<uint32_t> >;
+
 Node::Node(Graph* graph): graph_(graph) {
     op_ = nullptr;
     name_ = "";
@@ -98,8 +100,9 @@ void Node::setup(const op::BaseParam* param) {
     diff_tensor_->set_name(param->op_name);
 }
 
-void Node::infer_shape(const std::vector<uint32_t>& input_shape) {
-    
+void Node::infer_shape(const InputShapes& input_shapes) {
+    op_->infer_shape(input_shapes, output_shape_);
+    std::cout<<"debug:"<<output_shape_.size()<<std::endl;
 }
 
 void Node::set_graph(Graph* graph) {
@@ -248,6 +251,14 @@ void Node::set_bias(Tensor* bias) {
 
 Tensor* Node::get_bias(void) const {
     return bias_;
+}
+
+void Node::set_input_shape(const std::vector<uint32_t>& input_shape) {
+    input_shapes_.push_back(input_shape);
+}
+
+const InputShapes& Node::get_input_shapes(void) const {
+    return input_shapes_;
 }
 
 void Node::forward(const std::vector<const Tensor*> input_tensors) {

@@ -38,6 +38,8 @@ namespace eutopia {
 namespace core {
 namespace ir {
 
+using InputShapes = std::vector< std::vector<uint32_t> >;
+
 Graph::Graph() {
     
 }
@@ -168,7 +170,17 @@ void Graph::_setup_node() {
             output_nodes_.push_back(node);
             node->set_is_last_node(true);
         }
-        node->warm_up();
+        InputShapes input_shapes(0);
+        if (node->is_first_node()) {
+            input_shapes = node->get_input_shapes();
+        } else {
+            std::vector<uint32_t> input_shape(0);
+            for (auto it : node->get_producers()) {
+                const Node* papa = node_name_map_.at(it);
+                input_shapes.push_back(papa->get_output_shape());
+            }
+        }
+        node->infer_shape(input_shapes);
     }
 }
 
