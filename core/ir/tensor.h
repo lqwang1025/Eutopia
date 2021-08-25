@@ -49,14 +49,22 @@ public:
     ~Tensor();
     void set_data(const std::vector<uint32_t>& dims, DataType data_type, void* mem=nullptr);
     void set_name(const std::string& name);
-    const std::string& get_name() const;
+    const std::string& name() const;
+    
     template<typename T>
     const T& data(const std::vector<uint32_t>& indices) const;
+    
     template<typename T>
     T& mutable_data(const std::vector<uint32_t>& indices);
     uint8_t dims_size() const;
+    void set_dims(const std::vector<uint32_t>& dims);
     const std::vector<uint32_t>& dims() const;
     void reshape(std::vector<int>& shape);
+    DataType get_data_type() const;
+    void set_data_type(const DataType& data_type);
+    Tensor& operator=(const Tensor& rhs);
+    uint32_t byte_size() const;
+    Chunk* chunk() const;
 private:
     std::string name_;
     DataType data_type_;

@@ -27,8 +27,9 @@
  */
 
 #include <stdlib.h>
-
+#include <cstring>
 #include <iostream>
+
 #include "core/ir/chunk.h"
 #include "core/ir/tensor.h"
 #include "core/logging.h"
@@ -44,7 +45,7 @@ Chunk::Chunk() {
     owner_     = nullptr;
 }
 
-Chunk::Chunk(Tensor* owner, uint32_t byte_size, void* data) {
+Chunk::Chunk(Tensor* owner, uint32_t byte_size, void* data) : Chunk() {
     set_data(owner, byte_size, data);
 }
 
@@ -66,6 +67,19 @@ void Chunk::set_data(Tensor* owner, uint32_t byte_size, void* data) {
     owner_ = owner;
 }
 
+void Chunk::set_data(uint32_t byte_size, void* data) {
+    if (data == nullptr) {
+        data_ = malloc(byte_size);
+        CHECK(data_!=nullptr, "Alloc memory failed.");
+        own_data_ = true;
+    } else {
+        _release_data();
+        data_ = data;
+        own_data_ = false;
+    }
+    byte_size_ = byte_size;
+}
+
 uint32_t Chunk::get_byte_size() const {
     return byte_size_;
 }
@@ -74,7 +88,14 @@ const void* Chunk::get_data_ptr() const {
     return data_;
 }
 
-void* Chunk::get_mutable_data_ptr() const {
+void* Chunk::get_mutable_data_ptr() { // copy-on-write
+    if (!own_data_) {
+        CHECK(byte_size_>0, "Chunk byte size must greater than zero.");
+        void* tmp_data = malloc(byte_size_);
+        memcpy(tmp_data, data_, byte_size_);
+        data_ = tmp_data;
+        own_data_ = true;
+    }
     return data_;
 }
 

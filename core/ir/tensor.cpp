@@ -52,7 +52,8 @@ Tensor::Tensor(const std::vector<uint32_t>& dims, DataType data_type, void* mem)
 void Tensor::set_data(const std::vector<uint32_t>& dims, DataType data_type, void* mem) {
     CHECK(dims.size() != 0, "Please make sure your dims size is not 0.");
     CHECK(dims.size() <= MAX_DIMS_SIZE, "Please make sure your dims size is not out of range.");
-    dims_ = dims;
+    set_dims(dims);
+    set_data_type(data_type);
     int elem_num = 1;
     for (auto& it : dims) {
         elem_num *= it;
@@ -69,7 +70,7 @@ void Tensor::set_name(const std::string& name) {
     name_ = name;
 }
 
-const std::string& Tensor::get_name() const {
+const std::string& Tensor::name() const {
     return name_;
 }
 
@@ -109,6 +110,46 @@ const std::vector<uint32_t>& Tensor::dims() const {
     return dims_;
 }
 
+Tensor& Tensor::operator=(const Tensor& rhs) {
+    if (this == &rhs) {
+        return *this;
+    }
+    set_name(rhs.name());
+    set_dims(rhs.dims());
+    byte_size_ = rhs.byte_size();
+    mem_ = new Chunk(this, byte_size_, rhs.chunk()->get_mutable_data_ptr());
+    return *this;
+}
+
+DataType Tensor::get_data_type() const {
+    return data_type_;
+}
+
+void Tensor::set_data_type(const DataType& data_type) {
+    data_type_ = data_type;
+}
+
+void Tensor::set_dims(const std::vector<uint32_t>& dims) {
+    //TODO: more check
+    dims_ = dims;
+}
+
+void Tensor::reshape(std::vector<int>& shape) {
+    //TODO
+}
+
+uint32_t Tensor::byte_size() const {
+    return byte_size_;
+}
+
+Chunk* Tensor::chunk() const {
+    return mem_;
+}
+
+Tensor::~Tensor() {
+    delete mem_;
+}
+
 template const uint8_t& Tensor::data(const std::vector<uint32_t>& dims) const;
 template const int8_t& Tensor::data(const std::vector<uint32_t>& dims) const;
 template const int16_t& Tensor::data(const std::vector<uint32_t>& dims) const;
@@ -124,10 +165,6 @@ template uint16_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
 template uint32_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
 template int32_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
 template float& Tensor::mutable_data(const std::vector<uint32_t>& dims);
-
-Tensor::~Tensor() {
-    delete mem_;
-}
 
 } // namespace ir
 } // namespace eutopia

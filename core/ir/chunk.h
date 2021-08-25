@@ -40,16 +40,17 @@ class Tensor;
 class Chunk final {
 public:
     Chunk();
-    virtual ~Chunk();
+    ~Chunk();
     Chunk(Tensor *owner, uint32_t byte_size, void *data = nullptr);
     void set_data(Tensor *owner, uint32_t byte_size, void *data = nullptr);
+    void set_data(uint32_t byte_size, void *data = nullptr);
     uint32_t get_byte_size() const;
 
-    template <typename T> T &at(const uint32_t index);
-
-    const void *get_data_ptr() const;
-    void *get_mutable_data_ptr() const;
-
+    template <typename T> T& at(const uint32_t index);
+    
+    const void* get_data_ptr() const;
+    void* get_mutable_data_ptr();
+    
 protected:
     Tensor *owner_;
     uint32_t byte_size_;
