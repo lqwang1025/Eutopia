@@ -34,9 +34,13 @@
 #include <cstdint>
 
 #include "op/ops_param.h"
-#include "op/op.h"
 
 namespace eutopia {
+
+namespace op {
+class Operator;
+}
+
 namespace core {
 namespace ir {
 
@@ -75,6 +79,13 @@ public:
     bool in_place(void) const;
     void set_weight_shared(bool weight_shared);
     bool weight_shared(void) const;
+    
+    void set_weights(const std::vector<Tensor*>& weights);
+    std::vector<Tensor*> get_weights(void) const;
+    
+    void set_bias(const std::vector<Tensor*>& bias);
+    std::vector<Tensor*> get_bias(void) const;
+    
     bool is_trainning(void) const;
     void set_is_trainning(bool is_trainning);
     const Tensor* get_output_tensor(void) const;

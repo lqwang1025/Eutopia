@@ -28,6 +28,7 @@
 
 #include "op/cpu/convolution2D.h"
 #include "op/ops_param.h"
+#include "core/ir/node.h"
 
 namespace eutopia {
 namespace op {
@@ -40,14 +41,15 @@ Convolution2DOperator::Convolution2DOperator(const BaseParam* op_param) {
 }
 
 void Convolution2DOperator::infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
-    std::cout<<"conv2d"<<std::endl;
+    std::vector<core::ir::Tensor*> weights = node_->get_weights();
+    std::cout<<"debug:"<<weights.size()<<std::endl;
 }
 
-void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
     
 }
 
-void Convolution2DOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+void Convolution2DOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
     
 }
 

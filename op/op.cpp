@@ -34,6 +34,10 @@
 namespace eutopia {
 namespace op {
 
+void Operator::set_node(const core::ir::Node* node) {
+    node_ = node;
+}
+
 void Operator::infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
     std::cout<<"op"<<std::endl;
     return;

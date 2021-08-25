@@ -27,9 +27,12 @@
  */
 
 #include "core/ir/node.h"
+#include "core/ir/tensor.h"
+
 #include "op/op.h"
 #include "op/ops_param.h"
 #include "op/cpu/op_register.h"
+
 #include <iostream>
 
 namespace eutopia {
@@ -74,6 +77,13 @@ void Node::setup(const op::BaseParam* param) {
     set_is_first_node(param->first_op);
     set_is_last_node(param->last_op);
     op_ = op::Holder::get_op_creator(op_type_)(param);
+    op_->set_node(this);
+    output_tensor_ = new Tensor;
+    CHECK(output_tensor_!=nullptr, "Alloc mem failed.")
+    output_tensor_->set_name(param->op_name);
+    diff_tensor_ = new Tensor;
+    CHECK(diff_tensor_!=nullptr, "Alloc mem failed.");
+    diff_tensor_->set_name(param->op_name);
 }
 
 void Node::set_graph(Graph* graph) {
@@ -200,16 +210,33 @@ void Node::set_is_trainning(bool is_trainning) {
     is_trainning_ = is_trainning;
 }
 
+void Node::set_weights(const std::vector<Tensor*>& weights) {
+    weights_ = weights;
+}
+
+std::vector<Tensor*> Node::get_weights(void) const {
+    return weights_;
+}
+    
+void Node::set_bias(const std::vector<Tensor*>& bias) {
+    biases_ = bias;
+}
+
+std::vector<Tensor*> Node::get_bias(void) const {
+    return biases_;
+}
+
 void Node::forward(const std::vector<const Tensor*> input_tensors) {
     op_->infer_shape(input_tensors, output_shape_);
+    op_->forward(input_tensors, output_tensor_);
 }
 
 void Node::backward(void) {
-    
+    //TODO
 }
 
 void Node::update(void) {
-    
+    //TODO
 }
 
 void Node::run(void) {
@@ -217,11 +244,13 @@ void Node::run(void) {
 }
 
 void Node::dump(void) {
-    
+    //todo
 }
 
 Node::~Node(void) {
-    
+    delete op_;
+    delete output_tensor_;
+    delete diff_tensor_;
 }
 
 } // namespace ir

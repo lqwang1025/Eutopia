@@ -43,18 +43,19 @@ void InputOperator::infer_shape(const std::vector<const core::ir::Tensor*> input
     CHECK(input_tensors.size() == 1, "Input node only have one input.");
     const core::ir::Tensor* tensor = input_tensors[0];
     output_shape = tensor->dims();
-    std::cout<<"debug:"<<output_shape.size()<<std::endl;
-    
-    std::vector<uint32_t> input_dims = op_param_->input_dims;
-    std::cout<<"debug:"<<input_dims.size()<<std::endl;
+    // std::vector<uint32_t> input_dims = op_param_->input_dims;
 }
 
-void InputOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
+void InputOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
+    CHECK(input_tensors.size() == 1, "Input node only have one input.");
+    const core::ir::Tensor* input_tensor = input_tensors[0];
+    *output_tensor = *input_tensor;
 }
 
-void InputOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    
+void InputOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
+    CHECK(input_tensors.size() == 1, "Input node only have one input.");
+    const core::ir::Tensor* input_tensor = input_tensors[0];
+    *output_tensor = *input_tensor;
 }
 
 } // namespace cpu
