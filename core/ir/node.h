@@ -40,6 +40,9 @@ namespace eutopia {
 namespace op {
 class Operator;
 }
+namespace utils {
+class Filler;
+}
 
 namespace core {
 namespace ir {
@@ -57,6 +60,8 @@ public:
     void set_name(const std::string& name);
     int32_t get_index(void) const;
     void set_index(const int32_t index);
+    void set_weight_filler(utils::Filler* filler);
+    void set_bias_filler(utils::Filler* filler);
     const std::string& get_op_type(void) const;
     void set_op_type(const std::string& op_type);
     void set_output_shape(const std::vector<uint32_t>& output_shape);
@@ -80,17 +85,18 @@ public:
     void set_weight_shared(bool weight_shared);
     bool weight_shared(void) const;
     
-    void set_weights(const std::vector<Tensor*>& weights);
-    std::vector<Tensor*> get_weights(void) const;
+    void set_weight(Tensor* weight);
+    Tensor* get_weight(void) const;
     
-    void set_bias(const std::vector<Tensor*>& bias);
-    std::vector<Tensor*> get_bias(void) const;
+    void set_bias(Tensor* bias);
+    Tensor* get_bias(void) const;
     
     bool is_trainning(void) const;
     void set_is_trainning(bool is_trainning);
     const Tensor* get_output_tensor(void) const;
     void set_graph(Graph* graph);
     const Graph* get_graph(void) const;
+    void infer_shape(const std::vector<uint32_t>& input_shape);
     void dump(void);
     void forward(const std::vector<const Tensor*> input_tensors);
     void backward(void);
@@ -113,12 +119,15 @@ private:
     std::vector<uint32_t> output_shape_;
     std::vector<std::string> producers_;
     std::vector<std::string> consumers_;
-    std::vector<Tensor*> weights_;
-    std::vector<Tensor*> biases_;
+    Tensor* weight_;
+    Tensor* bias_;
     Tensor* output_tensor_;
     Tensor* diff_tensor_;
     Graph* graph_; // The graph that owned this node.
+    utils::Filler* weight_filler_;
+    utils::Filler* bias_filler_;
 private:
+    void _fill_weight_bias();
     Node& operator=(Node&);
     Node(const Node&);
 };

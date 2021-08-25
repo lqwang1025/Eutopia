@@ -53,7 +53,7 @@ class Operator {
 public:
     Operator(){};
     virtual ~Operator(){};
-    virtual void infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape);
+    virtual void infer_shape(const std::vector<uint32_t>& input_shape, std::vector<uint32_t>& output_shape);
     virtual void forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
     virtual void backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
     void set_node(const core::ir::Node* node);
@@ -108,7 +108,7 @@ public:
 
 
 #define REGISERT_OP_CLASS(op_type, op)                              \
-    Operator* Creator_##op_type(const BaseParam* op_param) { \
+    Operator* Creator_##op_type(const BaseParam* op_param) {        \
         return new op(op_param);                                    \
     }                                                               \
     REGISTER_OP_CREATOR(op_type, Creator_##op_type)
@@ -117,7 +117,7 @@ public:
     class sub_class : public Operator {                                 \
     public:                                                             \
     sub_class(const BaseParam* op_param);                               \
-    virtual void infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape); \
+    virtual void infer_shape(const std::vector<uint32_t>& input_shape, std::vector<uint32_t>& output_shape); \
     virtual void forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
     virtual void backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
     private:                                                            \

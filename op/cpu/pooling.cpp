@@ -39,7 +39,7 @@ PoolingOperator::PoolingOperator(const BaseParam* op_param) {
     op_param_ = pool_param;
 }
 
-void PoolingOperator::infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
+void PoolingOperator::infer_shape(const std::vector<uint32_t>& input_shape, std::vector<uint32_t>& output_shape) {
     std::cout<<"pooling"<<std::endl;
 }
 

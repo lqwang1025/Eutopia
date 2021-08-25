@@ -27,6 +27,8 @@
  * Description:
  */
 
+#include <set>
+
 #include "core/ir/tensor.h"
 #include "core/logging.h"
 #include "utils/filler.h"
@@ -124,7 +126,6 @@ void MSRAFiller::fill(core::ir::Tensor* tensor) {
         Distributions::normal(tensor, 0.0f, std);
     }
 }
-
 
 } // namespace utils
 } // namespace eutopia

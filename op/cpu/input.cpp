@@ -39,10 +39,8 @@ InputOperator::InputOperator(const BaseParam* op_param) {
     op_param_ = input_param;
 }
 
-void InputOperator::infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
-    CHECK(input_tensors.size() == 1, "Input node only have one input.");
-    const core::ir::Tensor* tensor = input_tensors[0];
-    output_shape = tensor->dims();
+void InputOperator::infer_shape(const std::vector<uint32_t>& input_shape, std::vector<uint32_t>& output_shape) {
+    output_shape = input_shape;
     // std::vector<uint32_t> input_dims = op_param_->input_dims;
 }
 

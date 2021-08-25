@@ -74,7 +74,7 @@ public:
     
     const Tensor* get_output_tensor(const std::string& node_name) const;
 
-    void sort_by_execute(void);
+    void warm_up(void);
     
     bool is_trainning(void) const;
     void set_is_trainning(bool is_trainning);
@@ -90,6 +90,8 @@ private:
     std::unordered_map<std::string, const Tensor*> input_tensors_;
     std::unordered_map<std::string, Tensor*> output_tensors_;
 private:
+    void _sort_by_execution();
+    void _setup_node();
     void _top_sort(std::unordered_map< std::string, std::vector<std::string> >& name_producers);
     Graph& operator=(Graph&);
     Graph(Graph&);

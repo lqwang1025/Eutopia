@@ -35,6 +35,7 @@
 #include "absl/strings/strip.h"
 #include "absl/strings/string_view.h"
 #include "core/ir/graph.h"
+#include "utils/filler.h"
 #include "io/cfg_parser.h"
 #include "CJsonObject.hpp"
 
@@ -209,9 +210,25 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
             c_json.Get("group", conv_param.group);
             
         } else if (param[0] == "weight_filler") {
-            
+            absl::string_view param_item = param[1];
+            do {
+                absl::ConsumePrefix(&param_item, " ");
+                absl::ConsumeSuffix(&param_item, " ");
+            } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
+            if (param_item == "xavier") {
+                utils::XavierFiller* filler = new utils::XavierFiller;
+                node->set_weight_filler(filler);
+            }
         } else if (param[0] == "bias_filler") {
-            
+            absl::string_view param_item = param[1];
+            do {
+                absl::ConsumePrefix(&param_item, " ");
+                absl::ConsumeSuffix(&param_item, " ");
+            } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
+            if (param_item == "constant") {
+                utils::ConstantFiller* filler = new utils::ConstantFiller(1.0);//TODO
+                node->set_bias_filler(filler);
+            }
         } else if (param[0] == "producer") {
             std::vector<std::string> p_param= absl::StrSplit(param[1].substr(1, param[1].size()-2), absl::ByChar(','));
             for (auto it : p_param) {
@@ -313,9 +330,25 @@ void CfgParser::init_fc_param(std::fstream& file, core::ir::Graph* graph) {
                 }
             }
         } else if (param[0] == "weight_filler") {
-            
+            absl::string_view param_item = param[1];
+            do {
+                absl::ConsumePrefix(&param_item, " ");
+                absl::ConsumeSuffix(&param_item, " ");
+            } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
+            if (param_item == "xavier") {
+                utils::XavierFiller* filler = new utils::XavierFiller;
+                node->set_weight_filler(filler);
+            }
         } else if (param[0] == "bias_filler") {
-            
+            absl::string_view param_item = param[1];
+            do {
+                absl::ConsumePrefix(&param_item, " ");
+                absl::ConsumeSuffix(&param_item, " ");
+            } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
+            if (param_item == "constant") {
+                utils::ConstantFiller* filler = new utils::ConstantFiller(1.0);//TODO
+                node->set_bias_filler(filler);
+            }
         } else {
             EU_WARN<<"Need to add param " <<param[0]<<" to fc node."<<EU_ENDL;
         }

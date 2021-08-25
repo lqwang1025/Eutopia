@@ -138,7 +138,7 @@ void Graph::_top_sort(std::unordered_map< std::string, std::vector<std::string> 
     _top_sort(name_producers);
 }
 
-void Graph::sort_by_execute(void) {
+void Graph::_sort_by_execution() {
     std::unordered_map< std::string, std::vector<std::string> > name_producers;
     for (int i = 0; i < (int)own_nodes_.size(); ++i) {
         Node* node = own_nodes_[i];
@@ -146,6 +146,9 @@ void Graph::sort_by_execute(void) {
         node_name_map_[node->get_name()] = node;
     }
     _top_sort(name_producers);
+}
+
+void Graph::_setup_node() {
     for (int  i = 0; i < seq_nodes_.size(); ++i) {
         Node* node = seq_nodes_[i];
         node->set_index(i);
@@ -165,7 +168,13 @@ void Graph::sort_by_execute(void) {
             output_nodes_.push_back(node);
             node->set_is_last_node(true);
         }
+        node->warm_up();
     }
+}
+
+void Graph::warm_up(void) {
+    _sort_by_execution();
+    _setup_node();
 }
 
 const Tensor* Graph::get_output_tensor(const std::string& node_name) const {

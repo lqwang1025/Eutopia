@@ -56,16 +56,28 @@ Node::Node(Graph* graph): graph_(graph) {
     device_ = "";
     producers_.resize(0);
     consumers_.resize(0);
-    weights_.resize(0);
-    biases_.resize(0);
+    weight_ = nullptr;
+    bias_ = nullptr;
     output_tensor_ = nullptr;
     diff_tensor_ = nullptr;
+    weight_filler_ = nullptr;
+    bias_filler_ = nullptr;
     set_is_trainning(false);
     set_dynamic_shape(false);
 }
 
 Node::Node(Graph* graph, const op::BaseParam* param): Node(graph) {
     setup(param);
+}
+
+void Node::_fill_weight_bias() {
+    if (weight_filler_ != nullptr) {
+        weight_ = new Tensor();
+        std::cout<<"weight_filler"<<std::endl;
+    }
+    if (bias_filler_ != nullptr) {
+        std::cout<<"bias_filler"<<std::endl;
+    }
 }
 
 void Node::setup(const op::BaseParam* param) {
@@ -86,12 +98,24 @@ void Node::setup(const op::BaseParam* param) {
     diff_tensor_->set_name(param->op_name);
 }
 
+void Node::infer_shape(const std::vector<uint32_t>& input_shape) {
+    
+}
+
 void Node::set_graph(Graph* graph) {
     graph_ = graph;
 }
 
 const Graph* Node::get_graph(void) const {
     return graph_;
+}
+
+void Node::set_weight_filler(utils::Filler* filler) {
+    weight_filler_ = filler;
+}
+
+void Node::set_bias_filler(utils::Filler* filler) {
+    bias_filler_ = filler;
 }
 
 const std::string& Node::get_name(void) const {
@@ -210,24 +234,23 @@ void Node::set_is_trainning(bool is_trainning) {
     is_trainning_ = is_trainning;
 }
 
-void Node::set_weights(const std::vector<Tensor*>& weights) {
-    weights_ = weights;
+void Node::set_weight(Tensor* weight) {
+    weight_ = weight;
 }
 
-std::vector<Tensor*> Node::get_weights(void) const {
-    return weights_;
+Tensor* Node::get_weight(void) const {
+    return weight_;
 }
     
-void Node::set_bias(const std::vector<Tensor*>& bias) {
-    biases_ = bias;
+void Node::set_bias(Tensor* bias) {
+    bias_ = bias;
 }
 
-std::vector<Tensor*> Node::get_bias(void) const {
-    return biases_;
+Tensor* Node::get_bias(void) const {
+    return bias_;
 }
 
 void Node::forward(const std::vector<const Tensor*> input_tensors) {
-    op_->infer_shape(input_tensors, output_shape_);
     op_->forward(input_tensors, output_tensor_);
 }
 

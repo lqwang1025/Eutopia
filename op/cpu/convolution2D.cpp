@@ -40,9 +40,8 @@ Convolution2DOperator::Convolution2DOperator(const BaseParam* op_param) {
     op_param_ = conv_param;
 }
 
-void Convolution2DOperator::infer_shape(const std::vector<const core::ir::Tensor*> input_tensors, std::vector<uint32_t>& output_shape) {
-    std::vector<core::ir::Tensor*> weights = node_->get_weights();
-    std::cout<<"debug:"<<weights.size()<<std::endl;
+void Convolution2DOperator::infer_shape(const std::vector<uint32_t>& input_shape, std::vector<uint32_t>& output_shape) {
+    core::ir::Tensor* weight = node_->get_weight();
 }
 
 void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {

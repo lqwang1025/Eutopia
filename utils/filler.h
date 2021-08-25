@@ -38,7 +38,7 @@ class Tensor;
 }
 
 namespace utils {
-
+    
 class Filler {
 public:
     Filler();
