@@ -105,6 +105,7 @@ link_directories(${ABSEIL_DIR}/lib)
 
 #add source file
 file(GLOB CORE_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/*.cpp"   "${CMAKE_CURRENT_SOURCE_DIR}/core/ir/*.cpp")
+file(GLOB CORE_UTILS     "${CMAKE_CURRENT_SOURCE_DIR}/utils/*.cpp")
 file(GLOB CORE_FRAMEWOEK_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cc" "${CMAKE_CURRENT_SOURCE_DIR}/core/framework/*.cpp")
 file(GLOB CORE_CV_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/cv/*.cpp")
 file(GLOB_RECURSE OP_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/op/*.cpp")
@@ -114,7 +115,7 @@ file(GLOB THIRD_SRC       "${CMAKE_CURRENT_SOURCE_DIR}/third_party/CJsonObject/*
 list(APPEND EUPOTIA_SRC
   ${CORE_SRC} ${CORE_FRAMEWOEK_SRC}
   ${OP_SRC} ${THIRD_SRC} ${IO_SRC}
-  ${CORE_CV_SRC})
+  ${CORE_CV_SRC} ${CORE_UTILS})
 
 # add header file
 file(GLOB CORE_HEAD
