@@ -38,18 +38,5 @@ void Operator::set_node(const core::ir::Node* node) {
     node_ = node;
 }
 
-void Operator::infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) {
-    std::cout<<"op"<<std::endl;
-    return;
-}
-
-void Operator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    return;
-}
-
-void Operator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
-    return;
-}
-
 } // namespace op
 } // namespace eutopia

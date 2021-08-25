@@ -101,6 +101,7 @@ public:
     void set_graph(Graph* graph);
     const Graph* get_graph(void) const;
     void infer_shape(const InputShapes& input_shape);
+    void fill_weight_bias();
     void dump(void);
     void forward(const std::vector<const Tensor*> input_tensors);
     void backward(void);
@@ -132,7 +133,6 @@ private:
     utils::Filler* weight_filler_;
     utils::Filler* bias_filler_;
 private:
-    void _fill_weight_bias();
     Node& operator=(Node&);
     Node(const Node&);
 };

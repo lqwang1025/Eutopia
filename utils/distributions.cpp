@@ -77,7 +77,7 @@ static void _truncated_data_fill(core::ir::Tensor* tensor, T distribution, std::
 
 void Distributions::uniform(core::ir::Tensor* tensor, float min, float max, int seed) {
     CHECK(tensor->get_data_type() == core::DataType::EUTOPIA_DT_FP32, "Filler now only support float weight.");
-    CHECK(min < max, "Are you kidding me?");
+    CHECK(min <= max, "Are you kidding me?");
     std::mt19937 mt(seed);
     std::uniform_real_distribution<float> uniform(min, max);
     _data_fill(tensor, uniform, mt);

@@ -170,6 +170,7 @@ void Graph::_setup_node() {
             output_nodes_.push_back(node);
             node->set_is_last_node(true);
         }
+        
         InputShapes input_shapes(0);
         if (node->is_first_node()) {
             input_shapes = node->get_input_shapes();
@@ -178,9 +179,12 @@ void Graph::_setup_node() {
             for (auto it : node->get_producers()) {
                 const Node* papa = node_name_map_.at(it);
                 input_shapes.push_back(papa->get_output_shape());
+                node->set_input_shape(papa->get_output_shape());
             }
         }
         node->infer_shape(input_shapes);
+        
+        node->fill_weight_bias();
     }
 }
 

@@ -29,7 +29,7 @@
 #include "op/cpu/convolution2D.h"
 #include "op/ops_param.h"
 #include "core/ir/node.h"
-
+#include "core/logging.h"
 namespace eutopia {
 namespace op {
 namespace cpu {
@@ -41,11 +41,26 @@ Convolution2DOperator::Convolution2DOperator(const BaseParam* op_param) {
 }
 
 void Convolution2DOperator::infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) {
-    core::ir::Tensor* weight = node_->get_weight();
+    CHECK(input_shapes.size()==1, "Now conv2d only support 1 input.");
+    std::vector<uint32_t> input_shape = input_shapes[0];
+    CHECK(input_shape.size()!=0,);
+    std::vector<uint32_t> kernel_shape = op_param_->kernel_shape; // h w ic oc
+    CHECK(kernel_shape.size()==4,);
+    std::vector<uint32_t> strides      = op_param_->strides; // h w
+    CHECK(strides.size()==2,);
+    std::vector<uint32_t> dilations    = op_param_->dilations; // h w h w
+    CHECK(dilations.size()==4,);
+    std::vector<int32_t> pads          = op_param_->pads; // t b l r
+    CHECK(pads.size()==4,);
+    uint32_t kernel_extent_h           = dilations[0] * (kernel_shape[0] - 1) + 1;
+    uint32_t kernel_extent_w           = dilations[1] * (kernel_shape[1] - 1) + 1;
+    uint32_t output_h                  = (input_shape[1] + pads[0] + pads[1] - kernel_extent_h) / strides[0] + 1;
+    uint32_t output_w                  = (input_shape[2] + pads[2] + pads[3] - kernel_extent_w) / strides[1] + 1;
+    output_shape = {input_shape[0], output_h, output_w, kernel_shape[3]};
 }
 
 void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
-    
+    core::ir::Tensor* weight = node_->get_weight();
 }
 
 void Convolution2DOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {

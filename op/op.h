@@ -50,13 +50,14 @@ struct BaseParam;
 
 
 class Operator {
+    friend class core::ir::Node;
 public:
     using InputShapes = std::vector< std::vector<uint32_t> >;
     Operator(){};
     virtual ~Operator(){};
-    virtual void infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape);
-    virtual void forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
-    virtual void backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor);
+    virtual void infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) = 0;
+    virtual void forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) = 0;
+    virtual void backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) = 0;
     void set_node(const core::ir::Node* node);
 protected:
     const core::ir::Node* node_ = nullptr;
@@ -116,11 +117,12 @@ public:
 
 #define DECLARE_OPERATOR(param_type, sub_class)                         \
     class sub_class : public Operator {                                 \
+        friend class core::ir::Node;                                    \
     public:                                                             \
     sub_class(const BaseParam* op_param);                               \
-    virtual void infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape); \
-    virtual void forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
-    virtual void backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor); \
+    virtual void infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) override; \
+    virtual void forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) override; \
+    virtual void backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) override; \
     private:                                                            \
     param_type* op_param_;                                              \
     sub_class();                                                        \

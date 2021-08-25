@@ -46,24 +46,21 @@ core::ir::Graph* CfgParser::operator() (const char* file_name) {
     core::ir::Graph* graph = new core::ir::Graph;
     std::fstream file;
     file.open(file_name, std::fstream::in);
-    if (file.is_open()) {
-        std::string line;
-        while(std::getline(file, line)) {
-            absl::string_view strip_line = line;
-            absl::ConsumePrefix(&strip_line, " ");
-            absl::ConsumeSuffix(&strip_line, " ");
-            if (strip_line == "" || strip_line[0] == '#') continue;
-            if (strip_line[0] == '[') {
-                line = line.substr(1, line.size()-2);                
-                if (param_parse_methods.count(line) != 0) {
-                    (this->*param_parse_methods[line])(file, graph);
-                } else {
-                    EU_ERROR<<"Unsupport " <<strip_line<<" type."<<EU_ENDL;
-                }
+    CHECK(file.is_open(), "Model config file open failed.");
+    std::string line;
+    while(std::getline(file, line)) {
+        absl::string_view strip_line = line;
+        absl::ConsumePrefix(&strip_line, " ");
+        absl::ConsumeSuffix(&strip_line, " ");
+        if (strip_line == "" || strip_line[0] == '#') continue;
+        if (strip_line[0] == '[') {
+            line = line.substr(1, line.size()-2);                
+            if (param_parse_methods.count(line) != 0) {
+                (this->*param_parse_methods[line])(file, graph);
+            } else {
+                EU_ERROR<<"Unsupport " <<strip_line<<" type."<<EU_ENDL;
             }
         }
-    } else {
-        EU_ERROR<<"Open" <<file_name<<" failed."<<EU_ENDL;
     }
     file.close();
     return graph;
@@ -183,8 +180,8 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
             CHECK(c_json["kernels"].GetArraySize() > 1, "Conv parameter kernels size must be greater than 1.");
             c_json["kernels"].Get(0, kh);
             c_json["kernels"].Get(1, kw);
-            if (c_json["kernels"].GetArraySize() > 3) {
-                c_json["kernels"].Get(1, ic);
+            if (c_json["kernels"].GetArraySize() == 3) {
+                c_json["kernels"].Get(2, ic);
             }
             conv_param.kernel_shape = {kh, kw, ic, oc};
             

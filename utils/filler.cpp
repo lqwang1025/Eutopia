@@ -83,7 +83,7 @@ void TruncatedNormalFiller::fill(core::ir::Tensor* tensor) {
 }
 
 void XavierFiller::fill(core::ir::Tensor* tensor) {
-    CHECK(tensor->dims_size() == 4, "Xavier filler only dims 4.")
+    CHECK(tensor->dims_size() == 4, "Xavier filler only dims 4.");
     float n;
     auto dims = tensor->dims();
     int fan_in = dims[1] * dims[2] * dims[3];

@@ -32,6 +32,7 @@
 #include "op/op.h"
 #include "op/ops_param.h"
 #include "op/cpu/op_register.h"
+#include "utils/filler.h"
 
 #include <iostream>
 
@@ -72,16 +73,6 @@ Node::Node(Graph* graph, const op::BaseParam* param): Node(graph) {
     setup(param);
 }
 
-void Node::_fill_weight_bias() {
-    if (weight_filler_ != nullptr) {
-        weight_ = new Tensor();
-        std::cout<<"weight_filler"<<std::endl;
-    }
-    if (bias_filler_ != nullptr) {
-        std::cout<<"bias_filler"<<std::endl;
-    }
-}
-
 void Node::setup(const op::BaseParam* param) {
     set_op_type(param->op_type);
     set_name(param->op_name);
@@ -102,7 +93,9 @@ void Node::setup(const op::BaseParam* param) {
 
 void Node::infer_shape(const InputShapes& input_shapes) {
     op_->infer_shape(input_shapes, output_shape_);
-    std::cout<<"debug:"<<output_shape_.size()<<std::endl;
+    for (auto it : output_shape_) {
+        std::cout<<it<<std::endl;
+    }
 }
 
 void Node::set_graph(Graph* graph) {
@@ -259,6 +252,58 @@ void Node::set_input_shape(const std::vector<uint32_t>& input_shape) {
 
 const InputShapes& Node::get_input_shapes(void) const {
     return input_shapes_;
+}
+
+void Node::fill_weight_bias() {
+    if (op_type_ == CONVOLUTION2D) {
+        CHECK(weight_filler_!=nullptr, "Please assign weight filler.");
+        CHECK(bias_filler_!=nullptr, "Please assign bias filler.");
+        op::cpu::Convolution2DOperator* conv2d_op = static_cast<op::cpu::Convolution2DOperator*>(op_);
+        op::Convolution2DParam* op_param = conv2d_op->op_param_;
+        std::vector<uint32_t> kernel_shape = op_param->kernel_shape;
+        CHECK(kernel_shape.size() == 4, "");
+        if (kernel_shape[2] == 0) {
+            uint32_t ic = 0;
+            for (int i = 0; i < input_shapes_.size(); ++i) {
+                CHECK(input_shapes_[i].size()==4,"");
+                ic += input_shapes_[i][3];
+            }
+            op_param->kernel_shape[2] = ic;
+            kernel_shape[2] = ic;
+        }
+        weight_ = new Tensor(kernel_shape, DataType::EUTOPIA_DT_FP32);
+        weight_filler_->fill(weight_);
+        bias_ = new Tensor({kernel_shape[3]}, DataType::EUTOPIA_DT_FP32);
+        bias_filler_->fill(bias_);
+    } else if (op_type_ == FULLYCONNECTED) {
+        CHECK(weight_filler_!=nullptr, "Please assign weight filler.");
+        CHECK(bias_filler_!=nullptr, "Please assign bias filler.");
+        op::cpu::FullyConnectedOperator* fc_op = static_cast<op::cpu::FullyConnectedOperator*>(op_);
+        op::FullyConnectedParam* op_param = fc_op->op_param_;
+        uint32_t num_outputs = op_param->num_outputs;
+        uint32_t num_inputs = 0;
+        for (int i = 0; i < (int)input_shapes_.size(); ++i) {
+            uint32_t flatten = 1;
+            for (int _i = 0; _i < (int)input_shapes_[i].size(); ++_i) {
+                flatten *= input_shapes_[i][_i];
+            }
+            num_inputs += flatten;
+        }
+        CHECK(num_inputs!=0,"");
+        std::vector<uint32_t> kernel_shape = {num_inputs, num_outputs};
+        weight_ = new Tensor(kernel_shape, DataType::EUTOPIA_DT_FP32);
+        weight_filler_->fill(weight_);
+        bias_ = new Tensor({num_outputs}, DataType::EUTOPIA_DT_FP32);
+        bias_filler_->fill(bias_);
+        std::cout<<"num_outputs:"<<num_outputs<<std::endl;
+    } else {
+        std::cout<<"node->"<<op_type_<<" do not need weight;"<<std::endl;
+    }
+    
+    
+    if (bias_filler_ != nullptr) {
+        std::cout<<"bias_filler"<<std::endl;
+    }
 }
 
 void Node::forward(const std::vector<const Tensor*> input_tensors) {
