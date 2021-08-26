@@ -122,12 +122,12 @@ void CfgParser::init_input_param(std::fstream& file, core::ir::Graph* graph) {
             if (!c_json.Parse(param[1].c_str())) {
                 EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
-            uint32_t batch, height, width, channels;
+            uint32_t batch = 0, height = 0, width = 0, channels = 0;
             c_json["shape"].Get("batch", batch);
+            c_json["shape"].Get("channels", channels);
             c_json["shape"].Get("height", height);
             c_json["shape"].Get("width", width);
-            c_json["shape"].Get("channels", channels);
-            input_param.input_dims = {batch, height, width, channels};
+            input_param.input_dims = {batch, channels, height, width}; // NCHW
             node->set_input_shape(input_param.input_dims);
         } else if (param[0] == "preprocess") {
             neb::CJsonObject c_json;
@@ -174,7 +174,7 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
             if (!c_json.Parse(param[1].c_str())) {
                 EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
-            uint32_t oc, kh, kw, ic = 0;
+            uint32_t oc = 0, kh = 0, kw = 0, ic = 0;
             c_json.Get("filters", oc);
             uint32_t value = 0;
             CHECK(c_json["kernels"].GetArraySize() > 1, "Conv parameter kernels size must be greater than 1.");
@@ -183,7 +183,7 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
             if (c_json["kernels"].GetArraySize() == 3) {
                 c_json["kernels"].Get(2, ic);
             }
-            conv_param.kernel_shape = {kh, kw, ic, oc};
+            conv_param.kernel_shape = {oc, ic, kh, kw}; // OcIcHW
             
             conv_param.strides.resize(2);
             CHECK(c_json["strides"].GetArraySize() == 2, "Conv parameter stride size must be 2.");

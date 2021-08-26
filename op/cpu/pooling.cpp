@@ -43,15 +43,15 @@ PoolingOperator::PoolingOperator(const BaseParam* op_param) {
 
 void PoolingOperator::infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) {
     CHECK(input_shapes.size()==1, "Now pooling only support 1 input.");
-    std::vector<uint32_t> input_shape = input_shapes[0]; // n h w c
+    std::vector<uint32_t> input_shape = input_shapes[0]; // n c h w
     std::vector<uint32_t> kernels = op_param_->kernels; // h w
     std::vector<uint32_t> strides = op_param_->strides; // h w
     CHECK(input_shape.size()!=0,);
     std::vector<uint32_t> pads = {0, 0}; // todo : add pads in parmeter
     
-    uint32_t pooled_h = static_cast<int32_t>(std::ceil(static_cast<float>(input_shape[1] + 2*pads[0] - kernels[0]) / strides[0])) + 1;
-    uint32_t pooled_w = static_cast<int32_t>(std::ceil(static_cast<float>(input_shape[2] + 2*pads[1] - kernels[1]) / strides[1])) + 1;
-    output_shape = {input_shape[0], pooled_h, pooled_w, input_shape[3]};
+    uint32_t pooled_h = static_cast<int32_t>(std::ceil(static_cast<float>(input_shape[2] + 2*pads[0] - kernels[0]) / strides[0])) + 1;
+    uint32_t pooled_w = static_cast<int32_t>(std::ceil(static_cast<float>(input_shape[3] + 2*pads[1] - kernels[1]) / strides[1])) + 1;
+    output_shape = {input_shape[0], input_shape[1], pooled_h, pooled_w};
 }
 
 void PoolingOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {

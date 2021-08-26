@@ -32,6 +32,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <map>
 
 #include "op/ops_param.h"
 
@@ -133,6 +134,13 @@ private:
     utils::Filler* weight_filler_;
     utils::Filler* bias_filler_;
 private:
+    typedef void (Node::*FillFunc)();
+    void _conv2d_filler();
+    void _fc_filler();
+    std::map<std::string, FillFunc> fill_func_map_ {
+        {CONVOLUTION2D, &Node::_conv2d_filler},
+        {FULLYCONNECTED, &Node::_fc_filler}
+    };
     Node& operator=(Node&);
     Node(const Node&);
 };

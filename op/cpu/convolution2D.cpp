@@ -42,9 +42,9 @@ Convolution2DOperator::Convolution2DOperator(const BaseParam* op_param) {
 
 void Convolution2DOperator::infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) {
     CHECK(input_shapes.size()==1, "Now conv2d only support 1 input.");
-    std::vector<uint32_t> input_shape = input_shapes[0]; // n h w c
+    std::vector<uint32_t> input_shape = input_shapes[0]; // n c h w
     CHECK(input_shape.size()!=0,);
-    std::vector<uint32_t> kernel_shape = op_param_->kernel_shape; // h w ic oc
+    std::vector<uint32_t> kernel_shape = op_param_->kernel_shape; // oc ic h w
     CHECK(kernel_shape.size()==4,);
     std::vector<uint32_t> strides      = op_param_->strides; // h w
     CHECK(strides.size()==2,);
@@ -53,8 +53,8 @@ void Convolution2DOperator::infer_shape(const InputShapes& input_shapes, std::ve
     std::string pad_type               = op_param_->pad_type;
     std::vector<int32_t> pads; // t b l r
     if (pad_type == "SAME") {
-        int pad_h = ((input_shape[1]-1)*strides[0]+kernel_shape[0] - input_shape[1]) >> 1;
-        int pad_w = ((input_shape[2]-1)*strides[1]+kernel_shape[1] - input_shape[2]) >> 1;
+        int pad_h = ((input_shape[2]-1)*strides[0]+kernel_shape[2] - input_shape[2]) >> 1;
+        int pad_w = ((input_shape[3]-1)*strides[1]+kernel_shape[3] - input_shape[3]) >> 1;
         pads = {pad_h, pad_h, pad_w, pad_w};
     } else if (pad_type == "VALID") {
         pads = op_param_->pads; // t b l r
@@ -63,11 +63,11 @@ void Convolution2DOperator::infer_shape(const InputShapes& input_shapes, std::ve
     }
     
     CHECK(pads.size()==4,);
-    uint32_t kernel_extent_h           = dilations[0] * (kernel_shape[0] - 1) + 1;
-    uint32_t kernel_extent_w           = dilations[1] * (kernel_shape[1] - 1) + 1;
-    uint32_t output_h                  = (input_shape[1] + pads[0] + pads[1] - kernel_extent_h) / strides[0] + 1;
-    uint32_t output_w                  = (input_shape[2] + pads[2] + pads[3] - kernel_extent_w) / strides[1] + 1;
-    output_shape = {input_shape[0], output_h, output_w, kernel_shape[3]};
+    uint32_t kernel_extent_h = dilations[0] * (kernel_shape[2] - 1) + 1;
+    uint32_t kernel_extent_w = dilations[1] * (kernel_shape[3] - 1) + 1;
+    uint32_t output_h        = (input_shape[2] + pads[0] + pads[1] - kernel_extent_h) / strides[0] + 1;
+    uint32_t output_w        = (input_shape[3] + pads[2] + pads[3] - kernel_extent_w) / strides[1] + 1;
+    output_shape             = {input_shape[0], kernel_shape[0], output_h, output_w};
 }
 
 void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
