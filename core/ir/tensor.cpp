@@ -106,6 +106,19 @@ T& Tensor::mutable_data(const std::vector<uint32_t>& indices) {
     return value;
 }
 
+template<typename T>
+const T& Tensor::data(uint32_t index) const {
+    const T& value = mem_->at<T>(index);
+    return value;
+}
+    
+template<typename T>
+T& Tensor::mutable_data(uint32_t index) {
+    T& value = mem_->at<T>(index);
+    return value;
+}
+    
+
 const std::vector<uint32_t>& Tensor::dims() const {
     return dims_;
 }
@@ -165,6 +178,22 @@ template uint16_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
 template uint32_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
 template int32_t& Tensor::mutable_data(const std::vector<uint32_t>& dims);
 template float& Tensor::mutable_data(const std::vector<uint32_t>& dims);
+
+template uint8_t& Tensor::mutable_data(uint32_t index);
+template int8_t& Tensor::mutable_data(uint32_t index);
+template int16_t& Tensor::mutable_data(uint32_t index);
+template uint16_t& Tensor::mutable_data(uint32_t index);
+template uint32_t& Tensor::mutable_data(uint32_t index);
+template int32_t& Tensor::mutable_data(uint32_t index);
+template float& Tensor::mutable_data(uint32_t index);
+
+template const uint8_t& Tensor::data(uint32_t index) const;
+template const int8_t& Tensor::data(uint32_t index) const;
+template const int16_t& Tensor::data(uint32_t index) const;
+template const uint16_t& Tensor::data(uint32_t index) const;
+template const uint32_t& Tensor::data(uint32_t index) const;
+template const int32_t& Tensor::data(uint32_t index) const;
+template const float& Tensor::data(uint32_t index) const;
 
 } // namespace ir
 } // namespace eutopia

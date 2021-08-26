@@ -56,6 +56,13 @@ public:
     
     template<typename T>
     T& mutable_data(const std::vector<uint32_t>& indices);
+
+    template<typename T>
+    const T& data(uint32_t index) const;
+    
+    template<typename T>
+    T& mutable_data(uint32_t index);
+    
     uint8_t dims_size() const;
     void set_dims(const std::vector<uint32_t>& dims);
     const std::vector<uint32_t>& dims() const;

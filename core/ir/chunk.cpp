@@ -106,9 +106,10 @@ void Chunk::_release_data() {
 }
 
 template <typename T>
-T& Chunk::at(const uint32_t index) {
+T& Chunk::at(uint32_t index) {
+    //TODO check index range
     void* data = data_;
-    uint8_t data_type_bytes = get_data_type_byte(owner_->data_type_);
+    uint8_t data_type_bytes = get_data_type_byte(owner_->data_type_); // fix me
     return ((T*)((uint8_t*)data + index * data_type_bytes))[0];
 }
 

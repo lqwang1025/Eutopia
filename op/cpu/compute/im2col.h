@@ -29,11 +29,24 @@
 #ifndef __IM2COL_H__
 #define __IM2COL_H__
 
-namespace eutopia {
-namespace op {
-namespace cpu {
-class Operator;
+#include <vector>
+#include <cstdint>
 
+#include "op/ops_param.h"
+
+namespace eutopia {
+namespace core {
+namespace ir {
+class Tensor;
+}
+}
+namespace op {
+class Operator;
+namespace cpu {
+
+void im2col(const Convolution2DParam* op_param, const core::ir::Tensor* im, core::ir::Tensor& col);
+
+void col2im(const Convolution2DParam* op_param, const core::ir::Tensor* col, core::ir::Tensor& im);
 
 } // namespace cpu
 } // namespace op

@@ -30,6 +30,8 @@
 #include "op/ops_param.h"
 #include "core/ir/node.h"
 #include "core/logging.h"
+#include "op/cpu/compute/im2col.h"
+
 namespace eutopia {
 namespace op {
 namespace cpu {
@@ -71,6 +73,22 @@ void Convolution2DOperator::infer_shape(const InputShapes& input_shapes, std::ve
 }
 
 void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
+    CHECK(input_tensors.size()==1,"");
+    std::vector<uint32_t> kernel_shape = op_param_->kernel_shape; // oc ic h w
+    std::vector<uint32_t> strides = op_param_->strides; // h w
+    uint32_t kernel_h = kernel_shape[2];
+    uint32_t kernel_w = kernel_shape[3];
+    uint32_t row_num  = kernel_w*kernel_h;
+    
+    std::vector<uint32_t> output_shape = node_->get_output_shape();
+    uint32_t output_h = output_shape[2];
+    uint32_t output_w = output_shape[3];
+    uint32_t col_num  = output_w*output_h;
+    
+    const core::ir::Tensor* input_tensor = input_tensors[0];
+    core::ir::Tensor data_col({row_num, col_num}, input_tensor->get_data_type());
+    im2col(op_param_, input_tensor, data_col);
+    
     const core::ir::Tensor* weight = node_->get_weight();
     const core::ir::Tensor* bias = node_->get_bias();
     std::vector<uint32_t> dims_ = weight->dims();
