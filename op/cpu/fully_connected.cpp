@@ -40,7 +40,8 @@ FullyConnectedOperator::FullyConnectedOperator(const BaseParam* op_param) {
 }
 
 void FullyConnectedOperator::infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) {
-    std::cout<<"fc"<<std::endl;
+    uint32_t num_outputs = op_param_->num_outputs;
+    output_shape = {1, num_outputs};
 }
 
 void FullyConnectedOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {

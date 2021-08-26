@@ -183,7 +183,6 @@ void Graph::_setup_node() {
             }
         }
         node->infer_shape(input_shapes);
-        
         node->fill_weight_bias();
     }
 }

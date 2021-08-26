@@ -44,7 +44,7 @@ struct PoolingParam : public BaseParam {
         op_type = POOLING;
     }
     std::vector<uint32_t> kernels; // h w
-    std::vector<uint32_t> strides;
+    std::vector<uint32_t> strides; // h w
     std::string pool_type; // SAME
     void copy_from(const BaseParam* param);
     virtual ~PoolingParam() {}

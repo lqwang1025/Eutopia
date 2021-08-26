@@ -93,9 +93,6 @@ void Node::setup(const op::BaseParam* param) {
 
 void Node::infer_shape(const InputShapes& input_shapes) {
     op_->infer_shape(input_shapes, output_shape_);
-    for (auto it : output_shape_) {
-        std::cout<<it<<std::endl;
-    }
 }
 
 void Node::set_graph(Graph* graph) {
@@ -290,19 +287,13 @@ void Node::fill_weight_bias() {
             num_inputs += flatten;
         }
         CHECK(num_inputs!=0,"");
-        std::vector<uint32_t> kernel_shape = {num_inputs, num_outputs};
+        std::vector<uint32_t> kernel_shape = {1, 1, num_inputs, num_outputs};
         weight_ = new Tensor(kernel_shape, DataType::EUTOPIA_DT_FP32);
         weight_filler_->fill(weight_);
         bias_ = new Tensor({num_outputs}, DataType::EUTOPIA_DT_FP32);
         bias_filler_->fill(bias_);
-        std::cout<<"num_outputs:"<<num_outputs<<std::endl;
     } else {
         std::cout<<"node->"<<op_type_<<" do not need weight;"<<std::endl;
-    }
-    
-    
-    if (bias_filler_ != nullptr) {
-        std::cout<<"bias_filler"<<std::endl;
     }
 }
 
