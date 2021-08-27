@@ -43,7 +43,7 @@ class Tensor;
 namespace op {
 namespace cpu {
 
-void im2col(const Convolution2DParam* op_param, const core::ir::Tensor* im, core::ir::Tensor& col);
+void im2col(const std::vector<uint32_t>& output_shape, const Convolution2DParam* op_param, const core::ir::Tensor* im, core::ir::Tensor& col);
 
 void col2im(const Convolution2DParam* op_param, const core::ir::Tensor* col, core::ir::Tensor& im);
 

@@ -81,19 +81,21 @@ void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> i
     uint32_t kernel_c = kernel_shape[1];
     uint32_t kernel_h = kernel_shape[2];
     uint32_t kernel_w = kernel_shape[3];
-    uint32_t row_num  = kernel_c*kernel_w*kernel_h;
+    uint32_t data_col_h  = kernel_c*kernel_w*kernel_h;
     
     std::vector<uint32_t> output_shape = node_->get_output_shape();
+    CHECK(output_shape.size() == 4, );
     uint32_t output_h = output_shape[2];
     uint32_t output_w = output_shape[3];
-    uint32_t col_num  = output_w*output_h;
-    
+    uint32_t data_col_w  = output_w*output_h;
+
     const core::ir::Tensor* input_tensor = input_tensors[0];
-    core::ir::Tensor data_col({row_num, col_num}, input_tensor->get_data_type());
-    im2col(op_param_, input_tensor, data_col);
-    
+    uint32_t data_col_n = input_tensor->dims()[0];
+    core::ir::Tensor data_col({data_col_n, data_col_h, data_col_w}, input_tensor->get_data_type());
+    im2col(output_shape, op_param_, input_tensor, data_col);
     const core::ir::Tensor* weight = node_->get_weight();
     const core::ir::Tensor* bias = node_->get_bias();
+    output_tensor->set_data(output_shape, input_tensor->get_data_type());
     gemm(weight, &data_col, bias, output_tensor);
 }
 

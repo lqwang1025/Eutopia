@@ -71,7 +71,7 @@ public:
     void set_data_type(const DataType& data_type);
     Tensor& operator=(const Tensor& rhs);
     uint32_t byte_size() const;
-    Chunk* chunk() const;
+    Chunk* chunk() const;    
 private:
     std::string name_;
     DataType data_type_;

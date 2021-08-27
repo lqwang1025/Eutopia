@@ -41,25 +41,31 @@ void gemm(const core::ir::Tensor* weight, core::ir::Tensor* data_col,
     std::vector<uint32_t> weight_shape = weight->dims();
     CHECK(weight_shape.size()==4,);
     std::vector<uint32_t> data_shape = data_col->dims();
-    CHECK(data_shape.size()==2,);
+    CHECK(data_shape.size()==3,);
     uint32_t weight_w = weight_shape[3]*weight_shape[2]*weight_shape[1];
+    uint32_t B = data_shape[0];
     uint32_t H = weight_shape[0];
-    uint32_t W = data_shape[1];
-    uint32_t K = data_shape[0];
-    int h, w , k;
+    uint32_t W = data_shape[2];
+    uint32_t K = data_shape[1];
+    
+    int n, h, w , k;
+    std::cout<<"debug:"<<B<<" "<<H<<" "<<W<<" "<<K<<std::endl;
 #pragma omp parallel for
-    for (h = 0; h < H; ++h) {
-        for (k = 0; k < K; ++k) {
-            register float A_PART = weight->data<float>(h*weight_w+k);
-            float sum = 0.;
-            for (w = 0; w < W; ++w) {
-                sum /*C[i*ldc+j]*/ += A_PART*data_col->data<float>(k*data_shape[1]+w);
-                std::cout<<sum;
+    for (n = 0; n < (int)B; ++n) {
+        int data_offset = n*data_shape[1]*data_shape[2];
+        int result_offset = n*data_shape[1]*data_shape[2];
+        for (h = 0; h < (int)H; ++h) {
+            for (k = 0; k < (int)K; ++k) {
+                register float A_PART = weight->data<float>(h*weight_w+k);
+                float sum = 0.;
+                for (w = 0; w < W; ++w) {
+                    sum /*C[i*ldc+j]*/ += A_PART*data_col->data<float>(data_offset+k*data_shape[1]+w);
+                    // std::cout<<sum;
+                }
+                // std::cout<<std::endl;
             }
-            std::cout<<std::endl;
         }
     }
-    std::cout<<"debug:"<<H<<" "<<W<<" "<<K<<std::endl;
 }
 
 } // namespace cpu

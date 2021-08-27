@@ -42,7 +42,7 @@ const static uint8_t MAX_DIMS_SIZE = 32;
 Tensor::Tensor() {
     data_type_ = DataType::EUTOPIA_DT_UNKNOWN;
     byte_size_ = 0;
-    mem_       = new Chunk;
+    mem_       = new Chunk(this);
 }
 
 Tensor::Tensor(const std::vector<uint32_t>& dims, DataType data_type, void* mem) : Tensor() {
@@ -59,7 +59,7 @@ void Tensor::set_data(const std::vector<uint32_t>& dims, DataType data_type, voi
         elem_num *= it;
     }
     byte_size_ = (uint32_t)(get_data_type_byte(data_type)*elem_num);
-    mem_->set_data(this, byte_size_, mem);
+    mem_->set_data(byte_size_, mem);
 }
 
 uint8_t Tensor::dims_size() const {
@@ -117,7 +117,6 @@ T& Tensor::mutable_data(uint32_t index) {
     T& value = mem_->at<T>(index);
     return value;
 }
-    
 
 const std::vector<uint32_t>& Tensor::dims() const {
     return dims_;
@@ -129,8 +128,9 @@ Tensor& Tensor::operator=(const Tensor& rhs) {
     }
     set_name(rhs.name());
     set_dims(rhs.dims());
+    set_data_type(rhs.get_data_type());
     byte_size_ = rhs.byte_size();
-    mem_ = new Chunk(this, byte_size_, rhs.chunk()->get_mutable_data_ptr());
+    mem_->set_data(byte_size_, rhs.chunk()->get_mutable_data_ptr());
     return *this;
 }
 

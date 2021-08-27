@@ -39,10 +39,9 @@ class Tensor;
 
 class Chunk final {
 public:
-    Chunk();
+    Chunk(Tensor *owner);
     ~Chunk();
     Chunk(Tensor *owner, uint32_t byte_size, void *data = nullptr);
-    void set_data(Tensor *owner, uint32_t byte_size, void *data = nullptr);
     void set_data(uint32_t byte_size, void *data = nullptr);
     uint32_t get_byte_size() const;
 

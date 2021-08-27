@@ -38,33 +38,19 @@ namespace eutopia {
 namespace core {
 namespace ir {
 
-Chunk::Chunk() {
+Chunk::Chunk(Tensor *owner) {
     byte_size_ = 0;
     data_      = nullptr;
     own_data_  = false;
-    owner_     = nullptr;
+    owner_     = owner;
 }
 
-Chunk::Chunk(Tensor* owner, uint32_t byte_size, void* data) : Chunk() {
-    set_data(owner, byte_size, data);
+Chunk::Chunk(Tensor* owner, uint32_t byte_size, void* data) : Chunk(owner) {
+    set_data(byte_size, data);
 }
 
 Chunk::~Chunk() {
     _release_data();
-}
-
-void Chunk::set_data(Tensor* owner, uint32_t byte_size, void* data) {
-    if (data == nullptr) {
-        data_ = malloc(byte_size);
-        CHECK(data_!=nullptr, "Alloc memory failed.");
-        own_data_ = true;
-    } else {
-        _release_data();
-        data_ = data;
-        own_data_ = false;
-    }
-    byte_size_ = byte_size;
-    owner_ = owner;
 }
 
 void Chunk::set_data(uint32_t byte_size, void* data) {
@@ -73,9 +59,15 @@ void Chunk::set_data(uint32_t byte_size, void* data) {
         CHECK(data_!=nullptr, "Alloc memory failed.");
         own_data_ = true;
     } else {
-        _release_data();
-        data_ = data;
-        own_data_ = false;
+        if (byte_size <= byte_size_) {
+            memcpy(data_, data, byte_size);
+        } else {
+            _release_data();
+            data_ = malloc(byte_size);
+            memcpy(data_, data, byte_size);
+            CHECK(data_!=nullptr, "Alloc memory failed.");
+            own_data_ = true;
+        }
     }
     byte_size_ = byte_size;
 }
@@ -88,14 +80,7 @@ const void* Chunk::get_data_ptr() const {
     return data_;
 }
 
-void* Chunk::get_mutable_data_ptr() { // copy-on-write
-    if (!own_data_) {
-        CHECK(byte_size_>0, "Chunk byte size must greater than zero.");
-        void* tmp_data = malloc(byte_size_);
-        memcpy(tmp_data, data_, byte_size_);
-        data_ = tmp_data;
-        own_data_ = true;
-    }
+void* Chunk::get_mutable_data_ptr() {
     return data_;
 }
 
@@ -103,13 +88,16 @@ void Chunk::_release_data() {
     if (own_data_ && data_ != nullptr) {
         free(data_);
     }
+    data_ = nullptr;
 }
 
 template <typename T>
 T& Chunk::at(uint32_t index) {
-    //TODO check index range
     void* data = data_;
     uint8_t data_type_bytes = get_data_type_byte(owner_->data_type_); // fix me
+    CHECK(data_type_bytes!=0,);
+    fflush(stdout);
+    CHECK(index < (int)get_byte_size()/data_type_bytes,);
     return ((T*)((uint8_t*)data + index * data_type_bytes))[0];
 }
 
