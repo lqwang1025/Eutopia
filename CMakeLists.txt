@@ -78,20 +78,18 @@ message(STATUS "GIT_VER: " ${CMD_OUT})
 # building flags
 ADD_DEFINITIONS(-Wl,-Bsymbolic)
 ADD_DEFINITIONS(-Wl,-Bsymbolic-functions)
-ADD_DEFINITIONS(-Wno-unused-command-line-argument)
 ADD_DEFINITIONS(-funroll-loops)
-# ADD_DEFINITIONS(-Wno-deprecated-register)
-# ADD_DEFINITIONS(-Wno-overloaded-virtual)
-ADD_DEFINITIONS(-fPIC)
-ADD_DEFINITIONS(-w)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+ADD_DEFINITIONS(-Wno-deprecated-register)
 
 OPTION(DEBUGEUTOPIA "This option is for open debug mode" ON)
 
 if(DEBUGEUTOPIA)
   ADD_DEFINITIONS(-DDEBUGEUTOPIA)
-  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fPIC -g -O0 -std=c++11 -lpthread -lrt -ldl -pthread -fopenmp -Wno-overloaded-virtual")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fPIC -g -O0 -fopenmp -std=c99")
+else()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fPIC -O3 -std=c++11 -lpthread -lrt -ldl -pthread -fopenmp -Wno-overloaded-virtual")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fPIC -O3 -fopenmp -std=c99")
 endif()
 
 # add all header file folder

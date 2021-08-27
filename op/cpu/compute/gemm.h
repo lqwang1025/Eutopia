@@ -38,11 +38,8 @@ class Tensor;
 namespace op {
 namespace cpu {
 
-void gemm(const core::ir::Tensor* weight,
-          core::ir::Tensor* data_col,
-          const core::ir::Tensor* bias,
-          const core::ir::Tensor* result);
-
+void gemm(const core::ir::Tensor* weight, core::ir::Tensor* data_col,
+          const core::ir::Tensor* bias, core::ir::Tensor* result);
 
 } // namespace cpu
 } // namespace op

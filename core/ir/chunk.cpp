@@ -96,7 +96,11 @@ T& Chunk::at(uint32_t index) {
     void* data = data_;
     uint8_t data_type_bytes = get_data_type_byte(owner_->data_type_); // fix me
     CHECK(data_type_bytes!=0,);
-    fflush(stdout);
+    if (index >= (int)get_byte_size()/data_type_bytes) {
+        std::cout<<"debug:"<<owner_->name()<<std::endl;
+        std::cout<<"debug:"<<index<<" "<< get_byte_size()<<" "<<(int)data_type_bytes<<std::endl;
+    }
+    
     CHECK(index < (int)get_byte_size()/data_type_bytes,);
     return ((T*)((uint8_t*)data + index * data_type_bytes))[0];
 }
