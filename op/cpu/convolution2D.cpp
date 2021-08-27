@@ -26,11 +26,13 @@
  * Description:
  */
 
-#include "op/cpu/convolution2D.h"
-#include "op/ops_param.h"
 #include "core/ir/node.h"
 #include "core/logging.h"
+
+#include "op/cpu/convolution2D.h"
+#include "op/ops_param.h"
 #include "op/cpu/compute/im2col.h"
+#include "op/cpu/compute/gemm.h"
 
 namespace eutopia {
 namespace op {
@@ -76,9 +78,10 @@ void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> i
     CHECK(input_tensors.size()==1,"");
     std::vector<uint32_t> kernel_shape = op_param_->kernel_shape; // oc ic h w
     std::vector<uint32_t> strides = op_param_->strides; // h w
+    uint32_t kernel_c = kernel_shape[1];
     uint32_t kernel_h = kernel_shape[2];
     uint32_t kernel_w = kernel_shape[3];
-    uint32_t row_num  = kernel_w*kernel_h;
+    uint32_t row_num  = kernel_c*kernel_w*kernel_h;
     
     std::vector<uint32_t> output_shape = node_->get_output_shape();
     uint32_t output_h = output_shape[2];
@@ -91,17 +94,7 @@ void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> i
     
     const core::ir::Tensor* weight = node_->get_weight();
     const core::ir::Tensor* bias = node_->get_bias();
-    std::vector<uint32_t> dims_ = weight->dims();
-    for (int h = 0; h < dims_[0]; ++h) {
-        for (int w = 0; w < dims_[1]; ++w) {
-            for (int ic = 0; ic < dims_[2]; ++ic) {
-                for (int oc = 0; oc < dims_[3]; ++oc) {
-                    std::cout<<weight->data<float>({h, w, ic, oc})<<" ";
-                }
-                std::cout<<std::endl;
-            }
-        }
-    }
+    gemm(weight, &data_col, bias, output_tensor);
 }
 
 void Convolution2DOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {

@@ -26,13 +26,41 @@
  * Description:
  */
 
+#include <vector>
+
 #include "op/cpu/compute/gemm.h"
+#include "core/ir/tensor.h"
+#include "core/logging.h"
 
 namespace eutopia {
 namespace op {
 namespace cpu {
 
-
+void gemm(const core::ir::Tensor* weight, core::ir::Tensor* data_col,
+          const core::ir::Tensor* bias, const core::ir::Tensor* result) {
+    std::vector<uint32_t> weight_shape = weight->dims();
+    CHECK(weight_shape.size()==4,);
+    std::vector<uint32_t> data_shape = data_col->dims();
+    CHECK(data_shape.size()==2,);
+    uint32_t weight_w = weight_shape[3]*weight_shape[2]*weight_shape[1];
+    uint32_t H = weight_shape[0];
+    uint32_t W = data_shape[1];
+    uint32_t K = data_shape[0];
+    int h, w , k;
+#pragma omp parallel for
+    for (h = 0; h < H; ++h) {
+        for (k = 0; k < K; ++k) {
+            register float A_PART = weight->data<float>(h*weight_w+k);
+            float sum = 0.;
+            for (w = 0; w < W; ++w) {
+                sum /*C[i*ldc+j]*/ += A_PART*data_col->data<float>(k*data_shape[1]+w);
+                std::cout<<sum;
+            }
+            std::cout<<std::endl;
+        }
+    }
+    std::cout<<"debug:"<<H<<" "<<W<<" "<<K<<std::endl;
+}
 
 } // namespace cpu
 } // namespace op

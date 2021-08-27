@@ -30,8 +30,18 @@
 #define __GEMM_H__
 
 namespace eutopia {
+namespace core {
+namespace ir {
+class Tensor;
+}
+}
 namespace op {
 namespace cpu {
+
+void gemm(const core::ir::Tensor* weight,
+          core::ir::Tensor* data_col,
+          const core::ir::Tensor* bias,
+          const core::ir::Tensor* result);
 
 
 } // namespace cpu

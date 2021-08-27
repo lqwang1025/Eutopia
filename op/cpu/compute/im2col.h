@@ -41,7 +41,6 @@ class Tensor;
 }
 }
 namespace op {
-class Operator;
 namespace cpu {
 
 void im2col(const Convolution2DParam* op_param, const core::ir::Tensor* im, core::ir::Tensor& col);
