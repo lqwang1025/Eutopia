@@ -27,6 +27,7 @@
  */
 
 #include <vector>
+#include <omp.h>
 
 #include "op/cpu/compute/gemm.h"
 #include "core/ir/tensor.h"
@@ -48,21 +49,20 @@ void gemm(const core::ir::Tensor* weight, core::ir::Tensor* data_col,
     uint32_t W = data_shape[2];
     uint32_t K = data_shape[1];
     std::vector<uint32_t> res_shape = result->dims();
-    std::cout<<"debug:"<<H<<" "<<res_shape[0]<<W<<std::endl;
     CHECK(res_shape.size()==4,);
-    int n, h, w , k;
-
+    int n, h, w, k;
+    int data_offset, result_offset;
+    int tid;
+#pragma omp parallel for private(data_offset, result_offset, n, h, w, k)
     for (n = 0; n < (int)B; ++n) {
-        int data_offset = n*data_shape[1]*data_shape[2];
-        int result_offset = n*res_shape[1]*res_shape[2]*res_shape[3];
-        std::cout<<"debug:"<<data_offset<<" "<<result_offset<<std::endl;
-        std::cout<<"H:"<<H<<" "<<res_shape[2]<<" "<<res_shape[3]<<" "<<W<<std::endl;
-#pragma omp parallel for
+        data_offset = n*data_shape[1]*data_shape[2];
+        result_offset = n*res_shape[1]*res_shape[2]*res_shape[3];
         for (h = 0; h < (int)H; ++h) {
             for (k = 0; k < (int)K; ++k) {
                 register float a_part = weight->data<float>(h*weight_w+k);
                 for (w = 0; w < W; ++w) {
-                    result->mutable_data<float>(result_offset+h*W+w) += a_part*data_col->data<float>(data_offset+k*K+w);
+                    tid = omp_get_thread_num();
+                    result->mutable_data<float>(result_offset+h*W+w) += a_part*data_col->data<float>(data_offset+k*W+w);
                 }
             }
         }

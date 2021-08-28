@@ -27,9 +27,11 @@
  */
 
 #include <cmath>
+#include <cfloat>
 
 #include "op/cpu/pooling.h"
 #include "op/ops_param.h"
+#include "core/ir/node.h"
 
 namespace eutopia {
 namespace op {
@@ -54,11 +56,56 @@ void PoolingOperator::infer_shape(const InputShapes& input_shapes, std::vector<u
     output_shape = {input_shape[0], input_shape[1], pooled_h, pooled_w};
 }
 
-void PoolingOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+void PoolingOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
+    CHECK(input_tensors.size() == 1, "Current pool only support 1 input.");
+    const core::ir::Tensor* input_tensor = input_tensors[0];
+    std::vector<uint32_t> input_shape = input_tensor->dims();
+    CHECK(input_shape.size() == 4, "Worng shape size");
+    uint32_t N = input_shape[0];
+    uint32_t IH = input_shape[2];
+    uint32_t IW = input_shape[3];
     
+    
+    std::vector<uint32_t> output_shape = node_->get_output_shape();
+    CHECK(output_shape.size() == 4, );
+    uint32_t oc = output_shape[1];
+    uint32_t oh = output_shape[2];
+    uint32_t ow = output_shape[3];
+    output_tensor->set_data(output_shape, input_tensor->get_data_type());
+
+    std::vector<uint32_t> kernels = op_param_->kernels; // h w
+    std::vector<uint32_t> strides = op_param_->strides; // h w
+    std::vector<uint32_t> pads = {0, 0};//op_param_->pads; // h w
+    uint32_t n, c, h, w, n_offset, c_offset, h_offsset, out_index, i, j, ih, iw, input_index;
+    int h_offset = -pads[0]/2;
+    int w_offset = -pads[1]/2;
+    for (n = 0; n < N; n++) {
+        n_offset = n*oc*oh*ow;
+        for (c = 0; c < oc; ++c) {
+            c_offset = c*oh*ow;
+            for (h = 0; h < oh; ++h) {
+                h_offset = h*ow;
+                for (w = 0; w < ow; ++w) {
+                    out_index = n_offset + c_offset + h_offset + w;
+                    float max_value = -FLT_MAX;
+                    for (i = 0; i < kernels[0]; ++i) {
+                        ih = (uint32_t)(h_offset + h*strides[0] + i);
+                        for (j = 0; j < kernels[0]; ++j) {
+                            iw = (uint32_t)(w_offset + w*strides[1] + j);
+                            bool valid = (0 <= ih && ih < IH && 0 <= iw && iw < IW);
+                            input_index = iw + IW*(ih + IH*(c+n*oc));
+                            float val = valid ? input_tensor->data<float>(input_index) : -FLT_MAX;
+                            max_value = (val > max_value) ? val : max_value;
+                        }
+                    }
+                    output_tensor->mutable_data<float>(out_index) = max_value;
+                }
+            }
+        }
+    }
 }
 
-void PoolingOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) {
+void PoolingOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
     
 }
 

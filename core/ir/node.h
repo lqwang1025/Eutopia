@@ -38,6 +38,10 @@
 
 namespace eutopia {
 
+namespace framework {
+class NodeDef;
+}
+
 namespace op {
 class Operator;
 }
@@ -99,6 +103,7 @@ public:
     bool is_trainning(void) const;
     void set_is_trainning(bool is_trainning);
     const Tensor* get_output_tensor(void) const;
+    eutopia::framework::NodeDef* to_proto() const;
     void set_graph(Graph* graph);
     const Graph* get_graph(void) const;
     void infer_shape(const InputShapes& input_shape);
@@ -141,6 +146,18 @@ private:
         {CONVOLUTION2D, &Node::_conv2d_filler},
         {FULLYCONNECTED, &Node::_fc_filler}
     };
+    typedef eutopia::framework::NodeDef* (Node::*ProtoFunc)() const;
+    eutopia::framework::NodeDef* _conv2d_proto() const;
+    eutopia::framework::NodeDef* _fc_proto() const;
+    eutopia::framework::NodeDef* _input_proto() const;
+    eutopia::framework::NodeDef* _pooling_proto() const;
+    std::map<std::string, ProtoFunc> proto_map_ {
+        {CONVOLUTION2D, &Node::_conv2d_proto},
+        {FULLYCONNECTED, &Node::_fc_proto},
+        {INPUT, &Node::_input_proto},
+        {POOLING, &Node::_pooling_proto},
+    };
+    
     Node& operator=(Node&);
     Node(const Node&);
 };

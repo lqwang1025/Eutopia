@@ -109,10 +109,10 @@ public:
     static ToHolder g_creator_operator_##op_type(#op_type, creator)
 
 
-#define REGISERT_OP_CLASS(op_type, op)                              \
-    Operator* Creator_##op_type(const BaseParam* op_param) {        \
-        return new op(op_param);                                    \
-    }                                                               \
+#define REGISERT_OP_CLASS(op_type, op)                                  \
+    static Operator* Creator_##op_type(const BaseParam* op_param) {     \
+        return new op(op_param);                                        \
+    }                                                                   \
     REGISTER_OP_CREATOR(op_type, Creator_##op_type)
 
 #define DECLARE_OPERATOR(param_type, sub_class)                         \
@@ -120,6 +120,7 @@ public:
         friend class core::ir::Node;                                    \
     public:                                                             \
     sub_class(const BaseParam* op_param);                               \
+    virtual ~sub_class(){ delete op_param_; }                           \
     virtual void infer_shape(const InputShapes& input_shapes, std::vector<uint32_t>& output_shape) override; \
     virtual void forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) override; \
     virtual void backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* Output_tensor) override; \

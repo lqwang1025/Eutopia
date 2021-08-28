@@ -66,7 +66,8 @@ void im2col(const std::vector<uint32_t>& output_shape, const Convolution2DParam*
     uint32_t kh = kernel_shape[2];
     uint32_t kw = kernel_shape[3];
     uint32_t batch = im_dims[0];
-#pragma omp parallel for
+    int n, n_offset, c, w_offset, h_offset, c_im, h, w, im_h, im_w, col_index;
+#pragma omp parallel for private(n, n_offset, c, w_offset, h_offset, c_im, h, w, im_h, im_w, col_index) 
     for (int n = 0; n < batch; ++n) {
         int n_offset = (int)n*col_dims[1]*col_dims[2];
         for (int c = 0; c < (int)col_dims[1]; ++c) {
@@ -78,7 +79,7 @@ void im2col(const std::vector<uint32_t>& output_shape, const Convolution2DParam*
                     int im_h = h_offset + h * strides[0];
                     int im_w = w_offset + w * strides[1];
                     int col_index = n_offset + (c * (int)output_shape[2] + h) * (int)output_shape[3] + w;
-                    col.mutable_data<uint8_t>((uint32_t)col_index) = _get_pixel<uint8_t>(im, n, c_im, im_h, im_w, pads);
+                    col.mutable_data<float>((uint32_t)col_index) = _get_pixel<float>(im, n, c_im, im_h, im_w, pads);
                 }
             }
         }

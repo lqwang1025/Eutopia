@@ -38,4 +38,4 @@ link_directories(${CMAKE_BINARY_DIR})
 
 add_executable(eutopia-train-tools ${MAIN_SRCS})
 
-target_link_libraries(eutopia-train-tools  libeutopia.a libabsl.a)
+target_link_libraries(eutopia-train-tools  libeutopia.a libabsl.a libprotobuf.a libprotobuf-lite.a libprotoc.a)

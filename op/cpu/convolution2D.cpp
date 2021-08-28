@@ -82,7 +82,6 @@ void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> i
     uint32_t kernel_h = kernel_shape[2];
     uint32_t kernel_w = kernel_shape[3];
     uint32_t data_col_h  = kernel_c*kernel_w*kernel_h;
-    
     std::vector<uint32_t> output_shape = node_->get_output_shape();
     CHECK(output_shape.size() == 4, );
     uint32_t output_h = output_shape[2];

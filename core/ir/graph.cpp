@@ -45,7 +45,7 @@ Graph::Graph() {
 }
 
 void Graph::forward() {
-    for (int i = 0; i < seq_nodes_.size(); ++i) {
+    for (int i = 0; i < (int)seq_nodes_.size(); ++i) {
         Node* cur_node = seq_nodes_[i];
         std::vector<const Tensor*> cur_inputs(0);
         const std::vector<std::string>& cur_producers = cur_node->get_producers();
@@ -59,7 +59,12 @@ void Graph::forward() {
                 cur_inputs.push_back(papa->get_output_tensor());
             }
         }
+        std::cout<<cur_node->get_name()<<" forward"<<std::endl;
         cur_node->forward(cur_inputs);
+        if (cur_node->is_last_node()) {
+            output_tensors_[cur_node->get_name()] = cur_node->get_output_tensor();
+        }
+        std::cout<<cur_node->get_name()<<" forward end."<<std::endl;
     }
 }
 

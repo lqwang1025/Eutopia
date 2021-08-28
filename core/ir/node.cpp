@@ -56,7 +56,7 @@ Node::Node(Graph* graph): graph_(graph) {
     is_last_node_ = false;
     dynamic_shape_ = false;
     in_place_ = false;
-    device_ = "";
+    device_ = "cpu";
     producers_.resize(0);
     consumers_.resize(0);
     weight_ = nullptr;
@@ -269,8 +269,10 @@ void Node::_conv2d_filler() {
     }
     weight_ = new Tensor(kernel_shape, DataType::EUTOPIA_DT_FP32);
     weight_filler_->fill(weight_);
+    delete weight_filler_;
     bias_ = new Tensor({kernel_shape[0]}, DataType::EUTOPIA_DT_FP32);
     bias_filler_->fill(bias_);
+    delete bias_filler_;
 }
 
 void Node::_fc_filler() {
@@ -282,7 +284,7 @@ void Node::_fc_filler() {
     uint32_t num_inputs = 0;
     for (int i = 0; i < (int)input_shapes_.size(); ++i) {
         uint32_t flatten = 1;
-        for (int _i = 0; _i < (int)input_shapes_[i].size(); ++_i) {
+        for (int _i = 1; _i < (int)input_shapes_[i].size(); ++_i) {
             flatten *= input_shapes_[i][_i];
         }
         num_inputs += flatten;
@@ -291,8 +293,10 @@ void Node::_fc_filler() {
     std::vector<uint32_t> kernel_shape = {num_outputs, num_inputs, 1, 1}; // // weight distribution: OcIcHW
     weight_ = new Tensor(kernel_shape, DataType::EUTOPIA_DT_FP32);
     weight_filler_->fill(weight_);
+    delete weight_filler_;
     bias_ = new Tensor({num_outputs}, DataType::EUTOPIA_DT_FP32);
     bias_filler_->fill(bias_);
+    delete bias_filler_;
 }
 
 void Node::fill_weight_bias() {
@@ -322,6 +326,12 @@ void Node::dump(void) {
 }
 
 Node::~Node(void) {
+    if (weight_ != nullptr) {
+        delete weight_;
+    }
+    if (bias_ != nullptr) {
+        delete bias_;
+    }
     delete op_;
     delete output_tensor_;
     delete diff_tensor_;

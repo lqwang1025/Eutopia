@@ -66,11 +66,12 @@ public:
     uint8_t dims_size() const;
     void set_dims(const std::vector<uint32_t>& dims);
     const std::vector<uint32_t>& dims() const;
-    void reshape(std::vector<int>& shape);
+    void reshape(const std::vector<uint32_t>& shape);
     DataType get_data_type() const;
     void set_data_type(const DataType& data_type);
     Tensor& operator=(const Tensor& rhs);
     uint32_t byte_size() const;
+    uint32_t total() const;
     Chunk* chunk() const;    
 private:
     std::string name_;

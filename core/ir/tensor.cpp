@@ -54,11 +54,7 @@ void Tensor::set_data(const std::vector<uint32_t>& dims, DataType data_type, voi
     CHECK(dims.size() <= MAX_DIMS_SIZE, "Please make sure your dims size is not out of range.");
     set_dims(dims);
     set_data_type(data_type);
-    int elem_num = 1;
-    for (auto& it : dims) {
-        elem_num *= it;
-    }
-    byte_size_ = (uint32_t)(get_data_type_byte(data_type)*elem_num);
+    byte_size_ = (uint32_t)(get_data_type_byte(data_type)*total());
     mem_->set_data(byte_size_, mem);
 }
 
@@ -147,12 +143,26 @@ void Tensor::set_dims(const std::vector<uint32_t>& dims) {
     dims_ = dims;
 }
 
-void Tensor::reshape(std::vector<int>& shape) {
-    //TODO
-}
-
 uint32_t Tensor::byte_size() const {
     return byte_size_;
+}
+
+uint32_t Tensor::total() const {
+    uint32_t elem_num = 1;
+    for (auto& it : dims_) {
+        elem_num *= it;
+    }
+    return elem_num;
+}
+
+void Tensor::reshape(const std::vector<uint32_t>& shape) {
+    if (shape == dims_) return;
+    uint32_t total = 1;
+    for (auto it : shape) {
+        total *= it;
+    }
+    CHECK(total == this->total(), "Tensor shape total size must be equal.");
+    dims_ = shape;
 }
 
 Chunk* Tensor::chunk() const {

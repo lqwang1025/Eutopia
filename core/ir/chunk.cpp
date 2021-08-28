@@ -93,25 +93,24 @@ void Chunk::_release_data() {
 
 template <typename T>
 T& Chunk::at(uint32_t index) {
-    void* data = data_;
+    T* data = (T*)data_;
     uint8_t data_type_bytes = get_data_type_byte(owner_->data_type_); // fix me
     CHECK(data_type_bytes!=0,);
     if (index >= (int)get_byte_size()/data_type_bytes) {
-        std::cout<<"debug:"<<owner_->name()<<std::endl;
-        std::cout<<"debug:"<<index<<" "<< get_byte_size()<<" "<<(int)data_type_bytes<<std::endl;
+        std::cout<<"tensor owner:"<<owner_->name()<<std::endl;
+        std::cout<<"index:"<<index<<" "<< get_byte_size()<<" "<<(int)data_type_bytes<<std::endl;
     }
-    
-    CHECK(index < (int)get_byte_size()/data_type_bytes,);
-    return ((T*)((uint8_t*)data + index * data_type_bytes))[0];
+    CHECK(index < (int)owner_->total(),);
+    return data[index];
 }
 
-template uint8_t& Chunk::at<uint8_t>(const uint32_t index);
-template int8_t& Chunk::at<int8_t>(const uint32_t index);
-template int16_t& Chunk::at<int16_t>(const uint32_t index);
-template uint16_t& Chunk::at<uint16_t>(const uint32_t index);
-template uint32_t& Chunk::at<uint32_t>(const uint32_t index);
-template int32_t& Chunk::at<int32_t>(const uint32_t index);
-template float& Chunk::at<float>(const uint32_t index);
+template uint8_t& Chunk::at<uint8_t>(uint32_t index);
+template int8_t& Chunk::at<int8_t>(uint32_t index);
+template int16_t& Chunk::at<int16_t>(uint32_t index);
+template uint16_t& Chunk::at<uint16_t>(uint32_t index);
+template uint32_t& Chunk::at<uint32_t>(uint32_t index);
+template int32_t& Chunk::at<int32_t>(uint32_t index);
+template float& Chunk::at<float>(uint32_t index);
 
 } // namespace ir
 } //namespace eutopia

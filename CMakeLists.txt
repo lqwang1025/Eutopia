@@ -133,7 +133,7 @@ ADD_LIBRARY (${CMAKE_PROJECT_NAME}-static STATIC)
 TARGET_SOURCES (${CMAKE_PROJECT_NAME}-static PRIVATE ${EUPOTIA_SRC})
 # TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${EUPOTIA_SRC})
 
-target_link_libraries(${CMAKE_PROJECT_NAME}-static)
+target_link_libraries(${CMAKE_PROJECT_NAME}-static libprotobuf.a libprotobuf-lite.a libprotoc.a libabsl.a)
 # target_link_libraries(${CMAKE_PROJECT_NAME})
 
 #set version

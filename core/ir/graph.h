@@ -37,6 +37,9 @@
 #include "core/ir/node.h"
 
 namespace eutopia {
+namespace framework {
+class GraphDef;
+}
 namespace core {
 namespace ir {
 
@@ -78,6 +81,7 @@ public:
     
     bool is_trainning(void) const;
     void set_is_trainning(bool is_trainning);
+    void to_proto() const;
 private:
     bool is_trainning_;
     std::string name_;
@@ -88,7 +92,7 @@ private:
     std::vector<Node*> own_nodes_;
     std::unordered_map<std::string, Node*> node_name_map_;
     std::unordered_map<std::string, const Tensor*> input_tensors_;
-    std::unordered_map<std::string, Tensor*> output_tensors_;
+    std::unordered_map<std::string, const Tensor*> output_tensors_;
 private:
     void _sort_by_execution();
     void _setup_node();
