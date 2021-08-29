@@ -39,6 +39,7 @@ void BaseParam::copy_from(const BaseParam* param) {
     last_op       = param->last_op;
     op_type       = param->op_type;
     op_name       = param->op_name;
+    device        = param->device;
     CHECK(EUTOPIA_SUPPORT_OPS.count(op_type) != 0, "Unsupport operator type.");
 }
 

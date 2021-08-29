@@ -32,11 +32,21 @@
 #include <map>
 #include <vector>
 #include <fstream>
+#include <string>
 
 #include "op/ops_param.h"
-#include "core/ir/graph.h" 
+#include "core/ir/graph.h"
+#include "CJsonObject.hpp"
 
 namespace eutopia {
+namespace utils {
+class Filler;
+}
+namespace core {
+namespace ir {
+class Node;
+}
+}
 namespace io {
 
 struct CfgParser {
@@ -56,6 +66,8 @@ struct CfgParser {
         {POOLING, &CfgParser::init_pooling_param},
         {CONVOLUTION2D, &CfgParser::init_conv2d_param},
     };
+private:
+    utils::Filler* _init_filler_type_(const neb::CJsonObject& c_json);
 };
 
 } // namespace io

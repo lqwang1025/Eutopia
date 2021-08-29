@@ -29,16 +29,17 @@
 #include <vector>
 #include <omp.h>
 
-#include "op/cpu/compute/gemm.h"
+
 #include "core/ir/tensor.h"
 #include "core/logging.h"
+
+#include "op/cpu/compute/gemm.h"
 
 namespace eutopia {
 namespace op {
 namespace cpu {
 
-void gemm(const core::ir::Tensor* weight, core::ir::Tensor* data_col,
-          const core::ir::Tensor* bias, core::ir::Tensor* result) {
+void gemm(const core::ir::Tensor* weight, core::ir::Tensor* data_col, core::ir::Tensor* result) {
     std::vector<uint32_t> weight_shape = weight->dims();
     CHECK(weight_shape.size()==4,);
     std::vector<uint32_t> data_shape = data_col->dims();

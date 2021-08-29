@@ -85,10 +85,10 @@ OPTION(DEBUGEUTOPIA "This option is for open debug mode" ON)
 
 if(DEBUGEUTOPIA)
   ADD_DEFINITIONS(-DDEBUGEUTOPIA)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fPIC -g -O0 -std=c++11 -lpthread -lrt -ldl -pthread -fopenmp -Wno-overloaded-virtual")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fPIC -g -O0 -std=c++11 -lpthread -lrt -ldl -fopenmp -Wno-overloaded-virtual")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fPIC -g -O0 -fopenmp -std=c99")
 else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fPIC -O3 -std=c++11 -lpthread -lrt -ldl -pthread -fopenmp -Wno-overloaded-virtual")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fPIC -O3 -std=c++11 -lpthread -lrt -ldl -fopenmp -Wno-overloaded-virtual")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fPIC -O3 -fopenmp -std=c99")
 endif()
 

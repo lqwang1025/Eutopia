@@ -118,16 +118,18 @@ void Node::_conv2d_proto(onnx::GraphProto* graph) const {
     _add_attr_to_node(conv2d_node, "is_sparse", (int)is_sparse_);
     _add_attr_to_node(conv2d_node, "is_first_node", (int)is_first_node_);
     _add_attr_to_node(conv2d_node, "in_place", (int)in_place_);
-    _add_attr_to_node(conv2d_node, "device", device_);
     _add_attr_to_node(conv2d_node, "output_shape", output_shape_);
     
     op::cpu::Convolution2DOperator* conv2d_op = static_cast<op::cpu::Convolution2DOperator*>(op_);
     op::Convolution2DParam* op_param = conv2d_op->op_param_;
+    _add_attr_to_node(conv2d_node, "device", op_param->device);
     _add_attr_to_node(conv2d_node, "kennels", op_param->kernel_shape);
     _add_attr_to_node(conv2d_node, "strides", op_param->strides);
     _add_attr_to_node(conv2d_node, "dilations", op_param->dilations);
     _add_attr_to_node(conv2d_node, "pads", op_param->pads);
     _add_attr_to_node(conv2d_node, "padding", op_param->pad_type);
+    _add_attr_to_node(conv2d_node, "activation", op_param->activation);
+    _add_attr_to_node(conv2d_node, "with_bias", op_param->with_bias);
     
     for (auto it : get_producers()) {
         conv2d_node->add_input(it);
@@ -145,6 +147,8 @@ void Node::_conv2d_proto(onnx::GraphProto* graph) const {
     *graph->add_node() = *conv2d_node;
     *graph->add_initializer() = *proto_bias;
     *graph->add_initializer() = *proto_weight;
+    delete proto_bias;
+    delete proto_weight;
     delete conv2d_node;
 }
 
@@ -161,12 +165,14 @@ void Node::_fc_proto(onnx::GraphProto* graph) const {
     _add_attr_to_node(fc_node, "is_sparse", (int)is_sparse_);
     _add_attr_to_node(fc_node, "is_first_node", (int)is_first_node_);
     _add_attr_to_node(fc_node, "in_place", (int)in_place_);
-    _add_attr_to_node(fc_node, "device", device_);
     _add_attr_to_node(fc_node, "output_shape", output_shape_);
     
     op::cpu::FullyConnectedOperator* fc_op = static_cast<op::cpu::FullyConnectedOperator*>(op_);
     op::FullyConnectedParam* op_param = fc_op->op_param_;
+    _add_attr_to_node(fc_node, "device", op_param->device);
     _add_attr_to_node(fc_node, "num_outputs", (int)op_param->num_outputs);
+    _add_attr_to_node(fc_node, "activation", op_param->activation);
+    _add_attr_to_node(fc_node, "with_bias", op_param->with_bias);
     
     for (auto it : get_producers()) {
         fc_node->add_input(it);
@@ -185,6 +191,8 @@ void Node::_fc_proto(onnx::GraphProto* graph) const {
     *graph->add_node() = *fc_node;
     *graph->add_initializer() = *proto_bias;
     *graph->add_initializer() = *proto_weight;
+    delete proto_bias;
+    delete proto_weight;
     delete fc_node;
 }
 
@@ -201,11 +209,11 @@ void Node::_input_proto(onnx::GraphProto* graph) const {
     _add_attr_to_node(input_node, "is_sparse", (int)is_sparse_);
     _add_attr_to_node(input_node, "is_first_node", (int)is_first_node_);
     _add_attr_to_node(input_node, "in_place", (int)in_place_);
-    _add_attr_to_node(input_node, "device", device_);
     _add_attr_to_node(input_node, "output_shape", output_shape_);
     
     op::cpu::InputOperator* input_op = static_cast<op::cpu::InputOperator*>(op_);
     op::InputParam* op_param = input_op->op_param_;
+    _add_attr_to_node(input_node, "device", op_param->device);
     _add_attr_to_node(input_node, "mean", op_param->mean);
     _add_attr_to_node(input_node, "std", op_param->std);
         
@@ -229,11 +237,11 @@ void Node::_pooling_proto(onnx::GraphProto* graph) const {
     _add_attr_to_node(pool_node, "is_sparse", (int)is_sparse_);
     _add_attr_to_node(pool_node, "is_first_node", (int)is_first_node_);
     _add_attr_to_node(pool_node, "in_place", (int)in_place_);
-    _add_attr_to_node(pool_node, "device", device_);
     _add_attr_to_node(pool_node, "output_shape", output_shape_);
     
     op::cpu::PoolingOperator* pool_op = static_cast<op::cpu::PoolingOperator*>(op_);
     op::PoolingParam* op_param = pool_op->op_param_;
+    _add_attr_to_node(pool_node, "device", op_param->device);
     _add_attr_to_node(pool_node, "kernels", op_param->kernels);
     _add_attr_to_node(pool_node, "strides", op_param->strides);
     _add_attr_to_node(pool_node, "pool_type", op_param->pool_type);

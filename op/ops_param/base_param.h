@@ -44,6 +44,7 @@ struct BaseParam {
     bool weight_shared = false;
     bool first_op = false;
     bool last_op  = false;
+    std::string device = "cpu";
     std::string op_type;
     std::string op_name;
     void copy_from(const BaseParam* param);

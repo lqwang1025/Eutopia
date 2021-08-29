@@ -95,7 +95,7 @@ void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> i
     const core::ir::Tensor* weight = node_->get_weight();
     const core::ir::Tensor* bias = node_->get_bias();
     output_tensor->set_data(output_shape, input_tensor->get_data_type());
-    gemm(weight, &data_col, bias, output_tensor);
+    gemm(weight, &data_col, output_tensor);
 }
 
 void Convolution2DOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {

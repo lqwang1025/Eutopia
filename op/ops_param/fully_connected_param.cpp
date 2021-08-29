@@ -35,6 +35,8 @@ void FullyConnectedParam::copy_from(const BaseParam* param) {
     this->BaseParam::copy_from(param);
     const FullyConnectedParam* fully_connected_param = static_cast<const FullyConnectedParam*>(param);
     num_outputs = fully_connected_param->num_outputs;
+    activation  = fully_connected_param->activation;
+    with_bias   = fully_connected_param->with_bias;
 }
 
 } // namespace op

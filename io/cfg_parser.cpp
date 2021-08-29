@@ -42,6 +42,43 @@
 namespace eutopia {
 namespace io {
 
+utils::Filler* CfgParser::_init_filler_type_(const neb::CJsonObject& c_json) {
+    if (c_json("filler_type") == "xavier") {
+        utils::XavierFiller* filler = nullptr;
+        if (c_json("var_type") == "FANIN") {
+            filler = new utils::XavierFiller();
+        } else if (c_json("var_type") == "FANOUT") {
+            filler = new utils::XavierFiller(utils::XavierFiller::VarianceType::FANOUT);
+        } else if (c_json("var_type") == "AVERAGE") {
+            filler = new utils::XavierFiller(utils::XavierFiller::VarianceType::AVERAGE);
+        } else {
+            CHECK(false, "Unsupport var type.");
+        }
+        CHECK(filler != nullptr,);
+        return filler;
+    } else if (c_json("filler_type") == "MSRA"){
+        //todo
+        return nullptr;
+    } else if (c_json("filler_type") == "TruncatedNormal") {
+        //todo
+        return nullptr;
+    } else if (c_json("filler_type") == "normal") {
+        //todo
+        return nullptr;
+    } else if (c_json("filler_type") == "uniform") {
+        //todo
+        return nullptr;
+    } else if (c_json("filler_type") == "constant") {
+        float value;
+        c_json.Get("value", value);
+        utils::ConstantFiller* filler = new utils::ConstantFiller(value);
+        return filler;
+    } else {
+        CHECK(false, "Unsupport filler type.");
+        return nullptr;
+    }
+}
+
 core::ir::Graph* CfgParser::operator() (const char* file_name) {
     core::ir::Graph* graph = new core::ir::Graph;
     std::fstream file;
@@ -204,29 +241,28 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
             c_json["dilations"].Get(1, conv_param.dilations[1]);
             c_json["dilations"].Get(2, conv_param.dilations[2]);
             c_json["dilations"].Get(3, conv_param.dilations[3]);
-            // std::cout<<"debug:"<<c_json("activation")<<std::endl;
-            c_json.Get("group", conv_param.group);
+            if (c_json.KeyExist("activation")) {
+                conv_param.activation = c_json("activation");
+            }
+            if (c_json.KeyExist("group")) {
+                c_json.Get("group", conv_param.group);
+            }
+            if (c_json.KeyExist("with_bias")) {
+                conv_param.activation = c_json("with_bias");
+            }
             
         } else if (param[0] == "weight_filler") {
-            absl::string_view param_item = param[1];
-            do {
-                absl::ConsumePrefix(&param_item, " ");
-                absl::ConsumeSuffix(&param_item, " ");
-            } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
-            if (param_item == "xavier") {
-                utils::XavierFiller* filler = new utils::XavierFiller;
-                node->set_weight_filler(filler);
+            neb::CJsonObject c_json;
+            if (!c_json.Parse(param[1].c_str())) {
+                EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
+            node->set_weight_filler(_init_filler_type_(c_json));
         } else if (param[0] == "bias_filler") {
-            absl::string_view param_item = param[1];
-            do {
-                absl::ConsumePrefix(&param_item, " ");
-                absl::ConsumeSuffix(&param_item, " ");
-            } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
-            if (param_item == "constant") {
-                utils::ConstantFiller* filler = new utils::ConstantFiller(1.0);//TODO
-                node->set_bias_filler(filler);
+            neb::CJsonObject c_json;
+            if (!c_json.Parse(param[1].c_str())) {
+                EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
+            node->set_bias_filler(_init_filler_type_(c_json));
         } else if (param[0] == "producer") {
             std::vector<std::string> p_param= absl::StrSplit(param[1].substr(1, param[1].size()-2), absl::ByChar(','));
             for (auto it : p_param) {
@@ -314,7 +350,12 @@ void CfgParser::init_fc_param(std::fstream& file, core::ir::Graph* graph) {
                 EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
             c_json.Get("num_outputs", fc_param.num_outputs);
-            
+            if (c_json.KeyExist("activation")) {
+                fc_param.activation = c_json("activation");
+            }
+            if (c_json.KeyExist("with_bias")) {
+                fc_param.activation = c_json("with_bias");
+            }
         } else if (param[0] == "producer") {
             std::vector<std::string> p_param= absl::StrSplit(param[1].substr(1, param[1].size()-2), absl::ByChar(','));
             for (auto it : p_param) {
@@ -328,25 +369,17 @@ void CfgParser::init_fc_param(std::fstream& file, core::ir::Graph* graph) {
                 }
             }
         } else if (param[0] == "weight_filler") {
-            absl::string_view param_item = param[1];
-            do {
-                absl::ConsumePrefix(&param_item, " ");
-                absl::ConsumeSuffix(&param_item, " ");
-            } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
-            if (param_item == "xavier") {
-                utils::XavierFiller* filler = new utils::XavierFiller;
-                node->set_weight_filler(filler);
+            neb::CJsonObject c_json;
+            if (!c_json.Parse(param[1].c_str())) {
+                EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
+            node->set_weight_filler(_init_filler_type_(c_json));
         } else if (param[0] == "bias_filler") {
-            absl::string_view param_item = param[1];
-            do {
-                absl::ConsumePrefix(&param_item, " ");
-                absl::ConsumeSuffix(&param_item, " ");
-            } while (param_item[0] == ' ' || param_item[param_item.size()-1] == ' ');
-            if (param_item == "constant") {
-                utils::ConstantFiller* filler = new utils::ConstantFiller(1.0);//TODO
-                node->set_bias_filler(filler);
+            neb::CJsonObject c_json;
+            if (!c_json.Parse(param[1].c_str())) {
+                EU_ERROR<<"Invaild json format"<<EU_ENDL;
             }
+            node->set_bias_filler(_init_filler_type_(c_json));
         } else {
             EU_WARN<<"Need to add param " <<param[0]<<" to fc node."<<EU_ENDL;
         }

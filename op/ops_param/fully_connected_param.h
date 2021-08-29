@@ -29,6 +29,7 @@
 #ifndef __FULLY_CONNECTED_PARAM_H__
 #define __FULLY_CONNECTED_PARAM_H__
 #include <vector>
+#include <string>
 
 #include "op/ops_param/base_param.h"
 
@@ -40,6 +41,8 @@ struct FullyConnectedParam : public BaseParam {
         op_type = FULLYCONNECTED;
     }
     uint32_t num_outputs;
+    std::string activation = "None";
+    bool with_bias = true;
     void copy_from(const BaseParam* param);
     virtual ~FullyConnectedParam() {}
 };

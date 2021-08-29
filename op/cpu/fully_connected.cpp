@@ -63,7 +63,7 @@ void FullyConnectedOperator::forward(const std::vector<const core::ir::Tensor*> 
     const core::ir::Tensor* weight = node_->get_weight();
     const core::ir::Tensor* bias = node_->get_bias();
     std::vector<uint32_t> weight_shape = weight->dims();
-    gemm(weight, input_tensor, bias, output_tensor);
+    gemm(weight, input_tensor, output_tensor);
     input_tensor->reshape(ori_input_shape);
 }
 

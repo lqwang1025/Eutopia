@@ -40,6 +40,8 @@ void Convolution2DParam::copy_from(const BaseParam* param) {
     pads         = con_param->pads;
     pad_type     = con_param->pad_type;
     group        = con_param->group;
+    activation   = con_param->activation;
+    with_bias    = con_param->with_bias;
     CHECK(SUPPORT_PAD_TYPES.count(pad_type)!=0, "Unsupport pad type.");
 }
 

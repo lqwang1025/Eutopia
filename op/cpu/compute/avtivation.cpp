@@ -32,6 +32,15 @@ namespace eutopia {
 namespace op {
 namespace cpu {
 
+ActivationFunc get_activation(const std::string& act_type) {
+    if (act_type == "relu") {
+        return relu_activate;
+    } else if (act_type == "tanh") {
+        return tanh_activate;
+    } else {
+        return nullptr;
+    }
+}
 
 } // namespace cpu
 } // namespace op

@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     a.set_program_name("eutopia-train-tools");
     a.parse_check(argc, argv);
     eutopia::core::ir::Graph* graph = p.run("/home/parallels/project/Eutopia/tools/cfg/alexnet.cfg");
-    eutopia::core::ir::Tensor* tensor = new eutopia::core::ir::Tensor({20, 28, 28, 1}, eutopia::core::DataType::EUTOPIA_DT_FP32);
+    eutopia::core::ir::Tensor* tensor = new eutopia::core::ir::Tensor({20, 1, 28, 28}, eutopia::core::DataType::EUTOPIA_DT_FP32);
     graph->warm_up();
     graph->forward(tensor);
     graph->to_proto();

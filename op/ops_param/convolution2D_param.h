@@ -48,8 +48,10 @@ struct Convolution2DParam : public BaseParam {
     std::vector<uint32_t> strides;
     std::vector<uint32_t> dilations;
     std::vector<int32_t> pads;
+    std::string activation = "None";
     std::string pad_type;
-    uint32_t group;
+    bool with_bias = true;
+    uint32_t group = 1;
     void copy_from(const BaseParam* param);
     virtual ~Convolution2DParam() {}
 };
