@@ -46,7 +46,6 @@ static const std::map<DataType, DataTypeInfo> data_type_info_map = {
     {DataType::EUTOPIA_DT_INT16, {"EUTOPIA_DT_INT16", 2}},
     {DataType::EUTOPIA_DT_UINT16, {"EUTOPIA_DT_UINT16", 2}},
     {DataType::EUTOPIA_DT_INT32, {"EUTOPIA_DT_INT32", 4}},
-    {DataType::EUTOPIA_DT_UINT32, {"EUTOPIA_DT_UINT32", 4}},
     {DataType::EUTOPIA_DT_FP32, {"EUTOPIA_DT_FP32", 4}},
 };
 
@@ -69,8 +68,6 @@ DataType string_to_data_type(std::string& data_type_str) {
         return DataType::EUTOPIA_DT_INT16;
     } else if (data_type_str == "EUTOPIA_DT_INT32") {
         return DataType::EUTOPIA_DT_INT32;
-    } else if (data_type_str == "EUTOPIA_DT_UINT32") {
-        return DataType::EUTOPIA_DT_UINT32;
     } else if (data_type_str == "EUTOPIA_DT_FP32") {
         return DataType::EUTOPIA_DT_FP32;
     } else {

@@ -268,9 +268,11 @@ void Node::_conv2d_filler() {
         kernel_shape[1] = ic;
     }
     weight_ = new Tensor(kernel_shape, DataType::EUTOPIA_DT_FP32);
+    weight_->set_name(get_name()+"_const_1");
     weight_filler_->fill(weight_);
     delete weight_filler_;
     bias_ = new Tensor({kernel_shape[0]}, DataType::EUTOPIA_DT_FP32);
+    bias_->set_name(get_name()+"_const_2");
     bias_filler_->fill(bias_);
     delete bias_filler_;
 }
@@ -292,9 +294,11 @@ void Node::_fc_filler() {
     CHECK(num_inputs!=0,"");
     std::vector<uint32_t> kernel_shape = {num_outputs, num_inputs, 1, 1}; // // weight distribution: OcIcHW
     weight_ = new Tensor(kernel_shape, DataType::EUTOPIA_DT_FP32);
+    weight_->set_name(get_name()+"_const_1");
     weight_filler_->fill(weight_);
     delete weight_filler_;
     bias_ = new Tensor({num_outputs}, DataType::EUTOPIA_DT_FP32);
+    bias_->set_name(get_name()+"_const_2");
     bias_filler_->fill(bias_);
     delete bias_filler_;
 }

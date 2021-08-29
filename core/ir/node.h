@@ -38,6 +38,7 @@
 
 namespace onnx {
 class NodeProto;
+class GraphProto;
 }
 
 namespace eutopia {
@@ -103,7 +104,7 @@ public:
     bool is_trainning(void) const;
     void set_is_trainning(bool is_trainning);
     const Tensor* get_output_tensor(void) const;
-    onnx::NodeProto* to_proto() const;
+    void to_proto(onnx::GraphProto* graph) const;
     void set_graph(Graph* graph);
     const Graph* get_graph(void) const;
     void infer_shape(const InputShapes& input_shape);
@@ -146,11 +147,11 @@ private:
         {CONVOLUTION2D, &Node::_conv2d_filler},
         {FULLYCONNECTED, &Node::_fc_filler}
     };
-    typedef onnx::NodeProto* (Node::*ProtoFunc)() const;
-    onnx::NodeProto* _conv2d_proto() const;
-    onnx::NodeProto* _fc_proto() const;
-    onnx::NodeProto* _input_proto() const;
-    onnx::NodeProto* _pooling_proto() const;
+    typedef void (Node::*ProtoFunc)(onnx::GraphProto*) const;
+    void _conv2d_proto(onnx::GraphProto* graph) const;
+    void  _fc_proto(onnx::GraphProto* graph) const;
+    void  _input_proto(onnx::GraphProto* graph) const;
+    void  _pooling_proto(onnx::GraphProto* graph) const;
     std::map<std::string, ProtoFunc> proto_map_ {
         {CONVOLUTION2D, &Node::_conv2d_proto},
         {FULLYCONNECTED, &Node::_fc_proto},

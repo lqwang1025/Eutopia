@@ -35,6 +35,7 @@
 
 #include "core/ir/graph.h"
 #include "core/ir/node.h"
+#include "core/ir/tensor.h"
 #include "core/framework/onnx.pb.h"
 #include "core/logging.h"
 
@@ -46,8 +47,6 @@
 namespace eutopia {
 namespace core {
 namespace ir {
-
-using onnx::AttributeProto_AttributeType;
 
 static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, const float& value) {
     onnx::AttributeProto* attr = node->add_attribute();
@@ -106,7 +105,7 @@ static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, co
     }
 }
 
-onnx::NodeProto* Node::_conv2d_proto() const {
+void Node::_conv2d_proto(onnx::GraphProto* graph) const {
     onnx::NodeProto* conv2d_node = new onnx::NodeProto;
     conv2d_node->set_op_type(get_op_type());
     conv2d_node->set_name(get_name());
@@ -133,11 +132,23 @@ onnx::NodeProto* Node::_conv2d_proto() const {
     for (auto it : get_producers()) {
         conv2d_node->add_input(it);
     }
+    onnx::TensorProto* proto_weight = new onnx::TensorProto;
+    onnx::TensorProto* proto_bias = new onnx::TensorProto;
+    Tensor* weight = get_weight();
+    Tensor* bias = get_bias();
+    weight->to_proto(proto_weight);
+    bias->to_proto(proto_bias);
+
+    conv2d_node->add_input(weight->name());
+    conv2d_node->add_input(bias->name());
     
-    return conv2d_node;
+    *graph->add_node() = *conv2d_node;
+    *graph->add_initializer() = *proto_bias;
+    *graph->add_initializer() = *proto_weight;
+    delete conv2d_node;
 }
 
-onnx::NodeProto* Node::_fc_proto() const {
+void Node::_fc_proto(onnx::GraphProto* graph) const {
     onnx::NodeProto* fc_node = new onnx::NodeProto;
     fc_node->set_op_type(get_op_type());
     fc_node->set_name(get_name());
@@ -157,15 +168,27 @@ onnx::NodeProto* Node::_fc_proto() const {
     op::FullyConnectedParam* op_param = fc_op->op_param_;
     _add_attr_to_node(fc_node, "num_outputs", (int)op_param->num_outputs);
     
-    
     for (auto it : get_producers()) {
         fc_node->add_input(it);
     }
+    onnx::TensorProto* proto_weight = new onnx::TensorProto;
+    onnx::TensorProto* proto_bias = new onnx::TensorProto;
+    Tensor* weight = get_weight();
+    weight->reshape({weight->dims()[0], weight->dims()[1]});
+    Tensor* bias = get_bias();
+    weight->to_proto(proto_weight);
+    bias->to_proto(proto_bias);
     
-    return fc_node;
+    fc_node->add_input(weight->name());
+    fc_node->add_input(bias->name());
+    
+    *graph->add_node() = *fc_node;
+    *graph->add_initializer() = *proto_bias;
+    *graph->add_initializer() = *proto_weight;
+    delete fc_node;
 }
 
-onnx::NodeProto* Node::_input_proto() const {
+void Node::_input_proto(onnx::GraphProto* graph) const {
     onnx::NodeProto* input_node = new onnx::NodeProto;
     input_node->set_op_type(get_op_type());
     input_node->set_name(get_name());
@@ -185,15 +208,15 @@ onnx::NodeProto* Node::_input_proto() const {
     op::InputParam* op_param = input_op->op_param_;
     _add_attr_to_node(input_node, "mean", op_param->mean);
     _add_attr_to_node(input_node, "std", op_param->std);
-    
-    
+        
     for (auto it : get_producers()) {
         input_node->add_input(it);
     }
-    return input_node;
+    *graph->add_node() = *input_node;
+    delete input_node;
 }
 
-onnx::NodeProto* Node::_pooling_proto() const {
+void Node::_pooling_proto(onnx::GraphProto* graph) const {
     onnx::NodeProto* pool_node = new onnx::NodeProto;
     pool_node->set_op_type(get_op_type());
     pool_node->set_name(get_name());
@@ -219,14 +242,15 @@ onnx::NodeProto* Node::_pooling_proto() const {
         pool_node->add_input(it);
     }
     
-    return pool_node;
+    *graph->add_node() = *pool_node;
+    delete pool_node;
 }
 
-onnx::NodeProto* Node::to_proto() const {
+void Node::to_proto(onnx::GraphProto* graph) const {
     if (proto_map_.count(op_type_) != 0) {
-        return (this->*proto_map_.at(op_type_))();
+        (this->*proto_map_.at(op_type_))(graph);
     } else {
-        return nullptr;
+        CHECK(false,);
     }
 }
 
@@ -236,10 +260,7 @@ void Graph::to_proto() const {
     graph->set_name(get_name());
     for (int i = 0; i < (int)seq_nodes_.size(); ++i) {
         Node* cur_node = seq_nodes_[i];
-        onnx::NodeProto* node = cur_node->to_proto();
-        onnx::NodeProto* g_node = graph->add_node();
-        *g_node = *node;
-        delete node;
+        cur_node->to_proto(graph);
     }
     model->set_allocated_graph(graph);
     std::fstream file("out.onnx", std::ios::out | std::ios::trunc | std::ios::binary);

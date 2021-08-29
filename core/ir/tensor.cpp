@@ -33,6 +33,8 @@
 #include "core/ir/tensor.h"
 #include "core/ir/chunk.h"
 
+#include "core/framework/onnx.pb.h"
+
 namespace eutopia {
 namespace core {
 namespace ir {
@@ -167,6 +169,16 @@ void Tensor::reshape(const std::vector<uint32_t>& shape) {
 
 Chunk* Tensor::chunk() const {
     return mem_;
+}
+
+void Tensor::to_proto(onnx::TensorProto* tensor_proto) {
+    for (auto it : dims_) {
+        tensor_proto->add_dims(it);
+    }
+    tensor_proto->set_name(name());
+    tensor_proto->set_data_type(static_cast<onnx::TensorProto_DataType>(data_type_));
+    std::string data((char*)chunk()->get_data_ptr(), byte_size_);
+    tensor_proto->set_raw_data(data);
 }
 
 Tensor::~Tensor() {

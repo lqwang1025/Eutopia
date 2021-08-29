@@ -35,6 +35,10 @@
 
 #include "core/data_type.h"
 
+namespace onnx {
+class TensorProto;
+}
+
 namespace eutopia {
 namespace core {
 namespace ir {
@@ -72,7 +76,8 @@ public:
     Tensor& operator=(const Tensor& rhs);
     uint32_t byte_size() const;
     uint32_t total() const;
-    Chunk* chunk() const;    
+    Chunk* chunk() const;
+    void to_proto(onnx::TensorProto* tensor_proto);
 private:
     std::string name_;
     DataType data_type_;
