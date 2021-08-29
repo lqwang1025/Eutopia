@@ -26,6 +26,7 @@
  * Description:
  */
 #include <fstream>
+#include <string>
 
 #include "op/cpu/convolution2D.h"
 #include "op/cpu/fully_connected.h"
@@ -34,9 +35,7 @@
 
 #include "core/ir/graph.h"
 #include "core/ir/node.h"
-#include "core/framework/node_def.pb.h"
-#include "core/framework/graph_def.pb.h"
-#include "core/framework/attr_value.pb.h"
+#include "core/framework/onnx.pb.h"
 #include "core/logging.h"
 
 #include <google/protobuf/io/coded_stream.h>
@@ -48,163 +47,145 @@ namespace eutopia {
 namespace core {
 namespace ir {
 
-eutopia::framework::NodeDef* Node::_conv2d_proto() const {
-    eutopia::framework::NodeDef* conv2d_node = new eutopia::framework::NodeDef;
-    auto conv2d_attr = conv2d_node->mutable_attr();
-    conv2d_node->set_op(get_op_type());
-    conv2d_node->set_name(get_name());
-    eutopia::framework::AttrValue attr_value;
-    attr_value.set_b(is_quantize_);
-    conv2d_attr->insert({"is_quantize", attr_value});
-    attr_value.set_b(weight_shared_);
-    conv2d_attr->insert({"weight_shared", attr_value});
-    attr_value.set_b(dynamic_shape_);
-    conv2d_attr->insert({"dynamic_shape", attr_value});
-    attr_value.set_b(is_last_node_);
-    conv2d_attr->insert({"is_last_node", attr_value});
-    attr_value.set_b(is_sparse_);
-    conv2d_attr->insert({"is_sparse", attr_value});
-    attr_value.set_b(is_first_node_);
-    conv2d_attr->insert({"is_first_node", attr_value});
-    attr_value.set_b(in_place_);
-    conv2d_attr->insert({"in_place", attr_value});
-    attr_value.clear_b();
-    attr_value.set_s(device_);
-    conv2d_attr->insert({"device", attr_value});
-    
-    eutopia::framework::AttrValue_ListValue list_value;
-    list_value.clear_i();
-    for (auto it : output_shape_) {
-        list_value.add_i(it);
+using onnx::AttributeProto_AttributeType;
+
+static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, const float& value) {
+    onnx::AttributeProto* attr = node->add_attribute();
+    attr->set_type(onnx::AttributeProto_AttributeType_FLOAT);
+    attr->set_name(name);
+    attr->set_f(value);
+}
+
+static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, const int& value) {
+    onnx::AttributeProto* attr = node->add_attribute();
+    attr->set_type(onnx::AttributeProto_AttributeType_INT);
+    attr->set_name(name);
+    attr->set_i(value);
+}
+
+static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, const std::string& value) {
+    onnx::AttributeProto* attr = node->add_attribute();
+    attr->set_type(onnx::AttributeProto_AttributeType_STRING);
+    attr->set_name(name);
+    attr->set_s(value);
+}
+
+static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, const std::vector<float>& value) {
+    onnx::AttributeProto* attr = node->add_attribute();
+    attr->set_type(onnx::AttributeProto_AttributeType_FLOATS);
+    attr->set_name(name);
+    for (auto it : value) {
+        attr->add_floats(it);
     }
-    attr_value.clear_s();
-    *attr_value.mutable_list() = list_value;
-    conv2d_attr->insert({"output_shape", attr_value});
+}
+
+static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, const std::vector<int>& value) {
+    onnx::AttributeProto* attr = node->add_attribute();
+    attr->set_type(onnx::AttributeProto_AttributeType_INTS);
+    attr->set_name(name);
+    for (auto it : value) {
+        attr->add_ints(it);
+    }
+}
+
+static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, const std::vector<uint32_t>& value) {
+    onnx::AttributeProto* attr = node->add_attribute();
+    attr->set_type(onnx::AttributeProto_AttributeType_INTS);
+    attr->set_name(name);
+    for (auto it : value) {
+        attr->add_ints((int32_t)it);
+    }
+}
+
+static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, const std::vector<std::string>& value) {
+    onnx::AttributeProto* attr = node->add_attribute();
+    attr->set_type(onnx::AttributeProto_AttributeType_STRINGS);
+    attr->set_name(name);
+    for (auto it : value) {
+        attr->add_strings(it);
+    }
+}
+
+onnx::NodeProto* Node::_conv2d_proto() const {
+    onnx::NodeProto* conv2d_node = new onnx::NodeProto;
+    conv2d_node->set_op_type(get_op_type());
+    conv2d_node->set_name(get_name());
+    conv2d_node->add_output(get_name());
+    
+    _add_attr_to_node(conv2d_node, "is_quantize", (int)is_quantize_);
+    _add_attr_to_node(conv2d_node, "weight_shared", (int)weight_shared_);
+    _add_attr_to_node(conv2d_node, "dynamic_shape", (int)dynamic_shape_);
+    _add_attr_to_node(conv2d_node, "is_last_node", (int)is_last_node_);
+    _add_attr_to_node(conv2d_node, "is_sparse", (int)is_sparse_);
+    _add_attr_to_node(conv2d_node, "is_first_node", (int)is_first_node_);
+    _add_attr_to_node(conv2d_node, "in_place", (int)in_place_);
+    _add_attr_to_node(conv2d_node, "device", device_);
+    _add_attr_to_node(conv2d_node, "output_shape", output_shape_);
     
     op::cpu::Convolution2DOperator* conv2d_op = static_cast<op::cpu::Convolution2DOperator*>(op_);
     op::Convolution2DParam* op_param = conv2d_op->op_param_;
-    list_value.clear_i();
-    for (auto it : op_param->kernel_shape) {
-        list_value.add_i(it);
-    }
-    *attr_value.mutable_list() = list_value;
-    conv2d_attr->insert({"kernels", attr_value});
-    list_value.clear_i();
-    for (auto it : op_param->strides) {
-        list_value.add_i(it);
-    }
-    *attr_value.mutable_list() = list_value;
-    conv2d_attr->insert({"strides", attr_value});
-    
-    list_value.clear_i();
-    for (auto it : op_param->dilations) {
-        list_value.add_i(it);
-    }
-    *attr_value.mutable_list() = list_value;
-    conv2d_attr->insert({"dilations", attr_value});
-
-    list_value.clear_i();
-    for (auto it : op_param->pads) {
-        list_value.add_i(it);
-    }
-    *attr_value.mutable_list() = list_value;
-    conv2d_attr->insert({"pads", attr_value});
-    attr_value.clear_list();
-    attr_value.set_s(op_param->pad_type);
-    conv2d_attr->insert({"padding", attr_value});
+    _add_attr_to_node(conv2d_node, "kennels", op_param->kernel_shape);
+    _add_attr_to_node(conv2d_node, "strides", op_param->strides);
+    _add_attr_to_node(conv2d_node, "dilations", op_param->dilations);
+    _add_attr_to_node(conv2d_node, "pads", op_param->pads);
+    _add_attr_to_node(conv2d_node, "padding", op_param->pad_type);
     
     for (auto it : get_producers()) {
         conv2d_node->add_input(it);
     }
+    
     return conv2d_node;
 }
 
-eutopia::framework::NodeDef* Node::_fc_proto() const {
-    eutopia::framework::NodeDef* fc_node = new eutopia::framework::NodeDef;
-    auto fc_attr = fc_node->mutable_attr();
-    fc_node->set_op(get_op_type());
+onnx::NodeProto* Node::_fc_proto() const {
+    onnx::NodeProto* fc_node = new onnx::NodeProto;
+    fc_node->set_op_type(get_op_type());
     fc_node->set_name(get_name());
-    eutopia::framework::AttrValue attr_value;
-    attr_value.set_b(is_quantize_);
-    fc_attr->insert({"is_quantize", attr_value});
-    attr_value.set_b(weight_shared_);
-    fc_attr->insert({"weight_shared", attr_value});
-    attr_value.set_b(dynamic_shape_);
-    fc_attr->insert({"dynamic_shape", attr_value});
-    attr_value.set_b(is_last_node_);
-    fc_attr->insert({"is_last_node", attr_value});
-    attr_value.set_b(is_sparse_);
-    fc_attr->insert({"is_sparse", attr_value});
-    attr_value.set_b(is_first_node_);
-    fc_attr->insert({"is_first_node", attr_value});
-    attr_value.set_b(in_place_);
-    fc_attr->insert({"in_place", attr_value});
-    attr_value.clear_b();
-    attr_value.set_s(device_);
-    fc_attr->insert({"device", attr_value});
+    fc_node->add_output(get_name());
     
-    eutopia::framework::AttrValue_ListValue list_value;
-    list_value.clear_i();
-    for (auto it : output_shape_) {
-        list_value.add_i(it);
-    }
-    attr_value.clear_s();
-    *attr_value.mutable_list() = list_value;
-    fc_attr->insert({"output_shape", attr_value});
+    _add_attr_to_node(fc_node, "is_quantize", (int)is_quantize_);
+    _add_attr_to_node(fc_node, "weight_shared", (int)weight_shared_);
+    _add_attr_to_node(fc_node, "dynamic_shape", (int)dynamic_shape_);
+    _add_attr_to_node(fc_node, "is_last_node", (int)is_last_node_);
+    _add_attr_to_node(fc_node, "is_sparse", (int)is_sparse_);
+    _add_attr_to_node(fc_node, "is_first_node", (int)is_first_node_);
+    _add_attr_to_node(fc_node, "in_place", (int)in_place_);
+    _add_attr_to_node(fc_node, "device", device_);
+    _add_attr_to_node(fc_node, "output_shape", output_shape_);
     
     op::cpu::FullyConnectedOperator* fc_op = static_cast<op::cpu::FullyConnectedOperator*>(op_);
     op::FullyConnectedParam* op_param = fc_op->op_param_;
-    attr_value.clear_list();
-    attr_value.set_i(op_param->num_outputs);
-    fc_attr->insert({"num_outputs", attr_value});
+    _add_attr_to_node(fc_node, "num_outputs", (int)op_param->num_outputs);
+    
     
     for (auto it : get_producers()) {
         fc_node->add_input(it);
     }
+    
     return fc_node;
 }
 
-eutopia::framework::NodeDef* Node::_input_proto() const {
-    eutopia::framework::NodeDef* input_node = new eutopia::framework::NodeDef;
-    auto input_attr = input_node->mutable_attr();
-    input_node->set_op(get_op_type());
+onnx::NodeProto* Node::_input_proto() const {
+    onnx::NodeProto* input_node = new onnx::NodeProto;
+    input_node->set_op_type(get_op_type());
     input_node->set_name(get_name());
-    eutopia::framework::AttrValue attr_value;
-    attr_value.set_b(is_quantize_);
-    input_attr->insert({"is_quantize", attr_value});
-    attr_value.set_b(weight_shared_);
-    input_attr->insert({"weight_shared", attr_value});
-    attr_value.set_b(dynamic_shape_);
-    input_attr->insert({"dynamic_shape", attr_value});
-    attr_value.set_b(is_last_node_);
-    input_attr->insert({"is_last_node", attr_value});
-    attr_value.set_b(is_sparse_);
-    input_attr->insert({"is_sparse", attr_value});
-    attr_value.set_b(is_first_node_);
-    input_attr->insert({"is_first_node", attr_value});
-    attr_value.set_b(in_place_);
-    input_attr->insert({"in_place", attr_value});
-    attr_value.clear_b();
-    attr_value.set_s(device_);
-    input_attr->insert({"device", attr_value});
+    input_node->add_output(get_name());
     
-    eutopia::framework::AttrValue_ListValue list_value;
-    list_value.clear_i();
-    for (auto it : output_shape_) {
-        list_value.add_i(it);
-    }
-    attr_value.clear_s();
-    *attr_value.mutable_list() = list_value;
-    input_attr->insert({"output_shape", attr_value});
+    _add_attr_to_node(input_node, "is_quantize", (int)is_quantize_);
+    _add_attr_to_node(input_node, "weight_shared", (int)weight_shared_);
+    _add_attr_to_node(input_node, "dynamic_shape", (int)dynamic_shape_);
+    _add_attr_to_node(input_node, "is_last_node", (int)is_last_node_);
+    _add_attr_to_node(input_node, "is_sparse", (int)is_sparse_);
+    _add_attr_to_node(input_node, "is_first_node", (int)is_first_node_);
+    _add_attr_to_node(input_node, "in_place", (int)in_place_);
+    _add_attr_to_node(input_node, "device", device_);
+    _add_attr_to_node(input_node, "output_shape", output_shape_);
     
     op::cpu::InputOperator* input_op = static_cast<op::cpu::InputOperator*>(op_);
     op::InputParam* op_param = input_op->op_param_;
-    attr_value.clear_list();
-    attr_value.set_f(op_param->mean);
-    input_attr->insert({"mean", attr_value});
+    _add_attr_to_node(input_node, "mean", op_param->mean);
+    _add_attr_to_node(input_node, "std", op_param->std);
     
-    attr_value.set_f(op_param->std);
-    input_attr->insert({"std", attr_value});
     
     for (auto it : get_producers()) {
         input_node->add_input(it);
@@ -212,94 +193,61 @@ eutopia::framework::NodeDef* Node::_input_proto() const {
     return input_node;
 }
 
-eutopia::framework::NodeDef* Node::_pooling_proto() const {
-    eutopia::framework::NodeDef* pool_node = new eutopia::framework::NodeDef;
-    auto pool_attr = pool_node->mutable_attr();
-    pool_node->set_op(get_op_type());
+onnx::NodeProto* Node::_pooling_proto() const {
+    onnx::NodeProto* pool_node = new onnx::NodeProto;
+    pool_node->set_op_type(get_op_type());
     pool_node->set_name(get_name());
-    eutopia::framework::AttrValue attr_value;
-    attr_value.set_b(is_quantize_);
-    pool_attr->insert({"is_quantize", attr_value});
-    attr_value.set_b(weight_shared_);
-    pool_attr->insert({"weight_shared", attr_value});
-    attr_value.set_b(dynamic_shape_);
-    pool_attr->insert({"dynamic_shape", attr_value});
-    attr_value.set_b(is_last_node_);
-    pool_attr->insert({"is_last_node", attr_value});
-    attr_value.set_b(is_sparse_);
-    pool_attr->insert({"is_sparse", attr_value});
-    attr_value.set_b(is_first_node_);
-    pool_attr->insert({"is_first_node", attr_value});
-    attr_value.set_b(in_place_);
-    pool_attr->insert({"in_place", attr_value});
-    attr_value.clear_b();
-    attr_value.set_s(device_);
-    pool_attr->insert({"device", attr_value});
+    pool_node->add_output(get_name());
     
-    eutopia::framework::AttrValue_ListValue list_value;
-    list_value.clear_i();
-    for (auto it : output_shape_) {
-        list_value.add_i(it);
-    }
-    attr_value.clear_s();
-    *attr_value.mutable_list() = list_value;
-    pool_attr->insert({"output_shape", attr_value});
+    _add_attr_to_node(pool_node, "is_quantize", (int)is_quantize_);
+    _add_attr_to_node(pool_node, "weight_shared", (int)weight_shared_);
+    _add_attr_to_node(pool_node, "dynamic_shape", (int)dynamic_shape_);
+    _add_attr_to_node(pool_node, "is_last_node", (int)is_last_node_);
+    _add_attr_to_node(pool_node, "is_sparse", (int)is_sparse_);
+    _add_attr_to_node(pool_node, "is_first_node", (int)is_first_node_);
+    _add_attr_to_node(pool_node, "in_place", (int)in_place_);
+    _add_attr_to_node(pool_node, "device", device_);
+    _add_attr_to_node(pool_node, "output_shape", output_shape_);
     
     op::cpu::PoolingOperator* pool_op = static_cast<op::cpu::PoolingOperator*>(op_);
     op::PoolingParam* op_param = pool_op->op_param_;
-    list_value.clear_i();
-    for (auto it : op_param->kernels) {
-        list_value.add_i(it);
-    }
-    *attr_value.mutable_list() = list_value;
-    pool_attr->insert({"kernels", attr_value});
-
-    list_value.clear_i();
-    for (auto it : op_param->strides) {
-        list_value.add_i(it);
-    }
-    *attr_value.mutable_list() = list_value;
-    pool_attr->insert({"strides", attr_value});
+    _add_attr_to_node(pool_node, "kernels", op_param->kernels);
+    _add_attr_to_node(pool_node, "strides", op_param->strides);
+    _add_attr_to_node(pool_node, "pool_type", op_param->pool_type);
     
-    attr_value.clear_list();
-    attr_value.set_s(op_param->pool_type);
-    pool_attr->insert({"pool_type", attr_value});
     for (auto it : get_producers()) {
         pool_node->add_input(it);
     }
+    
     return pool_node;
 }
 
-eutopia::framework::NodeDef* Node::to_proto() const {
+onnx::NodeProto* Node::to_proto() const {
     if (proto_map_.count(op_type_) != 0) {
         return (this->*proto_map_.at(op_type_))();
     } else {
         return nullptr;
     }
-    
 }
 
 void Graph::to_proto() const {
-    framework::GraphDef* graph = new framework::GraphDef;
+    onnx::ModelProto* model = new onnx::ModelProto;
+    onnx::GraphProto* graph = new onnx::GraphProto;
     graph->set_name(get_name());
-    eutopia::framework::AttrValue attr_value;
-    attr_value.set_s("Daniel Wang");
-    graph->mutable_attr()->insert({"author", attr_value});
     for (int i = 0; i < (int)seq_nodes_.size(); ++i) {
         Node* cur_node = seq_nodes_[i];
-        framework::NodeDef* node = cur_node->to_proto();
-        framework::NodeDef* g_node = graph->add_node();
+        onnx::NodeProto* node = cur_node->to_proto();
+        onnx::NodeProto* g_node = graph->add_node();
         *g_node = *node;
         delete node;
     }
-    std::fstream file("out.pb", std::ios::out | std::ios::trunc | std::ios::binary);
-    if (!graph->SerializeToOstream(&file)) {
+    model->set_allocated_graph(graph);
+    std::fstream file("out.onnx", std::ios::out | std::ios::trunc | std::ios::binary);
+    if (!model->SerializeToOstream(&file)) {
         EU_WARN<<"Failed to serialize."<<RESET;
-   }
-    std::string ddd = graph->DebugString();
-    std::cout<<"debu:"<<ddd<<std::endl;
+    }
     file.close();
-    delete graph;
+    delete model;
 }
 
 } // namespace ir
