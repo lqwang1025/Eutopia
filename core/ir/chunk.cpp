@@ -59,15 +59,10 @@ void Chunk::set_data(uint32_t byte_size, void* data) {
         CHECK(data_!=nullptr, "Alloc memory failed.");
         own_data_ = true;
     } else {
-        if (byte_size <= byte_size_) {
-            memcpy(data_, data, byte_size);
-        } else {
-            _release_data();
-            data_ = malloc(byte_size);
-            memcpy(data_, data, byte_size);
-            CHECK(data_!=nullptr, "Alloc memory failed.");
-            own_data_ = true;
-        }
+        _release_data();
+        data_ = data;
+        CHECK(data_!=nullptr, "Alloc memory failed.");
+        own_data_ = false;
     }
     byte_size_ = byte_size;
 }
@@ -88,18 +83,13 @@ void Chunk::_release_data() {
     if (own_data_ && data_ != nullptr) {
         free(data_);
     }
+    byte_size_ = 0;
     data_ = nullptr;
 }
 
 template <typename T>
 T& Chunk::at(uint32_t index) {
     T* data = (T*)data_;
-    uint8_t data_type_bytes = get_data_type_byte(owner_->data_type_); // fix me
-    CHECK(data_type_bytes!=0,);
-    if (index >= (int)get_byte_size()/data_type_bytes) {
-        std::cout<<"tensor owner:"<<owner_->name()<<std::endl;
-        std::cout<<"index:"<<index<<" "<< get_byte_size()<<" "<<(int)data_type_bytes<<std::endl;
-    }
     CHECK(index < (int)owner_->total(),);
     return data[index];
 }
