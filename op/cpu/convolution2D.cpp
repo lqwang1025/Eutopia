@@ -33,6 +33,7 @@
 #include "op/ops_param.h"
 #include "op/cpu/compute/im2col.h"
 #include "op/cpu/compute/gemm.h"
+#include "op/cpu/compute/batch_norm.h"
 
 namespace eutopia {
 namespace op {
@@ -96,6 +97,12 @@ void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> i
     const core::ir::Tensor* bias = node_->get_bias();
     output_tensor->set_data(output_shape, input_tensor->get_data_type());
     gemm(weight, &data_col, output_tensor);
+    if (op_param_->with_batch_norm) {
+        batch_norm(op_param_->mean, op_param_->var, op_param_->gamma,
+                   op_param_->beta, op_param_->epsilon, output_tensor);
+    } else {
+        add_bias(bias, output_tensor, op_param_->activation);
+    }
 }
 
 void Convolution2DOperator::backward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {

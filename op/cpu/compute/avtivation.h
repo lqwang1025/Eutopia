@@ -166,7 +166,6 @@ static inline float plse_gradient(float x) {
     return (x < 0 || x > 1) ? .01 : .125;
 }
 
-
 } // namespace cpu
 } // namespace op
 } // namespace eutopia

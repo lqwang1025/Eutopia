@@ -368,7 +368,7 @@ void CfgParser::init_fc_param(std::fstream& file, core::ir::Graph* graph) {
             }
             if (c_json.KeyExist("with_batch_norm")) {
                 c_json.Get("with_batch_norm", fc_param.with_batch_norm);
-                if (fc_param.with_batch_norm) {
+                if (fc_param.with_batch_norm) { 
                     fc_param.mean.resize(fc_param.num_outputs, 0.);
                     fc_param.var.resize(fc_param.num_outputs, 1.);
                     fc_param.gamma.resize(fc_param.num_outputs, 1.);

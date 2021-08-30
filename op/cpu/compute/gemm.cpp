@@ -29,11 +29,11 @@
 #include <vector>
 #include <omp.h>
 
-
 #include "core/ir/tensor.h"
 #include "core/logging.h"
 
 #include "op/cpu/compute/gemm.h"
+#include "op/cpu/compute/avtivation.h"
 
 namespace eutopia {
 namespace op {
@@ -65,6 +65,24 @@ void gemm(const core::ir::Tensor* weight, core::ir::Tensor* data_col, core::ir::
                     tid = omp_get_thread_num();
                     result->mutable_data<float>(result_offset+h*W+w) += a_part*data_col->data<float>(data_offset+k*W+w);
                 }
+            }
+        }
+    }
+}
+
+void add_bias(const core::ir::Tensor* bias, core::ir::Tensor* result, const std::string& act_type) {
+    std::vector<uint32_t> res_shape = result->dims(); // n c h w
+    ActivationFunc activate = get_activation(act_type);
+    CHECK(activate!=nullptr,);
+    CHECK(res_shape.size()==4,);
+    CHECK(bias->dims()[0]==res_shape[1],);
+    for (int  n = 0; n < (int)res_shape[0]; ++n) {
+        int n_offset = n*res_shape[1]*res_shape[2]*res_shape[3];
+        for (int c = 0; c < (int)res_shape[1]; ++c) {
+            int c_offset = c*res_shape[2]*res_shape[3];
+            for (int pl = 0; pl < (int)res_shape[2]*res_shape[3]; ++pl) {
+                result->mutable_data<float>(n_offset+c_offset+pl) += bias->data<float>(c);
+                result->mutable_data<float>(n_offset+c_offset+pl) = activate(result->data<float>(n_offset+c_offset+pl));
             }
         }
     }

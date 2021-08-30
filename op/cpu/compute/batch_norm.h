@@ -19,31 +19,32 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : avtivation.cpp
+ * File       : batch_norm.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-26:16:57:08
+ * Create Time: 2021-08-30:11:41:43
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#include "op/cpu/compute/avtivation.h"
-
+#ifndef __BATCH_NORM_H__
+#define __BATCH_NORM_H__
+#include "op/ops_param.h"
 namespace eutopia {
+namespace core {
+namespace ir {
+class Tensor;
+}
+}
 namespace op {
 namespace cpu {
 
-ActivationFunc get_activation(const std::string& act_type) {
-    if (act_type == "relu") {
-        return relu_activate;
-    } else if (act_type == "tanh") {
-        return tanh_activate;
-    } else if (act_type == "None") {
-        return linear_activate;
-    } else {
-        return nullptr;
-    }
-}
+void batch_norm(const std::vector<float>& mean, const std::vector<float>& var,
+                const std::vector<float>& gamma, const std::vector<float>& beta,
+                float epsilon, core::ir::Tensor* output_tensor);
 
 } // namespace cpu
 } // namespace op
 } // namespace eutopia
+
+#endif /* __BATCH_NORM_H__ */
+

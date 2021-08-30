@@ -48,7 +48,7 @@ void FullyConnectedOperator::infer_shape(const InputShapes& input_shapes, std::v
     CHECK(input_shapes.size()==1, "Now conv2d only support 1 input.");
     std::vector<uint32_t> input_shape = input_shapes[0]; // n c h w
     uint32_t num_outputs = op_param_->num_outputs;
-    output_shape = {input_shape[0], 1, 1, num_outputs};
+    output_shape = {input_shape[0], num_outputs, 1, 1};
 }
 
 void FullyConnectedOperator::forward(const std::vector<const core::ir::Tensor*> input_tensors, core::ir::Tensor* output_tensor) {
@@ -64,6 +64,11 @@ void FullyConnectedOperator::forward(const std::vector<const core::ir::Tensor*> 
     const core::ir::Tensor* bias = node_->get_bias();
     std::vector<uint32_t> weight_shape = weight->dims();
     gemm(weight, input_tensor, output_tensor);
+    if (op_param_->with_batch_norm) {
+        // todo 
+    } else {
+        add_bias(bias, output_tensor, op_param_->activation);
+    }
     input_tensor->reshape(ori_input_shape);
 }
 

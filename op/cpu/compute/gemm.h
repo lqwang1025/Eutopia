@@ -40,6 +40,8 @@ namespace cpu {
 
 void gemm(const core::ir::Tensor* weight, core::ir::Tensor* data_col, core::ir::Tensor* result);
 
+void add_bias(const core::ir::Tensor* bias, core::ir::Tensor* result, const std::string& act_type);
+
 } // namespace cpu
 } // namespace op
 } // namespace eutopia
