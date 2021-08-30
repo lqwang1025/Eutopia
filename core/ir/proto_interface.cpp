@@ -27,6 +27,7 @@
  */
 #include <fstream>
 #include <string>
+#include <typeinfo>
 
 #include "op/cpu/convolution2D.h"
 #include "op/cpu/fully_connected.h"
@@ -105,19 +106,57 @@ static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, co
     }
 }
 
+static void _add_attr_to_node(onnx::NodeProto* node, const std::string& name, bool value) {
+    std::string flag = "true";
+    if (!value) {
+        flag = "false";
+    }
+    _add_attr_to_node(node, name, flag);
+}
+
+template<typename T>
+static void _add_tensor_to_node(onnx::NodeProto* node, const std::string& name, const std::vector<T>& value) {
+    onnx::AttributeProto* attr = node->add_attribute();
+    attr->set_type(onnx::AttributeProto_AttributeType_TENSOR);
+    attr->set_name(name);
+    onnx::TensorProto* tensor = new onnx::TensorProto;
+    if (typeid(T) == typeid(float)) {
+        tensor->set_data_type(onnx::TensorProto_DataType::TensorProto_DataType_FLOAT);
+    } else if (typeid(T) == typeid(int) ||
+               typeid(T) == typeid(int32_t) ||
+               typeid(T) == typeid(uint32_t)) {
+        tensor->set_data_type(onnx::TensorProto_DataType::TensorProto_DataType_INT32);
+    } else if (typeid(T) == typeid(std::string)) {
+        tensor->set_data_type(onnx::TensorProto_DataType::TensorProto_DataType_STRING);
+    } else if (typeid(T) == typeid(uint8_t)) {
+        tensor->set_data_type(onnx::TensorProto_DataType::TensorProto_DataType_UINT8);
+    } else if (typeid(T) == typeid(int8_t)) {
+        tensor->set_data_type(onnx::TensorProto_DataType::TensorProto_DataType_INT8);
+    } else {
+        CHECK(false,);
+    }
+    
+    
+    tensor->add_dims(value.size());
+    std::string data((char*)value.data(), value.size()*sizeof(T));
+    tensor->set_raw_data(data);
+    attr->set_allocated_t(tensor);
+}
+
+
 void Node::_conv2d_proto(onnx::GraphProto* graph) const {
     onnx::NodeProto* conv2d_node = new onnx::NodeProto;
     conv2d_node->set_op_type(get_op_type());
     conv2d_node->set_name(get_name());
     conv2d_node->add_output(get_name());
     
-    _add_attr_to_node(conv2d_node, "is_quantize", (int)is_quantize_);
-    _add_attr_to_node(conv2d_node, "weight_shared", (int)weight_shared_);
-    _add_attr_to_node(conv2d_node, "dynamic_shape", (int)dynamic_shape_);
-    _add_attr_to_node(conv2d_node, "is_last_node", (int)is_last_node_);
-    _add_attr_to_node(conv2d_node, "is_sparse", (int)is_sparse_);
-    _add_attr_to_node(conv2d_node, "is_first_node", (int)is_first_node_);
-    _add_attr_to_node(conv2d_node, "in_place", (int)in_place_);
+    _add_attr_to_node(conv2d_node, "is_quantize", is_quantize_);
+    _add_attr_to_node(conv2d_node, "weight_shared", weight_shared_);
+    _add_attr_to_node(conv2d_node, "dynamic_shape", dynamic_shape_);
+    _add_attr_to_node(conv2d_node, "is_last_node", is_last_node_);
+    _add_attr_to_node(conv2d_node, "is_sparse", is_sparse_);
+    _add_attr_to_node(conv2d_node, "is_first_node", is_first_node_);
+    _add_attr_to_node(conv2d_node, "in_place", in_place_);
     _add_attr_to_node(conv2d_node, "output_shape", output_shape_);
     
     op::cpu::Convolution2DOperator* conv2d_op = static_cast<op::cpu::Convolution2DOperator*>(op_);
@@ -130,6 +169,15 @@ void Node::_conv2d_proto(onnx::GraphProto* graph) const {
     _add_attr_to_node(conv2d_node, "padding", op_param->pad_type);
     _add_attr_to_node(conv2d_node, "activation", op_param->activation);
     _add_attr_to_node(conv2d_node, "with_bias", op_param->with_bias);
+    _add_attr_to_node(conv2d_node, "with_batch_norm", op_param->with_batch_norm);
+    if (op_param->with_batch_norm) {
+        _add_attr_to_node(conv2d_node, "epsilon", op_param->epsilon);
+        _add_tensor_to_node(conv2d_node, "gamma", op_param->gamma);
+        _add_tensor_to_node(conv2d_node, "mean", op_param->mean);
+        _add_tensor_to_node(conv2d_node, "beta", op_param->beta);
+        _add_tensor_to_node(conv2d_node, "var", op_param->var);
+    }
+    
     
     for (auto it : get_producers()) {
         conv2d_node->add_input(it);
@@ -158,13 +206,13 @@ void Node::_fc_proto(onnx::GraphProto* graph) const {
     fc_node->set_name(get_name());
     fc_node->add_output(get_name());
     
-    _add_attr_to_node(fc_node, "is_quantize", (int)is_quantize_);
-    _add_attr_to_node(fc_node, "weight_shared", (int)weight_shared_);
-    _add_attr_to_node(fc_node, "dynamic_shape", (int)dynamic_shape_);
-    _add_attr_to_node(fc_node, "is_last_node", (int)is_last_node_);
-    _add_attr_to_node(fc_node, "is_sparse", (int)is_sparse_);
-    _add_attr_to_node(fc_node, "is_first_node", (int)is_first_node_);
-    _add_attr_to_node(fc_node, "in_place", (int)in_place_);
+    _add_attr_to_node(fc_node, "is_quantize", is_quantize_);
+    _add_attr_to_node(fc_node, "weight_shared", weight_shared_);
+    _add_attr_to_node(fc_node, "dynamic_shape", dynamic_shape_);
+    _add_attr_to_node(fc_node, "is_last_node", is_last_node_);
+    _add_attr_to_node(fc_node, "is_sparse", is_sparse_);
+    _add_attr_to_node(fc_node, "is_first_node", is_first_node_);
+    _add_attr_to_node(fc_node, "in_place", in_place_);
     _add_attr_to_node(fc_node, "output_shape", output_shape_);
     
     op::cpu::FullyConnectedOperator* fc_op = static_cast<op::cpu::FullyConnectedOperator*>(op_);
@@ -173,6 +221,14 @@ void Node::_fc_proto(onnx::GraphProto* graph) const {
     _add_attr_to_node(fc_node, "num_outputs", (int)op_param->num_outputs);
     _add_attr_to_node(fc_node, "activation", op_param->activation);
     _add_attr_to_node(fc_node, "with_bias", op_param->with_bias);
+    _add_attr_to_node(fc_node, "with_batch_norm", op_param->with_batch_norm);
+    if (op_param->with_batch_norm) {
+        _add_attr_to_node(fc_node, "epsilon", op_param->epsilon);
+        _add_tensor_to_node(fc_node, "gamma", op_param->gamma);
+        _add_tensor_to_node(fc_node, "mean", op_param->mean);
+        _add_tensor_to_node(fc_node, "beta", op_param->beta);
+        _add_tensor_to_node(fc_node, "var", op_param->var);
+    }
     
     for (auto it : get_producers()) {
         fc_node->add_input(it);
@@ -202,13 +258,13 @@ void Node::_input_proto(onnx::GraphProto* graph) const {
     input_node->set_name(get_name());
     input_node->add_output(get_name());
     
-    _add_attr_to_node(input_node, "is_quantize", (int)is_quantize_);
-    _add_attr_to_node(input_node, "weight_shared", (int)weight_shared_);
-    _add_attr_to_node(input_node, "dynamic_shape", (int)dynamic_shape_);
-    _add_attr_to_node(input_node, "is_last_node", (int)is_last_node_);
-    _add_attr_to_node(input_node, "is_sparse", (int)is_sparse_);
-    _add_attr_to_node(input_node, "is_first_node", (int)is_first_node_);
-    _add_attr_to_node(input_node, "in_place", (int)in_place_);
+    _add_attr_to_node(input_node, "is_quantize", is_quantize_);
+    _add_attr_to_node(input_node, "weight_shared", weight_shared_);
+    _add_attr_to_node(input_node, "dynamic_shape", dynamic_shape_);
+    _add_attr_to_node(input_node, "is_last_node", is_last_node_);
+    _add_attr_to_node(input_node, "is_sparse", is_sparse_);
+    _add_attr_to_node(input_node, "is_first_node", is_first_node_);
+    _add_attr_to_node(input_node, "in_place", in_place_);
     _add_attr_to_node(input_node, "output_shape", output_shape_);
     
     op::cpu::InputOperator* input_op = static_cast<op::cpu::InputOperator*>(op_);
@@ -230,13 +286,13 @@ void Node::_pooling_proto(onnx::GraphProto* graph) const {
     pool_node->set_name(get_name());
     pool_node->add_output(get_name());
     
-    _add_attr_to_node(pool_node, "is_quantize", (int)is_quantize_);
-    _add_attr_to_node(pool_node, "weight_shared", (int)weight_shared_);
-    _add_attr_to_node(pool_node, "dynamic_shape", (int)dynamic_shape_);
-    _add_attr_to_node(pool_node, "is_last_node", (int)is_last_node_);
-    _add_attr_to_node(pool_node, "is_sparse", (int)is_sparse_);
-    _add_attr_to_node(pool_node, "is_first_node", (int)is_first_node_);
-    _add_attr_to_node(pool_node, "in_place", (int)in_place_);
+    _add_attr_to_node(pool_node, "is_quantize", is_quantize_);
+    _add_attr_to_node(pool_node, "weight_shared", weight_shared_);
+    _add_attr_to_node(pool_node, "dynamic_shape", dynamic_shape_);
+    _add_attr_to_node(pool_node, "is_last_node", is_last_node_);
+    _add_attr_to_node(pool_node, "is_sparse", is_sparse_);
+    _add_attr_to_node(pool_node, "is_first_node", is_first_node_);
+    _add_attr_to_node(pool_node, "in_place", in_place_);
     _add_attr_to_node(pool_node, "output_shape", output_shape_);
     
     op::cpu::PoolingOperator* pool_op = static_cast<op::cpu::PoolingOperator*>(op_);

@@ -51,6 +51,12 @@ struct Convolution2DParam : public BaseParam {
     std::string activation = "None";
     std::string pad_type;
     bool with_bias = true;
+    bool with_batch_norm = false;
+    std::vector<float> mean;
+    std::vector<float> var;
+    std::vector<float> gamma;
+    std::vector<float> beta;
+    float epsilon;
     uint32_t group = 1;
     void copy_from(const BaseParam* param);
     virtual ~Convolution2DParam() {}

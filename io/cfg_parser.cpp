@@ -248,7 +248,17 @@ void CfgParser::init_conv2d_param(std::fstream& file, core::ir::Graph* graph) {
                 c_json.Get("group", conv_param.group);
             }
             if (c_json.KeyExist("with_bias")) {
-                conv_param.activation = c_json("with_bias");
+                c_json.Get("with_bias", conv_param.with_bias);
+            }
+            if (c_json.KeyExist("with_batch_norm")) {
+                c_json.Get("with_batch_norm", conv_param.with_batch_norm);
+                if (conv_param.with_batch_norm) {
+                    conv_param.mean.resize(oc, 0.);
+                    conv_param.var.resize(oc, 1.);
+                    conv_param.gamma.resize(oc, 1.);
+                    conv_param.beta.resize(oc, 0.);
+                    conv_param.epsilon = 0.00001f;
+                }                
             }
             
         } else if (param[0] == "weight_filler") {
@@ -354,7 +364,17 @@ void CfgParser::init_fc_param(std::fstream& file, core::ir::Graph* graph) {
                 fc_param.activation = c_json("activation");
             }
             if (c_json.KeyExist("with_bias")) {
-                fc_param.activation = c_json("with_bias");
+                c_json.Get("with_bias", fc_param.with_bias);
+            }
+            if (c_json.KeyExist("with_batch_norm")) {
+                c_json.Get("with_batch_norm", fc_param.with_batch_norm);
+                if (fc_param.with_batch_norm) {
+                    fc_param.mean.resize(fc_param.num_outputs, 0.);
+                    fc_param.var.resize(fc_param.num_outputs, 1.);
+                    fc_param.gamma.resize(fc_param.num_outputs, 1.);
+                    fc_param.beta.resize(fc_param.num_outputs, 0.);
+                    fc_param.epsilon = 0.00001f;
+                }                
             }
         } else if (param[0] == "producer") {
             std::vector<std::string> p_param= absl::StrSplit(param[1].substr(1, param[1].size()-2), absl::ByChar(','));

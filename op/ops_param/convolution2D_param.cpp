@@ -33,15 +33,21 @@ namespace op {
 
 void Convolution2DParam::copy_from(const BaseParam* param) {
     this->BaseParam::copy_from(param);
-    const Convolution2DParam* con_param = static_cast<const Convolution2DParam*>(param);
-    kernel_shape = con_param->kernel_shape;
-    strides      = con_param->strides;
-    dilations    = con_param->dilations;
-    pads         = con_param->pads;
-    pad_type     = con_param->pad_type;
-    group        = con_param->group;
-    activation   = con_param->activation;
-    with_bias    = con_param->with_bias;
+    const Convolution2DParam* conv_param = static_cast<const Convolution2DParam*>(param);
+    kernel_shape = conv_param->kernel_shape;
+    strides      = conv_param->strides;
+    dilations    = conv_param->dilations;
+    pads         = conv_param->pads;
+    pad_type     = conv_param->pad_type;
+    group        = conv_param->group;
+    activation   = conv_param->activation;
+    with_bias    = conv_param->with_bias;
+    mean         = conv_param->mean;
+    var          = conv_param->var;
+    gamma        = conv_param->gamma;
+    beta         = conv_param->beta;
+    epsilon      = conv_param->epsilon;
+    with_batch_norm = conv_param->with_batch_norm;
     CHECK(SUPPORT_PAD_TYPES.count(pad_type)!=0, "Unsupport pad type.");
 }
 

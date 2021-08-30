@@ -43,6 +43,12 @@ struct FullyConnectedParam : public BaseParam {
     uint32_t num_outputs;
     std::string activation = "None";
     bool with_bias = true;
+    bool with_batch_norm = false;
+    std::vector<float> mean;
+    std::vector<float> var;
+    std::vector<float> gamma;
+    std::vector<float> beta;
+    float epsilon;
     void copy_from(const BaseParam* param);
     virtual ~FullyConnectedParam() {}
 };

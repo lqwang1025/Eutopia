@@ -33,10 +33,16 @@ namespace op {
 
 void FullyConnectedParam::copy_from(const BaseParam* param) {
     this->BaseParam::copy_from(param);
-    const FullyConnectedParam* fully_connected_param = static_cast<const FullyConnectedParam*>(param);
-    num_outputs = fully_connected_param->num_outputs;
-    activation  = fully_connected_param->activation;
-    with_bias   = fully_connected_param->with_bias;
+    const FullyConnectedParam* fc_param = static_cast<const FullyConnectedParam*>(param);
+    num_outputs = fc_param->num_outputs;
+    activation  = fc_param->activation;
+    with_bias   = fc_param->with_bias;
+    mean        = fc_param->mean;
+    var         = fc_param->var;
+    gamma       = fc_param->gamma;
+    beta        = fc_param->beta;
+    epsilon     = fc_param->epsilon;
+    with_batch_norm = fc_param->with_batch_norm;
 }
 
 } // namespace op
