@@ -30,7 +30,6 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
 set(THIRD_PARTY_DIR "${CMAKE_SOURCE_DIR}/third_party")
 set(PROTOBUF_DIR "${THIRD_PARTY_DIR}/protobuf")
 set(ABSEIL_DIR "${THIRD_PARTY_DIR}/abseil")
-message("${PROTOBUF_DIR}")
 
 link_directories(${PROTOBUF_DIR}/lib)
 link_directories(${ABSEIL_DIR}/lib)
@@ -38,4 +37,4 @@ link_directories(${CMAKE_BINARY_DIR})
 
 add_executable(eutopia-train-tools ${MAIN_SRCS})
 
-target_link_libraries(eutopia-train-tools  libeutopia.a libabsl.a libprotobuf.a libprotobuf-lite.a libprotoc.a)
+target_link_libraries(eutopia-train-tools  libeutopia.a libabsl.a libprotobuf.a libprotobuf-lite.a libprotoc.a ${OpenCV_LIBS})

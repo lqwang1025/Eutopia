@@ -82,6 +82,7 @@ ADD_DEFINITIONS(-funroll-loops)
 ADD_DEFINITIONS(-Wno-deprecated-register)
 
 OPTION(DEBUGEUTOPIA "This option is for open debug mode" ON)
+OPTION(WITH_OPENCV "This option is for open debug mode" ON)
 
 if(DEBUGEUTOPIA)
   ADD_DEFINITIONS(-DDEBUGEUTOPIA)
@@ -90,6 +91,13 @@ if(DEBUGEUTOPIA)
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -fPIC -O3 -std=c++11 -lpthread -lrt -ldl -fopenmp -Wno-overloaded-virtual")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w -fPIC -O3 -fopenmp -std=c99")
+endif()
+
+if(WITH_OPENCV)
+  set(OpenCV_DIR ${THIRD_PARTY_DIR}/opencv/lib/cmake/opencv4)
+  find_package(OpenCV REQUIRED)
+  include_directories(${OpenCV_INCLUDE_DIRS})
+  link_directories(${OpenCV_LIBRARIES})
 endif()
 
 # add all header file folder
@@ -133,7 +141,7 @@ ADD_LIBRARY (${CMAKE_PROJECT_NAME}-static STATIC)
 TARGET_SOURCES (${CMAKE_PROJECT_NAME}-static PRIVATE ${EUPOTIA_SRC})
 # TARGET_SOURCES (${CMAKE_PROJECT_NAME}        PRIVATE ${EUPOTIA_SRC})
 
-target_link_libraries(${CMAKE_PROJECT_NAME}-static libprotobuf.a libprotobuf-lite.a libprotoc.a libabsl.a)
+target_link_libraries(${CMAKE_PROJECT_NAME}-static libprotobuf.a libprotobuf-lite.a libprotoc.a libabsl.a ${OpenCV_LIBS})
 # target_link_libraries(${CMAKE_PROJECT_NAME})
 
 #set version
