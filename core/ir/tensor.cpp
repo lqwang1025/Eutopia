@@ -128,7 +128,7 @@ Tensor& Tensor::operator=(const Tensor& rhs) {
     set_dims(rhs.dims());
     set_data_type(rhs.get_data_type());
     byte_size_ = rhs.byte_size();
-    mem_->set_data(byte_size_, rhs.chunk()->get_mutable_data_ptr());
+    *mem_ = *rhs.chunk();
     return *this;
 }
 

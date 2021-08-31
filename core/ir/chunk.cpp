@@ -87,6 +87,15 @@ void Chunk::_release_data() {
     data_ = nullptr;
 }
 
+Chunk& Chunk::operator=(const Chunk& rhs) {
+    if (this == &rhs) return *this;
+    byte_size_ = rhs.get_byte_size();
+    data_ = malloc(byte_size_);
+    CHECK(data_!=nullptr,);
+    memcpy(data_, rhs.get_data_ptr(), byte_size_);
+    own_data_ = true;
+}
+
 template <typename T>
 T& Chunk::at(uint32_t index) {
     T* data = (T*)data_;

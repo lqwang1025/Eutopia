@@ -19,49 +19,38 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : chunk.h
+ * File       : opencv_interface.cpp
  * Authors    : Daniel Wang
- * Create Time: 2021-08-08:18:27:41
+ * Create Time: 2021-08-31:07:35:55
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#ifndef __CHUNK_H__
-#define __CHUNK_H__
+// #ifdef WITH_OPENCV 1
 
-#include <stdint.h>
+#include <iostream>
+
+#include "cv/opencv_interface.h"
+#include "core/ir/tensor.h"
 
 namespace eutopia {
-namespace core {
-namespace ir {
+namespace cv {
 
-class Tensor;
+core::ir::Tensor* mat_to_tensor(const ::cv::Mat& mat) {
+    core::ir::Tensor* tensor = new core::ir::Tensor;
+    std::cout<<"debug:"<<mat.size().size()<<std::endl;
+    // std::cout<<"debug:"<<mat.size()<<std::endl;
+    // for (auto it : mat.size()) {
+    //     std::cout<<"debug:"<<it<<std::endl;
+    // }
+    return tensor;
+}
 
-class Chunk final {
-public:
-    Chunk(Tensor *owner);
-    ~Chunk();
-    Chunk(Tensor *owner, uint32_t byte_size, void *data = nullptr);
-    void set_data(uint32_t byte_size, void *data = nullptr);
-    uint32_t get_byte_size() const;
-
-    template <typename T> T& at(uint32_t index);
+::cv::Mat* mat_to_tensor(const core::ir::Tensor& tensor) {
     
-    const void* get_data_ptr() const;
-    void* get_mutable_data_ptr();
-    Chunk& operator=(const Chunk& rhs);
-protected:
-    Tensor *owner_;
-    uint32_t byte_size_;
-    void *data_;
-    bool own_data_;
+}
 
-protected:
-    void _release_data();
-};
-
-} // namespace ir
-} // namespace core
+} // namespace cv
 } // namespace eutopia
 
-#endif /* __CHUNK_H__ */
+// #endif

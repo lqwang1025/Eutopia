@@ -19,49 +19,35 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : chunk.h
+ * File       : opencv_interface.h
  * Authors    : Daniel Wang
- * Create Time: 2021-08-08:18:27:41
+ * Create Time: 2021-08-31:07:35:49
  * Email      : wangliquan21@qq.com
  * Description:
  */
 
-#ifndef __CHUNK_H__
-#define __CHUNK_H__
+#ifndef __OPENCV_INTERFACE_H__
+#define __OPENCV_INTERFACE_H__
 
-#include <stdint.h>
+// #ifdef WITH_OPENCV 1
+#include <opencv2/core/core.hpp>
 
 namespace eutopia {
 namespace core {
-namespace ir {
-
+namespace ir  {
 class Tensor;
+}
+}
+namespace cv {
 
-class Chunk final {
-public:
-    Chunk(Tensor *owner);
-    ~Chunk();
-    Chunk(Tensor *owner, uint32_t byte_size, void *data = nullptr);
-    void set_data(uint32_t byte_size, void *data = nullptr);
-    uint32_t get_byte_size() const;
+core::ir::Tensor* mat_to_tensor(const ::cv::Mat& mat);
 
-    template <typename T> T& at(uint32_t index);
-    
-    const void* get_data_ptr() const;
-    void* get_mutable_data_ptr();
-    Chunk& operator=(const Chunk& rhs);
-protected:
-    Tensor *owner_;
-    uint32_t byte_size_;
-    void *data_;
-    bool own_data_;
+::cv::Mat* mat_to_tensor(const core::ir::Tensor& tensor);
 
-protected:
-    void _release_data();
-};
-
-} // namespace ir
-} // namespace core
+} // namespace cv
 } // namespace eutopia
 
-#endif /* __CHUNK_H__ */
+// #endif
+
+#endif /* __OPENCV_INTERFACE_H__ */
+
