@@ -29,7 +29,7 @@
 #ifndef __OPENCV_INTERFACE_H__
 #define __OPENCV_INTERFACE_H__
 
-// #ifdef WITH_OPENCV 1
+#ifdef WITH_OPENCV 1
 #include <opencv2/core/core.hpp>
 
 namespace eutopia {
@@ -47,7 +47,7 @@ core::ir::Tensor* mat_to_tensor(const ::cv::Mat& mat);
 } // namespace cv
 } // namespace eutopia
 
-// #endif
+#endif
 
 #endif /* __OPENCV_INTERFACE_H__ */
 

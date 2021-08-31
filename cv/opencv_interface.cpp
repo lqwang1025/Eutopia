@@ -26,7 +26,7 @@
  * Description:
  */
 
-// #ifdef WITH_OPENCV 1
+#ifdef WITH_OPENCV 1
 
 #include <iostream>
 
@@ -38,7 +38,9 @@ namespace cv {
 
 core::ir::Tensor* mat_to_tensor(const ::cv::Mat& mat) {
     core::ir::Tensor* tensor = new core::ir::Tensor;
-    std::cout<<"debug:"<<mat.size().size()<<std::endl;
+    std::cout<<"debug:"<<mat.dims<<std::endl;
+    std::cout<<"debug:"<<mat.elemSize()<<std::endl;
+    std::cout<<"debug:"<<mat.total()<<std::endl;
     // std::cout<<"debug:"<<mat.size()<<std::endl;
     // for (auto it : mat.size()) {
     //     std::cout<<"debug:"<<it<<std::endl;
@@ -53,4 +55,4 @@ core::ir::Tensor* mat_to_tensor(const ::cv::Mat& mat) {
 } // namespace cv
 } // namespace eutopia
 
-// #endif
+#endif

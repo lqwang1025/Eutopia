@@ -35,6 +35,7 @@
 #include "core/ir/graph.h"
 #include "core/ir/tensor.h"
 #include "tools/cmdline.h"
+#include "cv/opencv_interface.h"
 
 int main(int argc, char** argv) {
     eutopia::io::Parser p;
@@ -43,13 +44,15 @@ int main(int argc, char** argv) {
     a.parse_check(argc, argv);
     eutopia::core::ir::Graph* graph = p.run("/home/lqwang/project/Eutopia/tools/cfg/alexnet.cfg");
     cv::Mat pic = cv::imread("./cat.jpg");
+    eutopia::cv::mat_to_tensor(pic);
     cv::imshow("pcv", pic);
     cv::waitKey(0);
-    eutopia::core::ir::Tensor* tensor = new eutopia::core::ir::Tensor({20, 1, 28, 28}, eutopia::core::DataType::EUTOPIA_DT_FP32);
-    graph->warm_up();
-    graph->forward(tensor);
-    graph->to_proto();
-    delete graph;
-    delete tensor;
+    
+    // eutopia::core::ir::Tensor* tensor = new eutopia::core::ir::Tensor({20, 1, 28, 28}, eutopia::core::DataType::EUTOPIA_DT_FP32);
+    // graph->warm_up();
+    // graph->forward(tensor);
+    // graph->to_proto();
+    // delete graph;
+    // delete tensor;
     return 0;
 }
