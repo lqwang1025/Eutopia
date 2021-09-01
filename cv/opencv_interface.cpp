@@ -29,19 +29,24 @@
 #ifdef WITH_OPENCV 1
 
 #include <iostream>
+#include <cstddef>
 
 #include "cv/opencv_interface.h"
 #include "core/ir/tensor.h"
+#include "core/data_type.h"
+#include "core/logging.h"
 
 namespace eutopia {
 namespace cv {
 
-core::ir::Tensor* mat_to_tensor(const ::cv::Mat& mat) {
-    core::ir::Tensor* tensor = new core::ir::Tensor;
-    std::cout<<"debug:"<<mat.dims<<std::endl;
-    std::cout<<"debug:"<<mat.elemSize()<<std::endl;
-    std::cout<<"debug:"<<mat.total()<<std::endl;
-    // std::cout<<"debug:"<<mat.size()<<std::endl;
+core::ir::Tensor* mats_to_tensor(const std::vector<::cv::Mat>& mats) {
+    if(mats.size() == 0) return nullptr;
+    std::vector<uint32_t> tensor_shape = {mats.size(), mats[0].channels(), mats[0].rows, mats[0].cols};
+    core::ir::Tensor* tensor = new core::ir::Tensor(tensor_shape, core::DataType::EUTOPIA_DT_UINT8);
+    std::cout<<"debug:"<<mats[0].dims<<std::endl;
+    std::cout<<"debug:"<<mats[0].size<<std::endl;
+    std::cout<<"debug:"<<mats[0].total()<<std::endl;
+    std::cout<<"debug:"<<mats[0].channels()<<std::endl;
     // for (auto it : mat.size()) {
     //     std::cout<<"debug:"<<it<<std::endl;
     // }

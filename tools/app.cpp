@@ -28,8 +28,8 @@
 
 #include <iostream>
 #include <string>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include <vector>
+#include <opencv2/highgui.hpp>
 
 #include "io/parser.h"
 #include "core/ir/graph.h"
@@ -42,12 +42,12 @@ int main(int argc, char** argv) {
     cmdline::parser a;
     a.set_program_name("eutopia-train-tools");
     a.parse_check(argc, argv);
-    eutopia::core::ir::Graph* graph = p.run("/home/lqwang/project/Eutopia/tools/cfg/alexnet.cfg");
-    cv::Mat pic = cv::imread("./cat.jpg");
-    eutopia::cv::mat_to_tensor(pic);
+    eutopia::core::ir::Graph* graph = p.run("/home/parallels/project/Eutopia/tools/cfg/alexnet.cfg");
+    ::cv::Mat pic = ::cv::imread("./cat.jpg");
+    std::vector<::cv::Mat> mats = {pic};
+    eutopia::cv::mats_to_tensor(mats);
     cv::imshow("pcv", pic);
     cv::waitKey(0);
-    
     // eutopia::core::ir::Tensor* tensor = new eutopia::core::ir::Tensor({20, 1, 28, 28}, eutopia::core::DataType::EUTOPIA_DT_FP32);
     // graph->warm_up();
     // graph->forward(tensor);

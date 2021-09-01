@@ -30,6 +30,7 @@
 #define __OPENCV_INTERFACE_H__
 
 #ifdef WITH_OPENCV 1
+#include <vector>
 #include <opencv2/core/core.hpp>
 
 namespace eutopia {
@@ -40,7 +41,7 @@ class Tensor;
 }
 namespace cv {
 
-core::ir::Tensor* mat_to_tensor(const ::cv::Mat& mat);
+core::ir::Tensor* mats_to_tensor(const std::vector<::cv::Mat>& mats);
 
 ::cv::Mat* mat_to_tensor(const core::ir::Tensor& tensor);
 
