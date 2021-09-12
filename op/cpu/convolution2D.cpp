@@ -32,7 +32,7 @@
 #include "op/cpu/convolution2D.h"
 #include "op/ops_param.h"
 #include "op/cpu/compute/im2col.h"
-#include "op/cpu/compute/gemm.h"
+#include "op/cpu/compute/blas.h"
 #include "op/cpu/compute/batch_norm.h"
 
 namespace eutopia {
@@ -98,8 +98,14 @@ void Convolution2DOperator::forward(const std::vector<const core::ir::Tensor*> i
     output_tensor->set_data(output_shape, input_tensor->get_data_type());
     gemm(weight, &data_col, output_tensor);
     if (op_param_->with_batch_norm) {
-        batch_norm(op_param_->mean, op_param_->var, op_param_->gamma,
-                   op_param_->beta, op_param_->epsilon, output_tensor);
+        if (node_->is_trainning()) {
+            batch_norm_forward_training(op_param_->mean, op_param_->var, op_param_->gamma,
+                                        op_param_->beta, op_param_->epsilon, output_tensor);
+        } else {
+            batch_norm_forward_inference(op_param_->mean, op_param_->var, op_param_->gamma,
+                                         op_param_->beta, op_param_->epsilon, output_tensor);
+        }
+        
     } else {
         add_bias(bias, output_tensor, op_param_->activation);
     }

@@ -37,12 +37,28 @@ namespace eutopia {
 namespace op {
 namespace cpu {
 
-void batch_norm(const std::vector<float>& mean, const std::vector<float>& var,
-                const std::vector<float>& gamma, const std::vector<float>& beta,
-                float epsilon, core::ir::Tensor* output_tensor) {
-    std::cout<<"debug:"<<mean.size()<<std::endl;
+void batch_norm_forward_training(std::vector<float>& mean, std::vector<float>& var,
+                                 std::vector<float>& gamma, std::vector<float>& beta,
+                                 float epsilon, core::ir::Tensor* output_tensor) {
+    
+}
+
+void batch_norm_forward_inference
+const std::vector<float>& mean, const std::vector<float>& var,
+                                  const std::vector<float>& gamma, const std::vector<float>& beta,
+                                  float epsilon, core::ir::Tensor* output_tensor) {
+    std::vector<uint32_t> res_shape = output_tensor->dims(); // n c h w
+    CHECK(res_shape.size()==4, );
+    CHECK(mean.size()==res_shape[1], );
+    CHECK(var.size()==res_shape[1], );
+    CHECK(gamma.size()==res_shape[1], );
+    CHECK(beta.size()==res_shape[1], );
+    for (int n = 0; n < res_shape[0]; ++n) {
+    }
+    
 }
 
 } // namespace cpu
 } // namespace op
 } // namespace eutopia
+

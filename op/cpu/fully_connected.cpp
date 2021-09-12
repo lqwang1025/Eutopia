@@ -32,7 +32,7 @@
 #include "core/ir/tensor.h"
 #include "core/ir/node.h"
 
-#include "op/cpu/compute/gemm.h"
+#include "op/cpu/compute/blas.h"
 
 namespace eutopia {
 namespace op {

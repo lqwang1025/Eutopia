@@ -19,7 +19,7 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : gemm.h
+ * File       : blas.h
  * Authors    : Daniel Wang
  * Create Time: 2021-08-26:16:49:20
  * Email      : wangliquan21@qq.com
@@ -41,6 +41,11 @@ namespace cpu {
 void gemm(const core::ir::Tensor* weight, core::ir::Tensor* data_col, core::ir::Tensor* result);
 
 void add_bias(const core::ir::Tensor* bias, core::ir::Tensor* result, const std::string& act_type);
+
+void scale_result(const core::ir::Tensor* scale, core::ir::Tensor* result);
+
+void scale_and_add_bias(const core::ir::Tensor* scale, const core::ir::Tensor* bias,
+                        core::ir::Tensor* result, const std::string& act_type);
 
 } // namespace cpu
 } // namespace op

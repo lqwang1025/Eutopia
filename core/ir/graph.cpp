@@ -107,6 +107,7 @@ Node* Graph::add_node(op::BaseParam* param) {
     } else {
         node = new Node(this);
     }
+    node->set_is_trainning(is_trainning());
     CHECK(node!=nullptr, "Graph add node failed.");
     own_nodes_.push_back(node);
     return node;

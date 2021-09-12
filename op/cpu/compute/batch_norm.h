@@ -38,10 +38,18 @@ class Tensor;
 namespace op {
 namespace cpu {
 
-void batch_norm(const std::vector<float>& mean, const std::vector<float>& var,
-                const std::vector<float>& gamma, const std::vector<float>& beta,
-                float epsilon, core::ir::Tensor* output_tensor);
+void batch_norm_forward_training(std::vector<float>& mean, std::vector<float>& var,
+                                 std::vector<float>& gamma, std::vector<float>& beta,
+                                 float epsilon, core::ir::Tensor* output_tensor);
 
+
+void batch_norm_forward_inference(const std::vector<float>& mean, const std::vector<float>& var,
+                                  const std::vector<float>& gamma, const std::vector<float>& beta,
+                                  float epsilon, core::ir::Tensor* output_tensor);
+
+void batch_norm_backward(const std::vector<float>& mean, const std::vector<float>& var,
+                         const std::vector<float>& gamma, const std::vector<float>& beta,
+                         float epsilon, core::ir::Tensor* output_tensor);
 } // namespace cpu
 } // namespace op
 } // namespace eutopia

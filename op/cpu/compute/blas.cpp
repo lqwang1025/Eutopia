@@ -19,7 +19,7 @@
 
 /*
  * (C) COPYRIGHT Daniel Wang Limited.
- * File       : gemm.cpp
+ * File       : blas.cpp
  * Authors    : Daniel Wang
  * Create Time: 2021-08-26:16:49:20
  * Email      : wangliquan21@qq.com
@@ -32,7 +32,7 @@
 #include "core/ir/tensor.h"
 #include "core/logging.h"
 
-#include "op/cpu/compute/gemm.h"
+#include "op/cpu/compute/blas.h"
 #include "op/cpu/compute/avtivation.h"
 
 namespace eutopia {
@@ -83,6 +83,21 @@ void add_bias(const core::ir::Tensor* bias, core::ir::Tensor* result, const std:
             for (int pl = 0; pl < (int)res_shape[2]*res_shape[3]; ++pl) {
                 result->mutable_data<float>(n_offset+c_offset+pl) += bias->data<float>(c);
                 result->mutable_data<float>(n_offset+c_offset+pl) = activate(result->data<float>(n_offset+c_offset+pl));
+            }
+        }
+    }
+}
+
+void scale_result(const core::ir::Tensor* scale, core::ir::Tensor* result) {
+    std::vector<uint32_t> res_shape = result->dims(); // n c h w
+    CHECK(res_shape.size()==4,);
+    CHECK(scale->dims()[0]==res_shape[1],);
+    for (int  n = 0; n < (int)res_shape[0]; ++n) {
+        int n_offset = n*res_shape[1]*res_shape[2]*res_shape[3];
+        for (int c = 0; c < (int)res_shape[1]; ++c) {
+            int c_offset = c*res_shape[2]*res_shape[3];
+            for (int pl = 0; pl < (int)res_shape[2]*res_shape[3]; ++pl) {
+                result->mutable_data<float>(n_offset+c_offset+pl) *= scale->data<float>(c);
             }
         }
     }

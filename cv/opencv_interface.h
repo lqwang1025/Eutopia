@@ -41,7 +41,7 @@ class Tensor;
 }
 namespace cv {
 
-core::ir::Tensor* mats_to_tensor(const std::vector<::cv::Mat>& mats);
+core::ir::Tensor* mats_to_tensor(std::vector<::cv::Mat>& mats);
 
 ::cv::Mat* mat_to_tensor(const core::ir::Tensor& tensor);
 

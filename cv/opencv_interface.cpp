@@ -39,16 +39,12 @@
 namespace eutopia {
 namespace cv {
 
-core::ir::Tensor* mats_to_tensor(const std::vector<::cv::Mat>& mats) {
+core::ir::Tensor* mats_to_tensor(std::vector<::cv::Mat>& mats) {
     if(mats.size() == 0) return nullptr;
     std::vector<uint32_t> tensor_shape = {mats.size(), mats[0].channels(), mats[0].rows, mats[0].cols};
     core::ir::Tensor* tensor = new core::ir::Tensor(tensor_shape, core::DataType::EUTOPIA_DT_UINT8);
-    std::cout<<"debug:"<<mats[0].dims<<std::endl;
-    std::cout<<"debug:"<<mats[0].size<<std::endl;
-    std::cout<<"debug:"<<mats[0].total()<<std::endl;
-    std::cout<<"debug:"<<mats[0].channels()<<std::endl;
-    // for (auto it : mat.size()) {
-    //     std::cout<<"debug:"<<it<<std::endl;
+    // for (int i = 0; i < (int)mats.size(); ++i) {
+        
     // }
     return tensor;
 }
