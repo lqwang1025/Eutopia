@@ -43,8 +43,7 @@ void batch_norm_forward_training(std::vector<float>& mean, std::vector<float>& v
     
 }
 
-void batch_norm_forward_inference
-const std::vector<float>& mean, const std::vector<float>& var,
+void batch_norm_forward_inference(const std::vector<float>& mean, const std::vector<float>& var,
                                   const std::vector<float>& gamma, const std::vector<float>& beta,
                                   float epsilon, core::ir::Tensor* output_tensor) {
     std::vector<uint32_t> res_shape = output_tensor->dims(); // n c h w
