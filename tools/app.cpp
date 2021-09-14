@@ -48,11 +48,11 @@ int main(int argc, char** argv) {
     eutopia::cv::mats_to_tensor(mats);
     cv::imshow("pcv", pic);
     cv::waitKey(0);
-    // eutopia::core::ir::Tensor* tensor = new eutopia::core::ir::Tensor({20, 1, 28, 28}, eutopia::core::DataType::EUTOPIA_DT_FP32);
-    // graph->warm_up();
-    // graph->forward(tensor);
-    // graph->to_proto();
-    // delete graph;
-    // delete tensor;
+    eutopia::core::ir::Tensor* tensor = new eutopia::core::ir::Tensor({20, 1, 28, 28}, eutopia::core::DataType::EUTOPIA_DT_FP32);
+    graph->warm_up();
+    graph->forward(tensor);
+    graph->to_proto();
+    delete graph;
+    delete tensor;
     return 0;
 }
