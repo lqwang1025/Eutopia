@@ -41,7 +41,8 @@ namespace cv {
 
 core::ir::Tensor* mats_to_tensor(std::vector<::cv::Mat>& mats) {
     if(mats.size() == 0) return nullptr;
-    std::vector<uint32_t> tensor_shape = {mats.size(), mats[0].channels(), mats[0].rows, mats[0].cols};
+    std::vector<uint32_t> tensor_shape = {(uint32_t)mats.size(), (uint32_t)mats[0].channels(),
+                                          (uint32_t)mats[0].rows, (uint32_t)mats[0].cols};
     core::ir::Tensor* tensor = new core::ir::Tensor(tensor_shape, core::DataType::EUTOPIA_DT_UINT8);
     // for (int i = 0; i < (int)mats.size(); ++i) {
         

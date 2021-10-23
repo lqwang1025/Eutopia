@@ -94,6 +94,7 @@ Chunk& Chunk::operator=(const Chunk& rhs) {
     CHECK(data_!=nullptr,);
     memcpy(data_, rhs.get_data_ptr(), byte_size_);
     own_data_ = true;
+    return *this;
 }
 
 template <typename T>
